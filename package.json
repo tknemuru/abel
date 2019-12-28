@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/tknemuru/abel#readme",
   "dependencies": {
+    "lodash": "^4.17.15",
+    "lodash-math": "0.0.7",
     "module-alias": "^2.2.2",
     "node-dev": "^4.0.0",
     "sqlite3": "^4.1.1"
@@ -31,6 +33,7 @@
     "eslint-plugin-standard": "^4.0.1"
   },
   "_moduleAliases": {
-    "@": "src"
+    "@": "src",
+    "@s": "src/services"
   }
 }
