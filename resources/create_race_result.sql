@@ -1,0 +1,27 @@
+create table if not exists race_result (
+  race_id integer not null,
+
+  order_of_finish text    not null,
+  frame_number       integer not null,
+  horse_number       integer not null,
+  horse_id           text    not null,
+  sex                text    not null,
+  age                integer not null,
+  basis_weight       real    not null,
+  jockey_id          text    not null,
+  finishing_time     text    not null,
+  length             text    not null,
+  speed_figure       integer,
+  pass               text    not null,
+  last_phase         real,
+  odds               real,
+  popularity         integer,
+  horse_weight       text    not null,
+  remark             text,
+  stable             text    not null,
+  trainer_id         text    not null,
+  owner_id           text    not null,
+  earning_money      real,
+  primary key (race_id, horse_number),
+  foreign key (race_id) references race_info (id)
+);
