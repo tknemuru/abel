@@ -19,6 +19,7 @@ module.exports = {
       db.serialize(() => {
         const results = []
         for (let i = 0; i < _sqls.length; i++) {
+          console.log(_sqls[i])
           db.run(
             _sqls[i],
             _params ? _params[i] : null,
@@ -52,6 +53,7 @@ module.exports = {
       db.serialize(() => {
         const results = []
         for (let i = 0; i < _sqls.length; i++) {
+          console.log(_sqls[i])
           db.all(
             _sqls[i],
             _params ? _params[i] : null,

@@ -10,8 +10,7 @@ module.exports = {
    */
   read (fileName) {
     const fs = require('fs')
-    const sql = fs.readFileSync(`resources/${fileName}.sql`, { encoding: 'utf-8' })
-    console.log(sql)
+    const sql = fs.readFileSync(`resources/sqls/${fileName}.sql`, { encoding: 'utf-8' })
     return sql
   }
 }

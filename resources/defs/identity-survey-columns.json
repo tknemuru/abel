@@ -1,0 +1,30 @@
+[
+  {
+    "name": "sex",
+    "jpName": "性別"
+  },
+  {
+    "name": "age",
+    "jpName": "年齢"
+  },
+  {
+    "name": "jockey_id",
+    "jpName": "騎手"
+  },
+  {
+    "name": "popularity",
+    "jpName": "人気"
+  },
+  {
+    "name": "horse_weight",
+    "jpName": "体重"
+  },
+  {
+    "name": "last_phase",
+    "jpName": "前回？？"
+  },
+  {
+    "name": "trainer_id",
+    "jpName": "調教師"
+  }
+]
