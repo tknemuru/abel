@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "init-db": "node-dev ./src/index.js -t init-db",
-    "create-param": "node-dev ./src/index.js -t create-param",
-    "simulate": "node-dev ./src/index.js -t simulate"
+    "init-db": "node ./src/index.js -t init-db",
+    "create-param": "node ./src/index.js -t create-param",
+    "simulate": "node ./src/index.js -t simulate",
+    "future-scrape": "node ./src/index.js -t future-scrape",
+    "future-simulate": "node ./src/index.js -t future-simulate"
   },
   "repository": {
     "type": "git",
@@ -20,12 +22,17 @@
   },
   "homepage": "https://github.com/tknemuru/abel#readme",
   "dependencies": {
+    "bufferutil": "^4.0.1",
+    "canvas": "^2.6.1",
     "command-line-args": "^5.1.1",
+    "jsdom": "^15.2.1",
     "lodash": "^4.17.15",
     "lodash-math": "0.0.7",
     "module-alias": "^2.2.2",
     "node-dev": "^4.0.0",
-    "sqlite3": "^4.1.1"
+    "puppeteer": "^2.0.0",
+    "sqlite3": "^4.1.1",
+    "utf-8-validate": "^5.0.2"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

@@ -1,5 +1,7 @@
 # custom
 db/
+resources/htmls/
+resources/races/
 
 # Logs
 logs
