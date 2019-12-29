@@ -1,0 +1,110 @@
+{
+  "1": {
+    "popularity": 1,
+    "countNum": 6958,
+    "recoveryRate": 76.98907732106925,
+    "score": 54.904199732388925
+  },
+  "2": {
+    "popularity": 2,
+    "countNum": 6957,
+    "recoveryRate": 80.49877820899802,
+    "score": 56.20121353189622
+  },
+  "3": {
+    "popularity": 3,
+    "countNum": 6957,
+    "recoveryRate": 84.34238896075902,
+    "score": 57.621624086571906
+  },
+  "4": {
+    "popularity": 4,
+    "countNum": 6949,
+    "recoveryRate": 80.83753057993954,
+    "score": 56.32639984086008
+  },
+  "5": {
+    "popularity": 5,
+    "countNum": 6940,
+    "recoveryRate": 76.47694524495677,
+    "score": 54.71494076386178
+  },
+  "6": {
+    "popularity": 6,
+    "countNum": 6944,
+    "recoveryRate": 88.37269585253462,
+    "score": 59.11102840386323
+  },
+  "7": {
+    "popularity": 7,
+    "countNum": 6929,
+    "recoveryRate": 70.13854813104348,
+    "score": 52.3725791820592
+  },
+  "8": {
+    "popularity": 8,
+    "countNum": 6868,
+    "recoveryRate": 82.31508444962142,
+    "score": 56.872431488481126
+  },
+  "9": {
+    "popularity": 9,
+    "countNum": 6753,
+    "recoveryRate": 72.28639123352588,
+    "score": 53.16631694833941
+  },
+  "10": {
+    "popularity": 10,
+    "countNum": 6497,
+    "recoveryRate": 72.31491457595813,
+    "score": 53.176857780713455
+  },
+  "11": {
+    "popularity": 11,
+    "countNum": 6158,
+    "recoveryRate": 74.21240662552778,
+    "score": 53.87807804173678
+  },
+  "12": {
+    "popularity": 12,
+    "countNum": 5771,
+    "recoveryRate": 90.12476173973315,
+    "score": 59.75850626762032
+  },
+  "13": {
+    "popularity": 13,
+    "countNum": 5275,
+    "recoveryRate": 68.64454976303318,
+    "score": 51.82047045210578
+  },
+  "14": {
+    "popularity": 14,
+    "countNum": 4703,
+    "recoveryRate": 60.9228152243249,
+    "score": 48.96689501287593
+  },
+  "15": {
+    "popularity": 15,
+    "countNum": 4034,
+    "recoveryRate": 34.45463559742191,
+    "score": 39.18555029999629
+  },
+  "16": {
+    "popularity": 16,
+    "countNum": 3143,
+    "recoveryRate": 33.999363665287945,
+    "score": 39.017304059828916
+  },
+  "17": {
+    "popularity": 17,
+    "countNum": 723,
+    "recoveryRate": 0,
+    "score": 26.452802053400266
+  },
+  "18": {
+    "popularity": 18,
+    "countNum": 583,
+    "recoveryRate": 0,
+    "score": 26.452802053400266
+  }
+}

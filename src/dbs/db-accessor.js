@@ -11,7 +11,7 @@ module.exports = {
    * @returns {void}
    */
   run (sqls, params) {
-    const dbProvider = require('@/providers/db-provider')
+    const dbProvider = require('@d/db-provider')
     const db = dbProvider.get()
     const _sqls = module.exports._toArray(sqls)
     const _params = module.exports._toArray(params)
@@ -45,7 +45,7 @@ module.exports = {
    * @returns {void}
    */
   all (sqls, params) {
-    const dbProvider = require('@/providers/db-provider')
+    const dbProvider = require('@d/db-provider')
     const db = dbProvider.get()
     const _sqls = module.exports._toArray(sqls)
     const _params = module.exports._toArray(params)

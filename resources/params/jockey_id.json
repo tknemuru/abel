@@ -1,0 +1,1106 @@
+{
+  "01023": {
+    "jockeyId": "01023",
+    "countNum": 83,
+    "recoveryRate": 268.1927710843374,
+    "score": 98.13951431933995
+  },
+  "05525": {
+    "jockeyId": "05525",
+    "countNum": 57,
+    "recoveryRate": 227.19298245614036,
+    "score": 88.01659490182843
+  },
+  "01174": {
+    "jockeyId": "01174",
+    "countNum": 89,
+    "recoveryRate": 208.65168539325848,
+    "score": 83.43871627504414
+  },
+  "01067": {
+    "jockeyId": "01067",
+    "countNum": 127,
+    "recoveryRate": 197.16535433070868,
+    "score": 80.60272107508146
+  },
+  "00718": {
+    "jockeyId": "00718",
+    "countNum": 129,
+    "recoveryRate": 193.4883720930233,
+    "score": 79.69486773883008
+  },
+  "05377": {
+    "jockeyId": "05377",
+    "countNum": 50,
+    "recoveryRate": 185,
+    "score": 77.59907384431148
+  },
+  "05498": {
+    "jockeyId": "05498",
+    "countNum": 67,
+    "recoveryRate": 181.94029850746267,
+    "score": 76.8436282021041
+  },
+  "00691": {
+    "jockeyId": "00691",
+    "countNum": 118,
+    "recoveryRate": 164.91525423728814,
+    "score": 72.64011503794069
+  },
+  "05472": {
+    "jockeyId": "05472",
+    "countNum": 50,
+    "recoveryRate": 148,
+    "score": 68.46370922464277
+  },
+  "01053": {
+    "jockeyId": "01053",
+    "countNum": 50,
+    "recoveryRate": 133.8,
+    "score": 64.95770442466181
+  },
+  "01015": {
+    "jockeyId": "01015",
+    "countNum": 986,
+    "recoveryRate": 133.01217038539554,
+    "score": 64.76318791688924
+  },
+  "00682": {
+    "jockeyId": "00682",
+    "countNum": 246,
+    "recoveryRate": 130.97560975609758,
+    "score": 64.26035754070818
+  },
+  "00734": {
+    "jockeyId": "00734",
+    "countNum": 235,
+    "recoveryRate": 130.2127659574468,
+    "score": 64.07201007453176
+  },
+  "00712": {
+    "jockeyId": "00712",
+    "countNum": 148,
+    "recoveryRate": 127.63513513513513,
+    "score": 63.435588522728686
+  },
+  "01167": {
+    "jockeyId": "01167",
+    "countNum": 214,
+    "recoveryRate": 125.74766355140187,
+    "score": 62.96956849227823
+  },
+  "01004": {
+    "jockeyId": "01004",
+    "countNum": 730,
+    "recoveryRate": 123.7808219178082,
+    "score": 62.48395185789923
+  },
+  "01046": {
+    "jockeyId": "01046",
+    "countNum": 173,
+    "recoveryRate": 118.67052023121387,
+    "score": 61.22220944645201
+  },
+  "01084": {
+    "jockeyId": "01084",
+    "countNum": 123,
+    "recoveryRate": 116.42276422764229,
+    "score": 60.667234563514825
+  },
+  "01127": {
+    "jockeyId": "01127",
+    "countNum": 1396,
+    "recoveryRate": 115.93123209169056,
+    "score": 60.54587442069852
+  },
+  "01156": {
+    "jockeyId": "01156",
+    "countNum": 442,
+    "recoveryRate": 115.24886877828054,
+    "score": 60.377397726885384
+  },
+  "01093": {
+    "jockeyId": "01093",
+    "countNum": 1097,
+    "recoveryRate": 112.11485870556062,
+    "score": 59.60360516645265
+  },
+  "01165": {
+    "jockeyId": "01165",
+    "countNum": 304,
+    "recoveryRate": 112.03947368421052,
+    "score": 59.58499247302307
+  },
+  "01147": {
+    "jockeyId": "01147",
+    "countNum": 420,
+    "recoveryRate": 110.16666666666666,
+    "score": 59.12259314957611
+  },
+  "01038": {
+    "jockeyId": "01038",
+    "countNum": 495,
+    "recoveryRate": 109.83838383838382,
+    "score": 59.0415395459345
+  },
+  "01153": {
+    "jockeyId": "01153",
+    "countNum": 499,
+    "recoveryRate": 108.79759519038075,
+    "score": 58.78456701102854
+  },
+  "01163": {
+    "jockeyId": "01163",
+    "countNum": 317,
+    "recoveryRate": 108.54889589905366,
+    "score": 58.723162721652166
+  },
+  "00727": {
+    "jockeyId": "00727",
+    "countNum": 131,
+    "recoveryRate": 107.93893129770993,
+    "score": 58.57256139629092
+  },
+  "05509": {
+    "jockeyId": "05509",
+    "countNum": 63,
+    "recoveryRate": 107.14285714285714,
+    "score": 58.37600929713214
+  },
+  "01109": {
+    "jockeyId": "01109",
+    "countNum": 754,
+    "recoveryRate": 100.76923076923077,
+    "score": 56.80234981408853
+  },
+  "05495": {
+    "jockeyId": "05495",
+    "countNum": 75,
+    "recoveryRate": 99.99999999999997,
+    "score": 56.61242539372119
+  },
+  "05475": {
+    "jockeyId": "05475",
+    "countNum": 56,
+    "recoveryRate": 99.46428571428571,
+    "score": 56.48015660096537
+  },
+  "00711": {
+    "jockeyId": "00711",
+    "countNum": 483,
+    "recoveryRate": 99.06832298136645,
+    "score": 56.382392710667595
+  },
+  "01069": {
+    "jockeyId": "01069",
+    "countNum": 173,
+    "recoveryRate": 99.01734104046244,
+    "score": 56.36980518041958
+  },
+  "01108": {
+    "jockeyId": "01108",
+    "countNum": 407,
+    "recoveryRate": 98.50122850122851,
+    "score": 56.24237609310377
+  },
+  "00705": {
+    "jockeyId": "00705",
+    "countNum": 583,
+    "recoveryRate": 98.14751286449405,
+    "score": 56.15504308463762
+  },
+  "01179": {
+    "jockeyId": "01179",
+    "countNum": 98,
+    "recoveryRate": 97.14285714285714,
+    "score": 55.906991832356816
+  },
+  "01151": {
+    "jockeyId": "01151",
+    "countNum": 429,
+    "recoveryRate": 96.13053613053613,
+    "score": 55.657048006418854
+  },
+  "00660": {
+    "jockeyId": "00660",
+    "countNum": 1132,
+    "recoveryRate": 96.10424028268541,
+    "score": 55.650555515659406
+  },
+  "01019": {
+    "jockeyId": "01019",
+    "countNum": 1039,
+    "recoveryRate": 94.63907603464872,
+    "score": 55.28880390394271
+  },
+  "00700": {
+    "jockeyId": "00700",
+    "countNum": 752,
+    "recoveryRate": 94.1755319148936,
+    "score": 55.174354051205775
+  },
+  "01140": {
+    "jockeyId": "01140",
+    "countNum": 624,
+    "recoveryRate": 93.86217948717947,
+    "score": 55.09698678954018
+  },
+  "01014": {
+    "jockeyId": "01014",
+    "countNum": 1531,
+    "recoveryRate": 93.14173742651859,
+    "score": 54.91910838652714
+  },
+  "01102": {
+    "jockeyId": "01102",
+    "countNum": 1368,
+    "recoveryRate": 92.49269005847957,
+    "score": 54.75885745781166
+  },
+  "01150": {
+    "jockeyId": "01150",
+    "countNum": 596,
+    "recoveryRate": 91.47651006711408,
+    "score": 54.507960843208
+  },
+  "01144": {
+    "jockeyId": "01144",
+    "countNum": 940,
+    "recoveryRate": 91.45744680851064,
+    "score": 54.50325409136526
+  },
+  "05517": {
+    "jockeyId": "05517",
+    "countNum": 63,
+    "recoveryRate": 90.7936507936508,
+    "score": 54.339361695991535
+  },
+  "01146": {
+    "jockeyId": "01146",
+    "countNum": 576,
+    "recoveryRate": 89.89583333333333,
+    "score": 54.117688997021126
+  },
+  "00733": {
+    "jockeyId": "00733",
+    "countNum": 1251,
+    "recoveryRate": 87.37809752198243,
+    "score": 53.49605562802956
+  },
+  "01099": {
+    "jockeyId": "01099",
+    "countNum": 618,
+    "recoveryRate": 87.13592233009709,
+    "score": 53.43626215019954
+  },
+  "01126": {
+    "jockeyId": "01126",
+    "countNum": 1593,
+    "recoveryRate": 87.08097928436914,
+    "score": 53.422696616252516
+  },
+  "05429": {
+    "jockeyId": "05429",
+    "countNum": 238,
+    "recoveryRate": 86.17647058823526,
+    "score": 53.199371839472946
+  },
+  "05339": {
+    "jockeyId": "05339",
+    "countNum": 828,
+    "recoveryRate": 84.93961352657004,
+    "score": 52.89398967080473
+  },
+  "01166": {
+    "jockeyId": "01166",
+    "countNum": 289,
+    "recoveryRate": 84.84429065743947,
+    "score": 52.87045428793714
+  },
+  "01115": {
+    "jockeyId": "01115",
+    "countNum": 1442,
+    "recoveryRate": 84.1886269070735,
+    "score": 52.70856976286978
+  },
+  "01154": {
+    "jockeyId": "01154",
+    "countNum": 848,
+    "recoveryRate": 83.5377358490566,
+    "score": 52.5478636238788
+  },
+  "01117": {
+    "jockeyId": "01117",
+    "countNum": 1178,
+    "recoveryRate": 83.48047538200339,
+    "score": 52.53372591455924
+  },
+  "01005": {
+    "jockeyId": "01005",
+    "countNum": 101,
+    "recoveryRate": 82.47524752475248,
+    "score": 52.28553340099612
+  },
+  "01043": {
+    "jockeyId": "01043",
+    "countNum": 1467,
+    "recoveryRate": 81.22017723244718,
+    "score": 51.97565435387388
+  },
+  "01080": {
+    "jockeyId": "01080",
+    "countNum": 133,
+    "recoveryRate": 80.6766917293233,
+    "score": 51.84146683396737
+  },
+  "01176": {
+    "jockeyId": "01176",
+    "countNum": 61,
+    "recoveryRate": 79.50819672131148,
+    "score": 51.55296337573897
+  },
+  "05538": {
+    "jockeyId": "05538",
+    "countNum": 52,
+    "recoveryRate": 79.42307692307692,
+    "score": 51.53194714889504
+  },
+  "00894": {
+    "jockeyId": "00894",
+    "countNum": 1139,
+    "recoveryRate": 77.96312554872694,
+    "score": 51.171482604795756
+  },
+  "01018": {
+    "jockeyId": "01018",
+    "countNum": 1798,
+    "recoveryRate": 77.90322580645164,
+    "score": 51.15669325381444
+  },
+  "05203": {
+    "jockeyId": "05203",
+    "countNum": 1669,
+    "recoveryRate": 77.72917914919115,
+    "score": 51.11372083016824
+  },
+  "01026": {
+    "jockeyId": "01026",
+    "countNum": 409,
+    "recoveryRate": 77.55501222493886,
+    "score": 51.07071871239173
+  },
+  "01010": {
+    "jockeyId": "01010",
+    "countNum": 133,
+    "recoveryRate": 77.5187969924812,
+    "score": 51.06177710824885
+  },
+  "01088": {
+    "jockeyId": "01088",
+    "countNum": 1304,
+    "recoveryRate": 76.92484662576686,
+    "score": 50.9151297253861
+  },
+  "01037": {
+    "jockeyId": "01037",
+    "countNum": 1253,
+    "recoveryRate": 76.91141260973663,
+    "score": 50.911812843366036
+  },
+  "01009": {
+    "jockeyId": "01009",
+    "countNum": 1450,
+    "recoveryRate": 76.80689655172417,
+    "score": 50.88600764610781
+  },
+  "05386": {
+    "jockeyId": "05386",
+    "countNum": 1353,
+    "recoveryRate": 76.74057649667401,
+    "score": 50.86963310868944
+  },
+  "01077": {
+    "jockeyId": "01077",
+    "countNum": 1172,
+    "recoveryRate": 76.67235494880548,
+    "score": 50.852789089373296
+  },
+  "01032": {
+    "jockeyId": "01032",
+    "countNum": 1140,
+    "recoveryRate": 75.87719298245614,
+    "score": 50.65646221114914
+  },
+  "00655": {
+    "jockeyId": "00655",
+    "countNum": 101,
+    "recoveryRate": 75.44554455445545,
+    "score": 50.54988746041148
+  },
+  "01158": {
+    "jockeyId": "01158",
+    "countNum": 447,
+    "recoveryRate": 74.89932885906039,
+    "score": 50.41502585126501
+  },
+  "00689": {
+    "jockeyId": "00689",
+    "countNum": 1202,
+    "recoveryRate": 73.84359400998335,
+    "score": 50.15436307321069
+  },
+  "01142": {
+    "jockeyId": "01142",
+    "countNum": 406,
+    "recoveryRate": 73.00492610837436,
+    "score": 49.947294503588786
+  },
+  "05366": {
+    "jockeyId": "05366",
+    "countNum": 122,
+    "recoveryRate": 72.54098360655735,
+    "score": 49.83274628962501
+  },
+  "01035": {
+    "jockeyId": "01035",
+    "countNum": 103,
+    "recoveryRate": 72.42718446601941,
+    "score": 49.80464908307855
+  },
+  "01085": {
+    "jockeyId": "01085",
+    "countNum": 1381,
+    "recoveryRate": 72.0492396813903,
+    "score": 49.711333855681545
+  },
+  "05416": {
+    "jockeyId": "05416",
+    "countNum": 173,
+    "recoveryRate": 72.02312138728323,
+    "score": 49.70488520325149
+  },
+  "00709": {
+    "jockeyId": "00709",
+    "countNum": 279,
+    "recoveryRate": 71.97132616487455,
+    "score": 49.6920968723796
+  },
+  "00684": {
+    "jockeyId": "00684",
+    "countNum": 1275,
+    "recoveryRate": 71.84313725490196,
+    "score": 49.660446806628315
+  },
+  "01180": {
+    "jockeyId": "01180",
+    "countNum": 81,
+    "recoveryRate": 71.35802469135803,
+    "score": 49.54067166745113
+  },
+  "01122": {
+    "jockeyId": "01122",
+    "countNum": 1464,
+    "recoveryRate": 71.30464480874315,
+    "score": 49.527492081206745
+  },
+  "01068": {
+    "jockeyId": "01068",
+    "countNum": 85,
+    "recoveryRate": 71.05882352941177,
+    "score": 49.46679837801849
+  },
+  "00422": {
+    "jockeyId": "00422",
+    "countNum": 1590,
+    "recoveryRate": 70.52201257861631,
+    "score": 49.334258816738824
+  },
+  "01119": {
+    "jockeyId": "01119",
+    "countNum": 527,
+    "recoveryRate": 70.5123339658444,
+    "score": 49.33186915034196
+  },
+  "00663": {
+    "jockeyId": "00663",
+    "countNum": 1365,
+    "recoveryRate": 70.18315018315018,
+    "score": 49.25059309948268
+  },
+  "01075": {
+    "jockeyId": "01075",
+    "countNum": 1584,
+    "recoveryRate": 69.65277777777781,
+    "score": 49.11964322631275
+  },
+  "00641": {
+    "jockeyId": "00641",
+    "countNum": 1123,
+    "recoveryRate": 69.61709706144255,
+    "score": 49.110833595134004
+  },
+  "01135": {
+    "jockeyId": "01135",
+    "countNum": 550,
+    "recoveryRate": 68.94545454545454,
+    "score": 48.945003884928
+  },
+  "01095": {
+    "jockeyId": "01095",
+    "countNum": 1459,
+    "recoveryRate": 68.42357779300889,
+    "score": 48.81615160330315
+  },
+  "00666": {
+    "jockeyId": "00666",
+    "countNum": 1219,
+    "recoveryRate": 68.318293683347,
+    "score": 48.79015677275129
+  },
+  "05473": {
+    "jockeyId": "05473",
+    "countNum": 208,
+    "recoveryRate": 68.07692307692308,
+    "score": 48.73056194847689
+  },
+  "01157": {
+    "jockeyId": "01157",
+    "countNum": 582,
+    "recoveryRate": 67.68041237113401,
+    "score": 48.63266276272053
+  },
+  "00732": {
+    "jockeyId": "00732",
+    "countNum": 1907,
+    "recoveryRate": 67.36234923964342,
+    "score": 48.554132420065386
+  },
+  "01120": {
+    "jockeyId": "01120",
+    "countNum": 124,
+    "recoveryRate": 67.33870967741935,
+    "score": 48.5482957708663
+  },
+  "01008": {
+    "jockeyId": "01008",
+    "countNum": 137,
+    "recoveryRate": 67.15328467153284,
+    "score": 48.502514013072314
+  },
+  "05223": {
+    "jockeyId": "05223",
+    "countNum": 90,
+    "recoveryRate": 67.11111111111111,
+    "score": 48.492101287349016
+  },
+  "01025": {
+    "jockeyId": "01025",
+    "countNum": 1242,
+    "recoveryRate": 66.85185185185185,
+    "score": 48.42808972344743
+  },
+  "01030": {
+    "jockeyId": "01030",
+    "countNum": 819,
+    "recoveryRate": 66.77655677655679,
+    "score": 48.40949923785592
+  },
+  "01152": {
+    "jockeyId": "01152",
+    "countNum": 434,
+    "recoveryRate": 66.22119815668202,
+    "score": 48.27238022468749
+  },
+  "01170": {
+    "jockeyId": "01170",
+    "countNum": 340,
+    "recoveryRate": 65.97058823529413,
+    "score": 48.21050419741222
+  },
+  "01062": {
+    "jockeyId": "01062",
+    "countNum": 607,
+    "recoveryRate": 65.81548599670512,
+    "score": 48.17220918382202
+  },
+  "05212": {
+    "jockeyId": "05212",
+    "countNum": 787,
+    "recoveryRate": 65.23506988564166,
+    "score": 48.02890343231675
+  },
+  "01034": {
+    "jockeyId": "01034",
+    "countNum": 1140,
+    "recoveryRate": 64.43859649122807,
+    "score": 47.83225276021315
+  },
+  "01116": {
+    "jockeyId": "01116",
+    "countNum": 1217,
+    "recoveryRate": 64.34675431388662,
+    "score": 47.809576766227245
+  },
+  "05171": {
+    "jockeyId": "05171",
+    "countNum": 61,
+    "recoveryRate": 63.60655737704918,
+    "score": 47.626820849784764
+  },
+  "01128": {
+    "jockeyId": "01128",
+    "countNum": 1095,
+    "recoveryRate": 63.51598173515983,
+    "score": 47.60445756561396
+  },
+  "01091": {
+    "jockeyId": "01091",
+    "countNum": 1157,
+    "recoveryRate": 63.128781331028506,
+    "score": 47.50885710959713
+  },
+  "01087": {
+    "jockeyId": "01087",
+    "countNum": 140,
+    "recoveryRate": 62.71428571428572,
+    "score": 47.40651741791605
+  },
+  "00722": {
+    "jockeyId": "00722",
+    "countNum": 298,
+    "recoveryRate": 62.449664429530195,
+    "score": 47.341181960554785
+  },
+  "05471": {
+    "jockeyId": "05471",
+    "countNum": 135,
+    "recoveryRate": 61.92592592592592,
+    "score": 47.21187000931736
+  },
+  "01092": {
+    "jockeyId": "01092",
+    "countNum": 1095,
+    "recoveryRate": 60.64840182648402,
+    "score": 46.89644707799802
+  },
+  "01141": {
+    "jockeyId": "01141",
+    "countNum": 538,
+    "recoveryRate": 60.4460966542751,
+    "score": 46.8464975776582
+  },
+  "05336": {
+    "jockeyId": "05336",
+    "countNum": 158,
+    "recoveryRate": 60.379746835443036,
+    "score": 46.830115691510095
+  },
+  "01063": {
+    "jockeyId": "01063",
+    "countNum": 292,
+    "recoveryRate": 60.273972602739725,
+    "score": 46.80399984872332
+  },
+  "00629": {
+    "jockeyId": "00629",
+    "countNum": 600,
+    "recoveryRate": 59.58333333333332,
+    "score": 46.63347980692092
+  },
+  "00945": {
+    "jockeyId": "00945",
+    "countNum": 162,
+    "recoveryRate": 58.76543209876542,
+    "score": 46.43153856365997
+  },
+  "01112": {
+    "jockeyId": "01112",
+    "countNum": 379,
+    "recoveryRate": 58.04749340369393,
+    "score": 46.254278245983016
+  },
+  "01096": {
+    "jockeyId": "01096",
+    "countNum": 1445,
+    "recoveryRate": 57.771626297577846,
+    "score": 46.186166175687255
+  },
+  "05243": {
+    "jockeyId": "05243",
+    "countNum": 1270,
+    "recoveryRate": 57.03937007874013,
+    "score": 46.005370836387186
+  },
+  "00695": {
+    "jockeyId": "00695",
+    "countNum": 121,
+    "recoveryRate": 56.776859504132226,
+    "score": 45.940556517047675
+  },
+  "00635": {
+    "jockeyId": "00635",
+    "countNum": 478,
+    "recoveryRate": 56.61087866108786,
+    "score": 45.89957555701821
+  },
+  "01137": {
+    "jockeyId": "01137",
+    "countNum": 136,
+    "recoveryRate": 56.32352941176472,
+    "score": 45.82862852551132
+  },
+  "01125": {
+    "jockeyId": "01125",
+    "countNum": 1089,
+    "recoveryRate": 55.188246097337,
+    "score": 45.548325092432314
+  },
+  "00715": {
+    "jockeyId": "00715",
+    "countNum": 76,
+    "recoveryRate": 55.00000000000001,
+    "score": 45.50184680223223
+  },
+  "01178": {
+    "jockeyId": "01178",
+    "countNum": 98,
+    "recoveryRate": 54.69387755102041,
+    "score": 45.42626463494319
+  },
+  "01169": {
+    "jockeyId": "01169",
+    "countNum": 368,
+    "recoveryRate": 54.21195652173913,
+    "score": 45.30727749114939
+  },
+  "01132": {
+    "jockeyId": "01132",
+    "countNum": 259,
+    "recoveryRate": 53.82239382239381,
+    "score": 45.21109378031853
+  },
+  "01162": {
+    "jockeyId": "01162",
+    "countNum": 511,
+    "recoveryRate": 53.30724070450097,
+    "score": 45.08390157580744
+  },
+  "01172": {
+    "jockeyId": "01172",
+    "countNum": 57,
+    "recoveryRate": 52.45614035087719,
+    "score": 44.87376341207008
+  },
+  "01171": {
+    "jockeyId": "01171",
+    "countNum": 222,
+    "recoveryRate": 51.84684684684685,
+    "score": 44.723327781807576
+  },
+  "01161": {
+    "jockeyId": "01161",
+    "countNum": 366,
+    "recoveryRate": 51.612021857923494,
+    "score": 44.66534908192583
+  },
+  "01124": {
+    "jockeyId": "01124",
+    "countNum": 1195,
+    "recoveryRate": 51.447698744769866,
+    "score": 44.624777418301576
+  },
+  "01131": {
+    "jockeyId": "01131",
+    "countNum": 355,
+    "recoveryRate": 50.8169014084507,
+    "score": 44.469032454290996
+  },
+  "01113": {
+    "jockeyId": "01113",
+    "countNum": 147,
+    "recoveryRate": 50.748299319727884,
+    "score": 44.452094478773326
+  },
+  "01029": {
+    "jockeyId": "01029",
+    "countNum": 1016,
+    "recoveryRate": 50.62007874015747,
+    "score": 44.420436593743034
+  },
+  "01159": {
+    "jockeyId": "01159",
+    "countNum": 214,
+    "recoveryRate": 50.14018691588785,
+    "score": 44.30195046421058
+  },
+  "01139": {
+    "jockeyId": "01139",
+    "countNum": 278,
+    "recoveryRate": 49.856115107913666,
+    "score": 44.23181263869672
+  },
+  "01066": {
+    "jockeyId": "01066",
+    "countNum": 169,
+    "recoveryRate": 48.81656804733728,
+    "score": 43.97514665389482
+  },
+  "01155": {
+    "jockeyId": "01155",
+    "countNum": 442,
+    "recoveryRate": 47.62443438914027,
+    "score": 43.680806771651326
+  },
+  "01059": {
+    "jockeyId": "01059",
+    "countNum": 222,
+    "recoveryRate": 47.16216216216216,
+    "score": 43.56667095146238
+  },
+  "01036": {
+    "jockeyId": "01036",
+    "countNum": 133,
+    "recoveryRate": 46.84210526315789,
+    "score": 43.487648344126036
+  },
+  "01052": {
+    "jockeyId": "01052",
+    "countNum": 116,
+    "recoveryRate": 46.4655172413793,
+    "score": 43.394668103846385
+  },
+  "01130": {
+    "jockeyId": "01130",
+    "countNum": 1073,
+    "recoveryRate": 46.23485554520037,
+    "score": 43.33771732821434
+  },
+  "01143": {
+    "jockeyId": "01143",
+    "countNum": 342,
+    "recoveryRate": 45.81871345029239,
+    "score": 43.234971118198736
+  },
+  "00836": {
+    "jockeyId": "00836",
+    "countNum": 70,
+    "recoveryRate": 44.71428571428572,
+    "score": 42.96228598132046
+  },
+  "01138": {
+    "jockeyId": "01138",
+    "countNum": 540,
+    "recoveryRate": 43.83333333333333,
+    "score": 42.74477729989978
+  },
+  "01118": {
+    "jockeyId": "01118",
+    "countNum": 612,
+    "recoveryRate": 43.49673202614379,
+    "score": 42.66166984928806
+  },
+  "00652": {
+    "jockeyId": "00652",
+    "countNum": 532,
+    "recoveryRate": 42.819548872180455,
+    "score": 42.49447214588935
+  },
+  "01134": {
+    "jockeyId": "01134",
+    "countNum": 469,
+    "recoveryRate": 41.833688699360344,
+    "score": 42.25106154743742
+  },
+  "01173": {
+    "jockeyId": "01173",
+    "countNum": 145,
+    "recoveryRate": 41.37931034482759,
+    "score": 42.138874738141695
+  },
+  "01089": {
+    "jockeyId": "01089",
+    "countNum": 111,
+    "recoveryRate": 40.9009009009009,
+    "score": 42.02075461090485
+  },
+  "01168": {
+    "jockeyId": "01168",
+    "countNum": 267,
+    "recoveryRate": 40.29962546816479,
+    "score": 41.87229865644827
+  },
+  "01061": {
+    "jockeyId": "01061",
+    "countNum": 394,
+    "recoveryRate": 39.416243654822345,
+    "score": 41.654190143927536
+  },
+  "01133": {
+    "jockeyId": "01133",
+    "countNum": 384,
+    "recoveryRate": 38.88020833333334,
+    "score": 41.52184208687825
+  },
+  "05115": {
+    "jockeyId": "05115",
+    "countNum": 187,
+    "recoveryRate": 37.967914438502675,
+    "score": 41.29659513094377
+  },
+  "01160": {
+    "jockeyId": "01160",
+    "countNum": 443,
+    "recoveryRate": 36.681715575620764,
+    "score": 40.97903038538081
+  },
+  "01114": {
+    "jockeyId": "01114",
+    "countNum": 341,
+    "recoveryRate": 35.542521994134894,
+    "score": 40.697761500535954
+  },
+  "01051": {
+    "jockeyId": "01051",
+    "countNum": 570,
+    "recoveryRate": 34.12280701754386,
+    "score": 40.34723139331532
+  },
+  "01049": {
+    "jockeyId": "01049",
+    "countNum": 251,
+    "recoveryRate": 33.18725099601594,
+    "score": 40.116240977672504
+  },
+  "01104": {
+    "jockeyId": "01104",
+    "countNum": 282,
+    "recoveryRate": 31.773049645390067,
+    "score": 39.76707219433209
+  },
+  "01123": {
+    "jockeyId": "01123",
+    "countNum": 290,
+    "recoveryRate": 29.862068965517242,
+    "score": 39.29524772698666
+  },
+  "01101": {
+    "jockeyId": "01101",
+    "countNum": 173,
+    "recoveryRate": 28.728323699421964,
+    "score": 39.01532404072711
+  },
+  "00726": {
+    "jockeyId": "00726",
+    "countNum": 290,
+    "recoveryRate": 27.51724137931035,
+    "score": 38.716305700763485
+  },
+  "01145": {
+    "jockeyId": "01145",
+    "countNum": 74,
+    "recoveryRate": 25.945945945945947,
+    "score": 38.32835011403364
+  },
+  "01072": {
+    "jockeyId": "01072",
+    "countNum": 93,
+    "recoveryRate": 24.408602150537632,
+    "score": 37.948777246010934
+  },
+  "01006": {
+    "jockeyId": "01006",
+    "countNum": 131,
+    "recoveryRate": 24.198473282442748,
+    "score": 37.89689606149295
+  },
+  "05531": {
+    "jockeyId": "05531",
+    "countNum": 61,
+    "recoveryRate": 23.934426229508198,
+    "score": 37.83170238297117
+  },
+  "00674": {
+    "jockeyId": "00674",
+    "countNum": 99,
+    "recoveryRate": 21.919191919191917,
+    "score": 37.33413751219264
+  },
+  "05041": {
+    "jockeyId": "05041",
+    "countNum": 95,
+    "recoveryRate": 21.368421052631582,
+    "score": 37.198151223329944
+  },
+  "01164": {
+    "jockeyId": "01164",
+    "countNum": 406,
+    "recoveryRate": 20.714285714285715,
+    "score": 37.036644065859676
+  },
+  "01149": {
+    "jockeyId": "01149",
+    "countNum": 394,
+    "recoveryRate": 18.299492385786802,
+    "score": 36.44042737567101
+  },
+  "01111": {
+    "jockeyId": "01111",
+    "countNum": 50,
+    "recoveryRate": 18,
+    "score": 36.366482182563516
+  },
+  "00637": {
+    "jockeyId": "00637",
+    "countNum": 98,
+    "recoveryRate": 16.734693877551017,
+    "score": 36.05407589110215
+  },
+  "01105": {
+    "jockeyId": "01105",
+    "countNum": 80,
+    "recoveryRate": 14.125000000000002,
+    "score": 35.40973791496308
+  },
+  "01057": {
+    "jockeyId": "01057",
+    "countNum": 68,
+    "recoveryRate": 14.117647058823529,
+    "score": 35.40792246094486
+  },
+  "01031": {
+    "jockeyId": "01031",
+    "countNum": 599,
+    "recoveryRate": 13.222036727879802,
+    "score": 35.18679470607154
+  },
+  "01129": {
+    "jockeyId": "01129",
+    "countNum": 192,
+    "recoveryRate": 8.541666666666666,
+    "score": 34.03120316379686
+  },
+  "05268": {
+    "jockeyId": "05268",
+    "countNum": 88,
+    "recoveryRate": 5.113636363636364,
+    "score": 33.18481649500076
+  },
+  "05086": {
+    "jockeyId": "05086",
+    "countNum": 60,
+    "recoveryRate": 4,
+    "score": 32.90985773187806
+  },
+  "01136": {
+    "jockeyId": "01136",
+    "countNum": 53,
+    "recoveryRate": 0,
+    "score": 31.92225074596793
+  },
+  "01097": {
+    "jockeyId": "01097",
+    "countNum": 83,
+    "recoveryRate": 0,
+    "score": 31.92225074596793
+  }
+}

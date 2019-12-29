@@ -12,7 +12,7 @@ module.exports = {
    */
   calc (race, horses) {
     const rates = race
-      .filter(r => horses.some(h => h === r.frameNumber))
+      .filter(r => horses.some(h => h === r.horseNumber))
       .map(r => r.orderOfFinish === 1 ? r.odds : 0)
     return rates
   }

@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db-init": "node-dev ./src/index.js"
+    "init-db": "node-dev ./src/index.js -t init-db",
+    "create-param": "node-dev ./src/index.js -t create-param",
+    "simulate": "node-dev ./src/index.js -t simulate"
   },
   "repository": {
     "type": "git",
@@ -18,6 +20,7 @@
   },
   "homepage": "https://github.com/tknemuru/abel#readme",
   "dependencies": {
+    "command-line-args": "^5.1.1",
     "lodash": "^4.17.15",
     "lodash-math": "0.0.7",
     "module-alias": "^2.2.2",
@@ -34,6 +37,10 @@
   },
   "_moduleAliases": {
     "@": "src",
-    "@s": "src/services"
+    "@ac": "src/accumulations",
+    "@an": "src/analytics",
+    "@d": "src/dbs",
+    "@h": "src/helpers",
+    "@s": "src/simulations"
   }
 }

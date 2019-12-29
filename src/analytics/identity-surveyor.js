@@ -12,19 +12,21 @@ module.exports = {
     console.log(columns)
 
     // テンプレートのSQLを取得
-    const reader = require('@/services/sql-reader')
+    const reader = require('@d/sql-reader')
     const sql = reader.read('select_identity_survey')
 
     // テンプレートからSQLを組み立てる
     const sqls = columns.map(col => {
       return sql
         .replace(/\$\$columnName/g, col.name)
-        .replace(/\$\$columnJpName/g, col.jpName)
+        .replace(/\$\$columnAlias/g, col.alias)
+        .replace(/\$\$countName/g, '買い目数')
+        .replace(/\$\$recoveryRateName/g, '回収率')
     })
 
     // パラメータを作成
     // SQLを実行
-    const accessor = require('@/services/db-accessor')
+    const accessor = require('@d/db-accessor')
     const results = await accessor.all(sqls)
     console.log(results)
     for (const ret of results) {

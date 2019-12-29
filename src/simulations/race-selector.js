@@ -9,9 +9,9 @@ module.exports = {
    * @returns {void}
    */
   async select () {
-    const reader = require('@/services/sql-reader')
+    const reader = require('@d/sql-reader')
     const sql = reader.read('select_simulation_race')
-    const accessor = require('@/services/db-accessor')
+    const accessor = require('@d/db-accessor')
     const results = await accessor.all(sql)
     return results
   }

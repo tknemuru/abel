@@ -1,0 +1,1520 @@
+{
+  "01004": {
+    "trainerId": "01004",
+    "countNum": 52,
+    "recoveryRate": 481.7307692307692,
+    "score": 143.82424710231408
+  },
+  "01156": {
+    "trainerId": "01156",
+    "countNum": 126,
+    "recoveryRate": 206.03174603174605,
+    "score": 80.57835937319969
+  },
+  "00436": {
+    "trainerId": "00436",
+    "countNum": 548,
+    "recoveryRate": 202.44525547445252,
+    "score": 79.75561152122644
+  },
+  "01157": {
+    "trainerId": "01157",
+    "countNum": 181,
+    "recoveryRate": 176.90607734806628,
+    "score": 73.89687479545555
+  },
+  "01033": {
+    "trainerId": "01033",
+    "countNum": 457,
+    "recoveryRate": 171.2472647702407,
+    "score": 72.59873227458453
+  },
+  "00385": {
+    "trainerId": "00385",
+    "countNum": 78,
+    "recoveryRate": 169.23076923076923,
+    "score": 72.13614430812805
+  },
+  "00301": {
+    "trainerId": "00301",
+    "countNum": 127,
+    "recoveryRate": 157.24409448818895,
+    "score": 69.38637800058704
+  },
+  "00389": {
+    "trainerId": "00389",
+    "countNum": 185,
+    "recoveryRate": 156.86486486486487,
+    "score": 69.29938199348479
+  },
+  "01164": {
+    "trainerId": "01164",
+    "countNum": 85,
+    "recoveryRate": 156.11764705882354,
+    "score": 69.12796878743954
+  },
+  "01027": {
+    "trainerId": "01027",
+    "countNum": 659,
+    "recoveryRate": 150.98634294385434,
+    "score": 67.95083772548068
+  },
+  "01147": {
+    "trainerId": "01147",
+    "countNum": 285,
+    "recoveryRate": 144.31578947368422,
+    "score": 66.42059989231694
+  },
+  "00406": {
+    "trainerId": "00406",
+    "countNum": 183,
+    "recoveryRate": 136.9398907103825,
+    "score": 64.72855448833909
+  },
+  "01061": {
+    "trainerId": "01061",
+    "countNum": 471,
+    "recoveryRate": 135.47770700636937,
+    "score": 64.39312672617179
+  },
+  "01083": {
+    "trainerId": "01083",
+    "countNum": 502,
+    "recoveryRate": 129.60159362549803,
+    "score": 63.045134981921564
+  },
+  "01163": {
+    "trainerId": "01163",
+    "countNum": 80,
+    "recoveryRate": 127.125,
+    "score": 62.47699962702835
+  },
+  "01039": {
+    "trainerId": "01039",
+    "countNum": 720,
+    "recoveryRate": 126.88888888888894,
+    "score": 62.422835282694976
+  },
+  "01099": {
+    "trainerId": "01099",
+    "countNum": 681,
+    "recoveryRate": 124.27312775330397,
+    "score": 61.82277463254185
+  },
+  "01162": {
+    "trainerId": "01162",
+    "countNum": 73,
+    "recoveryRate": 123.28767123287672,
+    "score": 61.596709005867964
+  },
+  "01129": {
+    "trainerId": "01129",
+    "countNum": 451,
+    "recoveryRate": 122.19512195121949,
+    "score": 61.34607609319226
+  },
+  "01049": {
+    "trainerId": "01049",
+    "countNum": 576,
+    "recoveryRate": 121.96180555555556,
+    "score": 61.2925528619733
+  },
+  "00405": {
+    "trainerId": "00405",
+    "countNum": 495,
+    "recoveryRate": 121.47474747474752,
+    "score": 61.18082079872944
+  },
+  "01065": {
+    "trainerId": "01065",
+    "countNum": 533,
+    "recoveryRate": 118.40525328330205,
+    "score": 60.47667291033744
+  },
+  "01105": {
+    "trainerId": "01105",
+    "countNum": 647,
+    "recoveryRate": 116.18238021638334,
+    "score": 59.96674154099442
+  },
+  "01153": {
+    "trainerId": "01153",
+    "countNum": 252,
+    "recoveryRate": 115.63492063492062,
+    "score": 59.84115325698942
+  },
+  "01062": {
+    "trainerId": "01062",
+    "countNum": 538,
+    "recoveryRate": 114.92565055762081,
+    "score": 59.67844533311643
+  },
+  "01046": {
+    "trainerId": "01046",
+    "countNum": 638,
+    "recoveryRate": 114.294670846395,
+    "score": 59.53369737023834
+  },
+  "01100": {
+    "trainerId": "01100",
+    "countNum": 443,
+    "recoveryRate": 114.2212189616253,
+    "score": 59.51684736618779
+  },
+  "01068": {
+    "trainerId": "01068",
+    "countNum": 456,
+    "recoveryRate": 113.13596491228071,
+    "score": 59.267887993876684
+  },
+  "01106": {
+    "trainerId": "01106",
+    "countNum": 651,
+    "recoveryRate": 112.11981566820278,
+    "score": 59.034781397192866
+  },
+  "01109": {
+    "trainerId": "01109",
+    "countNum": 589,
+    "recoveryRate": 111.90152801358235,
+    "score": 58.98470578815885
+  },
+  "01120": {
+    "trainerId": "01120",
+    "countNum": 437,
+    "recoveryRate": 111.48741418764298,
+    "score": 58.88970727768706
+  },
+  "00338": {
+    "trainerId": "00338",
+    "countNum": 76,
+    "recoveryRate": 110.26315789473684,
+    "score": 58.608860522575746
+  },
+  "00350": {
+    "trainerId": "00350",
+    "countNum": 225,
+    "recoveryRate": 109.86666666666665,
+    "score": 58.5179046700481
+  },
+  "01020": {
+    "trainerId": "01020",
+    "countNum": 607,
+    "recoveryRate": 106.1779242174629,
+    "score": 57.67170003683275
+  },
+  "01113": {
+    "trainerId": "01113",
+    "countNum": 501,
+    "recoveryRate": 105.96806387225548,
+    "score": 57.62355766883387
+  },
+  "01128": {
+    "trainerId": "01128",
+    "countNum": 331,
+    "recoveryRate": 105.67975830815708,
+    "score": 57.557419816305156
+  },
+  "00349": {
+    "trainerId": "00349",
+    "countNum": 462,
+    "recoveryRate": 104.95670995670996,
+    "score": 57.39155112976529
+  },
+  "01069": {
+    "trainerId": "01069",
+    "countNum": 454,
+    "recoveryRate": 104.11894273127756,
+    "score": 57.199365712247214
+  },
+  "00435": {
+    "trainerId": "00435",
+    "countNum": 335,
+    "recoveryRate": 103.70149253731343,
+    "score": 57.10360183251488
+  },
+  "01137": {
+    "trainerId": "01137",
+    "countNum": 231,
+    "recoveryRate": 103.67965367965368,
+    "score": 57.098591956441865
+  },
+  "01121": {
+    "trainerId": "01121",
+    "countNum": 478,
+    "recoveryRate": 103.61924686192468,
+    "score": 57.08473451593362
+  },
+  "01053": {
+    "trainerId": "01053",
+    "countNum": 624,
+    "recoveryRate": 101.201923076923,
+    "score": 56.530195776778314
+  },
+  "01114": {
+    "trainerId": "01114",
+    "countNum": 502,
+    "recoveryRate": 100.00000000000004,
+    "score": 56.254472304493014
+  },
+  "00368": {
+    "trainerId": "00368",
+    "countNum": 150,
+    "recoveryRate": 99.66666666666667,
+    "score": 56.17800499484587
+  },
+  "00383": {
+    "trainerId": "00383",
+    "countNum": 360,
+    "recoveryRate": 99.08333333333333,
+    "score": 56.04418720296339
+  },
+  "01041": {
+    "trainerId": "01041",
+    "countNum": 435,
+    "recoveryRate": 98.20689655172413,
+    "score": 55.84313091466705
+  },
+  "00138": {
+    "trainerId": "00138",
+    "countNum": 253,
+    "recoveryRate": 98.18181818181819,
+    "score": 55.83737788823592
+  },
+  "01146": {
+    "trainerId": "01146",
+    "countNum": 236,
+    "recoveryRate": 98.05084745762713,
+    "score": 55.80733295147164
+  },
+  "01081": {
+    "trainerId": "01081",
+    "countNum": 403,
+    "recoveryRate": 97.59305210918116,
+    "score": 55.70231381547774
+  },
+  "00379": {
+    "trainerId": "00379",
+    "countNum": 345,
+    "recoveryRate": 97.44927536231886,
+    "score": 55.66933115241061
+  },
+  "00345": {
+    "trainerId": "00345",
+    "countNum": 233,
+    "recoveryRate": 97.03862660944206,
+    "score": 55.57512753638329
+  },
+  "01142": {
+    "trainerId": "01142",
+    "countNum": 340,
+    "recoveryRate": 97.00000000000001,
+    "score": 55.56626651766882
+  },
+  "01094": {
+    "trainerId": "01094",
+    "countNum": 617,
+    "recoveryRate": 95.67260940032418,
+    "score": 55.26176055364451
+  },
+  "01023": {
+    "trainerId": "01023",
+    "countNum": 585,
+    "recoveryRate": 95.04273504273503,
+    "score": 55.11726616102284
+  },
+  "00375": {
+    "trainerId": "00375",
+    "countNum": 218,
+    "recoveryRate": 94.72477064220183,
+    "score": 55.044324514205826
+  },
+  "01134": {
+    "trainerId": "01134",
+    "countNum": 375,
+    "recoveryRate": 94.58666666666666,
+    "score": 55.012643195823586
+  },
+  "01092": {
+    "trainerId": "01092",
+    "countNum": 525,
+    "recoveryRate": 93.21904761904763,
+    "score": 54.698908748242786
+  },
+  "01132": {
+    "trainerId": "01132",
+    "countNum": 391,
+    "recoveryRate": 92.99232736572893,
+    "score": 54.64689868480139
+  },
+  "01115": {
+    "trainerId": "01115",
+    "countNum": 462,
+    "recoveryRate": 92.8354978354978,
+    "score": 54.6109216880514
+  },
+  "01066": {
+    "trainerId": "01066",
+    "countNum": 552,
+    "recoveryRate": 92.1195652173913,
+    "score": 54.4466853644657
+  },
+  "01075": {
+    "trainerId": "01075",
+    "countNum": 1009,
+    "recoveryRate": 92.06144697720514,
+    "score": 54.433352928060316
+  },
+  "01006": {
+    "trainerId": "01006",
+    "countNum": 378,
+    "recoveryRate": 91.85185185185186,
+    "score": 54.38527140200756
+  },
+  "01131": {
+    "trainerId": "01131",
+    "countNum": 399,
+    "recoveryRate": 91.80451127819549,
+    "score": 54.3744113830936
+  },
+  "01071": {
+    "trainerId": "01071",
+    "countNum": 638,
+    "recoveryRate": 91.45768025078368,
+    "score": 54.294847676388606
+  },
+  "01008": {
+    "trainerId": "01008",
+    "countNum": 511,
+    "recoveryRate": 90.90019569471623,
+    "score": 54.16695964387169
+  },
+  "01154": {
+    "trainerId": "01154",
+    "countNum": 172,
+    "recoveryRate": 89.94186046511625,
+    "score": 53.947115693628966
+  },
+  "01155": {
+    "trainerId": "01155",
+    "countNum": 203,
+    "recoveryRate": 89.11330049261083,
+    "score": 53.75704243769259
+  },
+  "00110": {
+    "trainerId": "00110",
+    "countNum": 77,
+    "recoveryRate": 88.7012987012987,
+    "score": 53.66252843203828
+  },
+  "01151": {
+    "trainerId": "01151",
+    "countNum": 177,
+    "recoveryRate": 88.58757062146891,
+    "score": 53.63643899115053
+  },
+  "01087": {
+    "trainerId": "01087",
+    "countNum": 422,
+    "recoveryRate": 88.50710900473932,
+    "score": 53.61798094106701
+  },
+  "00311": {
+    "trainerId": "00311",
+    "countNum": 210,
+    "recoveryRate": 87.90476190476193,
+    "score": 53.47980135443994
+  },
+  "00416": {
+    "trainerId": "00416",
+    "countNum": 162,
+    "recoveryRate": 86.97530864197532,
+    "score": 53.26658298309582
+  },
+  "00420": {
+    "trainerId": "00420",
+    "countNum": 632,
+    "recoveryRate": 86.56645569620254,
+    "score": 53.17279132868217
+  },
+  "01082": {
+    "trainerId": "01082",
+    "countNum": 505,
+    "recoveryRate": 86.3960396039604,
+    "score": 53.13369754839918
+  },
+  "01149": {
+    "trainerId": "01149",
+    "countNum": 277,
+    "recoveryRate": 86.10108303249098,
+    "score": 53.066033941950145
+  },
+  "01070": {
+    "trainerId": "01070",
+    "countNum": 447,
+    "recoveryRate": 86.06263982102908,
+    "score": 53.057214995086085
+  },
+  "00438": {
+    "trainerId": "00438",
+    "countNum": 728,
+    "recoveryRate": 85.87912087912085,
+    "score": 53.01511539581505
+  },
+  "01107": {
+    "trainerId": "01107",
+    "countNum": 560,
+    "recoveryRate": 84.67857142857144,
+    "score": 52.73970703606949
+  },
+  "01097": {
+    "trainerId": "01097",
+    "countNum": 652,
+    "recoveryRate": 84.00306748466258,
+    "score": 52.584745128329274
+  },
+  "01110": {
+    "trainerId": "01110",
+    "countNum": 616,
+    "recoveryRate": 83.99350649350649,
+    "score": 52.582551818515476
+  },
+  "00386": {
+    "trainerId": "00386",
+    "countNum": 587,
+    "recoveryRate": 83.90119250425899,
+    "score": 52.561374811313826
+  },
+  "00392": {
+    "trainerId": "00392",
+    "countNum": 388,
+    "recoveryRate": 83.71134020618555,
+    "score": 52.51782232792182
+  },
+  "00289": {
+    "trainerId": "00289",
+    "countNum": 171,
+    "recoveryRate": 82.69005847953214,
+    "score": 52.283538329834926
+  },
+  "01022": {
+    "trainerId": "01022",
+    "countNum": 594,
+    "recoveryRate": 81.46464646464648,
+    "score": 52.002426449872196
+  },
+  "01019": {
+    "trainerId": "01019",
+    "countNum": 92,
+    "recoveryRate": 81.08695652173914,
+    "score": 51.915783648427485
+  },
+  "00423": {
+    "trainerId": "00423",
+    "countNum": 555,
+    "recoveryRate": 80.97297297297297,
+    "score": 51.88963560247294
+  },
+  "01017": {
+    "trainerId": "01017",
+    "countNum": 442,
+    "recoveryRate": 80.95022624434391,
+    "score": 51.88441745904833
+  },
+  "00369": {
+    "trainerId": "00369",
+    "countNum": 151,
+    "recoveryRate": 79.40397350993376,
+    "score": 51.529704099143736
+  },
+  "01056": {
+    "trainerId": "01056",
+    "countNum": 453,
+    "recoveryRate": 79.33774834437085,
+    "score": 51.51451191841914
+  },
+  "00224": {
+    "trainerId": "00224",
+    "countNum": 289,
+    "recoveryRate": 78.3044982698962,
+    "score": 51.27748235825582
+  },
+  "01072": {
+    "trainerId": "01072",
+    "countNum": 501,
+    "recoveryRate": 77.94411177644713,
+    "score": 51.19480900149417
+  },
+  "01040": {
+    "trainerId": "01040",
+    "countNum": 422,
+    "recoveryRate": 77.36966824644549,
+    "score": 51.06303054764389
+  },
+  "00395": {
+    "trainerId": "00395",
+    "countNum": 281,
+    "recoveryRate": 76.26334519572954,
+    "score": 50.80923790577732
+  },
+  "01102": {
+    "trainerId": "01102",
+    "countNum": 485,
+    "recoveryRate": 76.06185567010309,
+    "score": 50.76301581993713
+  },
+  "01038": {
+    "trainerId": "01038",
+    "countNum": 623,
+    "recoveryRate": 75.92295345104334,
+    "score": 50.731151382950586
+  },
+  "01055": {
+    "trainerId": "01055",
+    "countNum": 545,
+    "recoveryRate": 75.77981651376146,
+    "score": 50.69831549343536
+  },
+  "01124": {
+    "trainerId": "01124",
+    "countNum": 363,
+    "recoveryRate": 75.12396694214875,
+    "score": 50.54786233661201
+  },
+  "00347": {
+    "trainerId": "00347",
+    "countNum": 165,
+    "recoveryRate": 74.66666666666666,
+    "score": 50.44295677131099
+  },
+  "01135": {
+    "trainerId": "01135",
+    "countNum": 278,
+    "recoveryRate": 74.49640287769783,
+    "score": 50.40389792969267
+  },
+  "01058": {
+    "trainerId": "01058",
+    "countNum": 508,
+    "recoveryRate": 73.70078740157481,
+    "score": 50.22138220477442
+  },
+  "01021": {
+    "trainerId": "01021",
+    "countNum": 569,
+    "recoveryRate": 73.44463971880492,
+    "score": 50.16262143225314
+  },
+  "01148": {
+    "trainerId": "01148",
+    "countNum": 317,
+    "recoveryRate": 73.24921135646689,
+    "score": 50.11778978896294
+  },
+  "01047": {
+    "trainerId": "01047",
+    "countNum": 413,
+    "recoveryRate": 73.24455205811138,
+    "score": 50.11672093693267
+  },
+  "00399": {
+    "trainerId": "00399",
+    "countNum": 623,
+    "recoveryRate": 72.95345104333867,
+    "score": 50.04994180262702
+  },
+  "01043": {
+    "trainerId": "01043",
+    "countNum": 367,
+    "recoveryRate": 72.50681198910083,
+    "score": 49.94748194204429
+  },
+  "01125": {
+    "trainerId": "01125",
+    "countNum": 458,
+    "recoveryRate": 72.40174672489083,
+    "score": 49.92337976776978
+  },
+  "01127": {
+    "trainerId": "01127",
+    "countNum": 406,
+    "recoveryRate": 72.33990147783248,
+    "score": 49.90919234879874
+  },
+  "01116": {
+    "trainerId": "01116",
+    "countNum": 414,
+    "recoveryRate": 72.10144927536233,
+    "score": 49.854490953591764
+  },
+  "01044": {
+    "trainerId": "01044",
+    "countNum": 436,
+    "recoveryRate": 71.85779816513761,
+    "score": 49.7985969189175
+  },
+  "01032": {
+    "trainerId": "01032",
+    "countNum": 419,
+    "recoveryRate": 71.81384248210024,
+    "score": 49.78851340044079
+  },
+  "01158": {
+    "trainerId": "01158",
+    "countNum": 181,
+    "recoveryRate": 71.76795580110496,
+    "score": 49.777986907307756
+  },
+  "01118": {
+    "trainerId": "01118",
+    "countNum": 363,
+    "recoveryRate": 71.70798898071628,
+    "score": 49.764230403038106
+  },
+  "00417": {
+    "trainerId": "00417",
+    "countNum": 421,
+    "recoveryRate": 71.25890736342043,
+    "score": 49.66121021377832
+  },
+  "01096": {
+    "trainerId": "01096",
+    "countNum": 455,
+    "recoveryRate": 71.23076923076923,
+    "score": 49.65475527187132
+  },
+  "01103": {
+    "trainerId": "01103",
+    "countNum": 559,
+    "recoveryRate": 70.8944543828265,
+    "score": 49.577603997021626
+  },
+  "01011": {
+    "trainerId": "01011",
+    "countNum": 483,
+    "recoveryRate": 70.89026915113871,
+    "score": 49.57664389679938
+  },
+  "00198": {
+    "trainerId": "00198",
+    "countNum": 70,
+    "recoveryRate": 70.85714285714286,
+    "score": 49.56904466105806
+  },
+  "01052": {
+    "trainerId": "01052",
+    "countNum": 524,
+    "recoveryRate": 70.76335877862594,
+    "score": 49.54753041254229
+  },
+  "01076": {
+    "trainerId": "01076",
+    "countNum": 484,
+    "recoveryRate": 70.45454545454545,
+    "score": 49.476688040315416
+  },
+  "01111": {
+    "trainerId": "01111",
+    "countNum": 523,
+    "recoveryRate": 70.43977055449334,
+    "score": 49.47329864974355
+  },
+  "01060": {
+    "trainerId": "01060",
+    "countNum": 82,
+    "recoveryRate": 70.24390243902438,
+    "score": 49.42836612623685
+  },
+  "00131": {
+    "trainerId": "00131",
+    "countNum": 202,
+    "recoveryRate": 69.35643564356435,
+    "score": 49.22477953148688
+  },
+  "01141": {
+    "trainerId": "01141",
+    "countNum": 337,
+    "recoveryRate": 69.19881305637982,
+    "score": 49.18862060594201
+  },
+  "01126": {
+    "trainerId": "01126",
+    "countNum": 346,
+    "recoveryRate": 69.13294797687861,
+    "score": 49.17351102965456
+  },
+  "01048": {
+    "trainerId": "01048",
+    "countNum": 478,
+    "recoveryRate": 69.1213389121339,
+    "score": 49.17084788780892
+  },
+  "00415": {
+    "trainerId": "00415",
+    "countNum": 330,
+    "recoveryRate": 68.93939393939394,
+    "score": 49.12910936010118
+  },
+  "00390": {
+    "trainerId": "00390",
+    "countNum": 445,
+    "recoveryRate": 68.8314606741573,
+    "score": 49.10434926085895
+  },
+  "00430": {
+    "trainerId": "00430",
+    "countNum": 141,
+    "recoveryRate": 68.72340425531915,
+    "score": 49.079560909942984
+  },
+  "00427": {
+    "trainerId": "00427",
+    "countNum": 604,
+    "recoveryRate": 68.60927152317882,
+    "score": 49.05337864103464
+  },
+  "01014": {
+    "trainerId": "01014",
+    "countNum": 472,
+    "recoveryRate": 68.05084745762711,
+    "score": 48.92527508322978
+  },
+  "01029": {
+    "trainerId": "01029",
+    "countNum": 432,
+    "recoveryRate": 68.00925925925925,
+    "score": 48.915734670302996
+  },
+  "01078": {
+    "trainerId": "01078",
+    "countNum": 550,
+    "recoveryRate": 67.96363636363637,
+    "score": 48.905268690043215
+  },
+  "00419": {
+    "trainerId": "00419",
+    "countNum": 477,
+    "recoveryRate": 67.8406708595388,
+    "score": 48.87706016620998
+  },
+  "00353": {
+    "trainerId": "00353",
+    "countNum": 624,
+    "recoveryRate": 67.70833333333334,
+    "score": 48.84670168242712
+  },
+  "01104": {
+    "trainerId": "01104",
+    "countNum": 406,
+    "recoveryRate": 67.6847290640394,
+    "score": 48.84128681751984
+  },
+  "01012": {
+    "trainerId": "01012",
+    "countNum": 372,
+    "recoveryRate": 67.60752688172043,
+    "score": 48.82357648797738
+  },
+  "00398": {
+    "trainerId": "00398",
+    "countNum": 216,
+    "recoveryRate": 67.45370370370371,
+    "score": 48.788289154224444
+  },
+  "00261": {
+    "trainerId": "00261",
+    "countNum": 529,
+    "recoveryRate": 67.24007561436672,
+    "score": 48.739282458454475
+  },
+  "00422": {
+    "trainerId": "00422",
+    "countNum": 448,
+    "recoveryRate": 67.1205357142857,
+    "score": 48.711859774790426
+  },
+  "00208": {
+    "trainerId": "00208",
+    "countNum": 210,
+    "recoveryRate": 67.0952380952381,
+    "score": 48.70605645218328
+  },
+  "01117": {
+    "trainerId": "01117",
+    "countNum": 457,
+    "recoveryRate": 66.56455142231947,
+    "score": 48.58431590575226
+  },
+  "01063": {
+    "trainerId": "01063",
+    "countNum": 417,
+    "recoveryRate": 65.97122302158273,
+    "score": 48.44820522612754
+  },
+  "00396": {
+    "trainerId": "00396",
+    "countNum": 358,
+    "recoveryRate": 65.72625698324023,
+    "score": 48.39200954440664
+  },
+  "00411": {
+    "trainerId": "00411",
+    "countNum": 689,
+    "recoveryRate": 65.71843251088534,
+    "score": 48.390214595355474
+  },
+  "01079": {
+    "trainerId": "01079",
+    "countNum": 509,
+    "recoveryRate": 65.6777996070727,
+    "score": 48.38089332884237
+  },
+  "00431": {
+    "trainerId": "00431",
+    "countNum": 475,
+    "recoveryRate": 65.57894736842104,
+    "score": 48.3582164346155
+  },
+  "01002": {
+    "trainerId": "01002",
+    "countNum": 754,
+    "recoveryRate": 65.07957559681695,
+    "score": 48.24365958695064
+  },
+  "00202": {
+    "trainerId": "00202",
+    "countNum": 101,
+    "recoveryRate": 65.04950495049505,
+    "score": 48.23676132267988
+  },
+  "00388": {
+    "trainerId": "00388",
+    "countNum": 726,
+    "recoveryRate": 65.0413223140496,
+    "score": 48.234884210095466
+  },
+  "01091": {
+    "trainerId": "01091",
+    "countNum": 492,
+    "recoveryRate": 64.57317073170732,
+    "score": 48.12748933406918
+  },
+  "00429": {
+    "trainerId": "00429",
+    "countNum": 521,
+    "recoveryRate": 64.4337811900192,
+    "score": 48.09551310433167
+  },
+  "01059": {
+    "trainerId": "01059",
+    "countNum": 538,
+    "recoveryRate": 64.01486988847583,
+    "score": 47.999414043702274
+  },
+  "01136": {
+    "trainerId": "01136",
+    "countNum": 280,
+    "recoveryRate": 63.39285714285714,
+    "score": 47.85672312003121
+  },
+  "00358": {
+    "trainerId": "00358",
+    "countNum": 61,
+    "recoveryRate": 63.114754098360656,
+    "score": 47.79292574517925
+  },
+  "01108": {
+    "trainerId": "01108",
+    "countNum": 538,
+    "recoveryRate": 63.10408921933085,
+    "score": 47.79047920135788
+  },
+  "00408": {
+    "trainerId": "00408",
+    "countNum": 462,
+    "recoveryRate": 62.878787878787875,
+    "score": 47.73879463924424
+  },
+  "01095": {
+    "trainerId": "01095",
+    "countNum": 594,
+    "recoveryRate": 62.676767676767675,
+    "score": 47.69245081521568
+  },
+  "01016": {
+    "trainerId": "01016",
+    "countNum": 535,
+    "recoveryRate": 61.71962616822427,
+    "score": 47.472880706885945
+  },
+  "00378": {
+    "trainerId": "00378",
+    "countNum": 334,
+    "recoveryRate": 61.31736526946108,
+    "score": 47.38060128077196
+  },
+  "01067": {
+    "trainerId": "01067",
+    "countNum": 507,
+    "recoveryRate": 61.183431952662716,
+    "score": 47.3498767195489
+  },
+  "01028": {
+    "trainerId": "01028",
+    "countNum": 727,
+    "recoveryRate": 61.169188445667125,
+    "score": 47.346609231569225
+  },
+  "00409": {
+    "trainerId": "00409",
+    "countNum": 527,
+    "recoveryRate": 60.322580645161274,
+    "score": 47.15239576907635
+  },
+  "01133": {
+    "trainerId": "01133",
+    "countNum": 334,
+    "recoveryRate": 60.02994011976048,
+    "score": 47.08526346806298
+  },
+  "01112": {
+    "trainerId": "01112",
+    "countNum": 539,
+    "recoveryRate": 58.831168831168824,
+    "score": 46.81026302210049
+  },
+  "00434": {
+    "trainerId": "00434",
+    "countNum": 480,
+    "recoveryRate": 58.52083333333334,
+    "score": 46.73907146027805
+  },
+  "01030": {
+    "trainerId": "01030",
+    "countNum": 359,
+    "recoveryRate": 57.82729805013928,
+    "score": 46.579973128524415
+  },
+  "01054": {
+    "trainerId": "01054",
+    "countNum": 625,
+    "recoveryRate": 57.584,
+    "score": 46.52416008651478
+  },
+  "01086": {
+    "trainerId": "01086",
+    "countNum": 643,
+    "recoveryRate": 57.54276827371696,
+    "score": 46.51470144897187
+  },
+  "00356": {
+    "trainerId": "00356",
+    "countNum": 519,
+    "recoveryRate": 57.39884393063582,
+    "score": 46.48168492704743
+  },
+  "00343": {
+    "trainerId": "00343",
+    "countNum": 361,
+    "recoveryRate": 56.53739612188365,
+    "score": 46.28406713803735
+  },
+  "01143": {
+    "trainerId": "01143",
+    "countNum": 422,
+    "recoveryRate": 56.06635071090047,
+    "score": 46.17600841213881
+  },
+  "01024": {
+    "trainerId": "01024",
+    "countNum": 489,
+    "recoveryRate": 55.97137014314928,
+    "score": 46.15421968668474
+  },
+  "00404": {
+    "trainerId": "00404",
+    "countNum": 83,
+    "recoveryRate": 55.18072289156626,
+    "score": 45.972843682059384
+  },
+  "01101": {
+    "trainerId": "01101",
+    "countNum": 516,
+    "recoveryRate": 54.80620155038761,
+    "score": 45.886927763963286
+  },
+  "00362": {
+    "trainerId": "00362",
+    "countNum": 413,
+    "recoveryRate": 54.624697336561745,
+    "score": 45.84529034720064
+  },
+  "01130": {
+    "trainerId": "01130",
+    "countNum": 346,
+    "recoveryRate": 54.393063583815035,
+    "score": 45.79215311751261
+  },
+  "00425": {
+    "trainerId": "00425",
+    "countNum": 549,
+    "recoveryRate": 53.87978142076503,
+    "score": 45.67440519921772
+  },
+  "01073": {
+    "trainerId": "01073",
+    "countNum": 523,
+    "recoveryRate": 53.76673040152965,
+    "score": 45.64847107733634
+  },
+  "01064": {
+    "trainerId": "01064",
+    "countNum": 524,
+    "recoveryRate": 53.07251908396946,
+    "score": 45.489217661995085
+  },
+  "01088": {
+    "trainerId": "01088",
+    "countNum": 523,
+    "recoveryRate": 52.65774378585084,
+    "score": 45.39406740852943
+  },
+  "00400": {
+    "trainerId": "00400",
+    "countNum": 310,
+    "recoveryRate": 52.48387096774194,
+    "score": 45.35418064866477
+  },
+  "01009": {
+    "trainerId": "01009",
+    "countNum": 583,
+    "recoveryRate": 52.36706689536879,
+    "score": 45.32738556915416
+  },
+  "01098": {
+    "trainerId": "01098",
+    "countNum": 412,
+    "recoveryRate": 51.91747572815534,
+    "score": 45.224248488160384
+  },
+  "00365": {
+    "trainerId": "00365",
+    "countNum": 451,
+    "recoveryRate": 51.618625277161854,
+    "score": 45.15569161823747
+  },
+  "01085": {
+    "trainerId": "01085",
+    "countNum": 505,
+    "recoveryRate": 51.544554455445535,
+    "score": 45.138699628857474
+  },
+  "01018": {
+    "trainerId": "01018",
+    "countNum": 498,
+    "recoveryRate": 51.144578313253,
+    "score": 45.046944330307966
+  },
+  "01005": {
+    "trainerId": "01005",
+    "countNum": 555,
+    "recoveryRate": 50.25225225225226,
+    "score": 44.84224301066972
+  },
+  "00348": {
+    "trainerId": "00348",
+    "countNum": 381,
+    "recoveryRate": 49.71128608923884,
+    "score": 44.71814432938242
+  },
+  "01010": {
+    "trainerId": "01010",
+    "countNum": 469,
+    "recoveryRate": 49.23240938166312,
+    "score": 44.60828908893944
+  },
+  "01144": {
+    "trainerId": "01144",
+    "countNum": 258,
+    "recoveryRate": 48.837209302325576,
+    "score": 44.517629428421614
+  },
+  "01159": {
+    "trainerId": "01159",
+    "countNum": 84,
+    "recoveryRate": 48.6904761904762,
+    "score": 44.483968569523796
+  },
+  "01084": {
+    "trainerId": "01084",
+    "countNum": 536,
+    "recoveryRate": 48.47014925373134,
+    "score": 44.433425145236775
+  },
+  "01051": {
+    "trainerId": "01051",
+    "countNum": 592,
+    "recoveryRate": 48.09121621621622,
+    "score": 44.34649717549119
+  },
+  "01140": {
+    "trainerId": "01140",
+    "countNum": 283,
+    "recoveryRate": 48.02120141342756,
+    "score": 44.33043564467702
+  },
+  "01089": {
+    "trainerId": "01089",
+    "countNum": 618,
+    "recoveryRate": 47.68608414239481,
+    "score": 44.253559096280526
+  },
+  "00413": {
+    "trainerId": "00413",
+    "countNum": 306,
+    "recoveryRate": 47.09150326797386,
+    "score": 44.1171610967767
+  },
+  "01007": {
+    "trainerId": "01007",
+    "countNum": 271,
+    "recoveryRate": 46.64206642066421,
+    "score": 44.01405941706653
+  },
+  "01145": {
+    "trainerId": "01145",
+    "countNum": 292,
+    "recoveryRate": 46.60958904109589,
+    "score": 44.00660904354659
+  },
+  "00412": {
+    "trainerId": "00412",
+    "countNum": 438,
+    "recoveryRate": 45.89041095890411,
+    "score": 43.84162820423943
+  },
+  "01093": {
+    "trainerId": "01093",
+    "countNum": 406,
+    "recoveryRate": 44.99999999999999,
+    "score": 43.63736621271626
+  },
+  "01026": {
+    "trainerId": "01026",
+    "countNum": 456,
+    "recoveryRate": 44.9342105263158,
+    "score": 43.62227398054907
+  },
+  "01080": {
+    "trainerId": "01080",
+    "countNum": 477,
+    "recoveryRate": 44.27672955974843,
+    "score": 43.47144657857626
+  },
+  "00106": {
+    "trainerId": "00106",
+    "countNum": 93,
+    "recoveryRate": 42.68817204301076,
+    "score": 43.10702842000229
+  },
+  "01139": {
+    "trainerId": "01139",
+    "countNum": 261,
+    "recoveryRate": 42.605363984674334,
+    "score": 43.08803209168802
+  },
+  "01042": {
+    "trainerId": "01042",
+    "countNum": 416,
+    "recoveryRate": 42.54807692307692,
+    "score": 43.07489032925419
+  },
+  "01013": {
+    "trainerId": "01013",
+    "countNum": 443,
+    "recoveryRate": 42.46049661399549,
+    "score": 43.054799237413626
+  },
+  "00359": {
+    "trainerId": "00359",
+    "countNum": 539,
+    "recoveryRate": 41.743970315398876,
+    "score": 42.89042672237832
+  },
+  "01025": {
+    "trainerId": "01025",
+    "countNum": 302,
+    "recoveryRate": 40.066225165562905,
+    "score": 42.50554874873388
+  },
+  "01050": {
+    "trainerId": "01050",
+    "countNum": 447,
+    "recoveryRate": 40.044742729306485,
+    "score": 42.5006206364183
+  },
+  "01003": {
+    "trainerId": "01003",
+    "countNum": 560,
+    "recoveryRate": 39.357142857142854,
+    "score": 42.34288389940411
+  },
+  "01150": {
+    "trainerId": "01150",
+    "countNum": 236,
+    "recoveryRate": 39.32203389830507,
+    "score": 42.334829836523596
+  },
+  "01138": {
+    "trainerId": "01138",
+    "countNum": 312,
+    "recoveryRate": 38.55769230769231,
+    "score": 42.15948840126689
+  },
+  "00337": {
+    "trainerId": "00337",
+    "countNum": 146,
+    "recoveryRate": 37.73972602739726,
+    "score": 41.97184535875819
+  },
+  "01119": {
+    "trainerId": "01119",
+    "countNum": 410,
+    "recoveryRate": 37.60975609756098,
+    "score": 41.942030006149366
+  },
+  "01057": {
+    "trainerId": "01057",
+    "countNum": 516,
+    "recoveryRate": 37.38372093023256,
+    "score": 41.890177102755636
+  },
+  "00397": {
+    "trainerId": "00397",
+    "countNum": 387,
+    "recoveryRate": 36.770025839793284,
+    "score": 41.749394265227004
+  },
+  "00357": {
+    "trainerId": "00357",
+    "countNum": 165,
+    "recoveryRate": 36.121212121212125,
+    "score": 41.600555146660845
+  },
+  "01074": {
+    "trainerId": "01074",
+    "countNum": 472,
+    "recoveryRate": 35.91101694915254,
+    "score": 41.55233596873621
+  },
+  "00387": {
+    "trainerId": "00387",
+    "countNum": 412,
+    "recoveryRate": 35.898058252427184,
+    "score": 41.549363218710845
+  },
+  "00341": {
+    "trainerId": "00341",
+    "countNum": 419,
+    "recoveryRate": 35.51312649164678,
+    "score": 41.461059130277015
+  },
+  "01031": {
+    "trainerId": "01031",
+    "countNum": 476,
+    "recoveryRate": 35.21008403361344,
+    "score": 41.391540605853024
+  },
+  "00201": {
+    "trainerId": "00201",
+    "countNum": 226,
+    "recoveryRate": 34.33628318584071,
+    "score": 41.19108900586333
+  },
+  "00361": {
+    "trainerId": "00361",
+    "countNum": 220,
+    "recoveryRate": 33.86363636363636,
+    "score": 41.08266291314163
+  },
+  "01160": {
+    "trainerId": "01160",
+    "countNum": 83,
+    "recoveryRate": 33.734939759036145,
+    "score": 41.053139663798135
+  },
+  "01161": {
+    "trainerId": "01161",
+    "countNum": 88,
+    "recoveryRate": 32.84090909090909,
+    "score": 40.84804730399703
+  },
+  "00244": {
+    "trainerId": "00244",
+    "countNum": 96,
+    "recoveryRate": 31.145833333333332,
+    "score": 40.45919365550735
+  },
+  "01090": {
+    "trainerId": "01090",
+    "countNum": 488,
+    "recoveryRate": 30.327868852459016,
+    "score": 40.271551025789236
+  },
+  "01034": {
+    "trainerId": "01034",
+    "countNum": 94,
+    "recoveryRate": 28.404255319148934,
+    "score": 39.830270370710124
+  },
+  "01077": {
+    "trainerId": "01077",
+    "countNum": 401,
+    "recoveryRate": 27.93017456359102,
+    "score": 39.721515330911146
+  },
+  "01036": {
+    "trainerId": "01036",
+    "countNum": 357,
+    "recoveryRate": 27.675070028011206,
+    "score": 39.66299385836744
+  },
+  "01123": {
+    "trainerId": "01123",
+    "countNum": 452,
+    "recoveryRate": 27.610619469026553,
+    "score": 39.64820877581501
+  },
+  "00421": {
+    "trainerId": "00421",
+    "countNum": 268,
+    "recoveryRate": 24.62686567164179,
+    "score": 38.96372989920874
+  },
+  "01152": {
+    "trainerId": "01152",
+    "countNum": 211,
+    "recoveryRate": 21.327014218009474,
+    "score": 38.206737610525416
+  },
+  "00428": {
+    "trainerId": "00428",
+    "countNum": 418,
+    "recoveryRate": 21.267942583732058,
+    "score": 38.193186463676454
+  },
+  "00407": {
+    "trainerId": "00407",
+    "countNum": 55,
+    "recoveryRate": 19.272727272727273,
+    "score": 37.73548022267855
+  },
+  "00437": {
+    "trainerId": "00437",
+    "countNum": 397,
+    "recoveryRate": 19.118387909319896,
+    "score": 37.70007447500131
+  },
+  "00364": {
+    "trainerId": "00364",
+    "countNum": 149,
+    "recoveryRate": 17.651006711409398,
+    "score": 37.36345439770831
+  },
+  "01035": {
+    "trainerId": "01035",
+    "countNum": 403,
+    "recoveryRate": 17.64267990074442,
+    "score": 37.361544211279835
+  },
+  "00402": {
+    "trainerId": "00402",
+    "countNum": 362,
+    "recoveryRate": 16.104972375690608,
+    "score": 37.00879113888479
+  },
+  "00203": {
+    "trainerId": "00203",
+    "countNum": 60,
+    "recoveryRate": 13.499999999999998,
+    "score": 36.411205451062315
+  },
+  "00339": {
+    "trainerId": "00339",
+    "countNum": 295,
+    "recoveryRate": 12.949152542372882,
+    "score": 36.28483998173019
+  },
+  "00221": {
+    "trainerId": "00221",
+    "countNum": 152,
+    "recoveryRate": 12.36842105263158,
+    "score": 36.15161905778652
+  },
+  "00346": {
+    "trainerId": "00346",
+    "countNum": 235,
+    "recoveryRate": 10.723404255319148,
+    "score": 35.77424903134205
+  },
+  "01122": {
+    "trainerId": "01122",
+    "countNum": 246,
+    "recoveryRate": 9.146341463414634,
+    "score": 35.41246778481746
+  },
+  "00401": {
+    "trainerId": "00401",
+    "countNum": 105,
+    "recoveryRate": 8.285714285714285,
+    "score": 35.215038250153604
+  },
+  "00433": {
+    "trainerId": "00433",
+    "countNum": 224,
+    "recoveryRate": 6.7857142857142865,
+    "score": 34.87093535674152
+  },
+  "01165": {
+    "trainerId": "01165",
+    "countNum": 96,
+    "recoveryRate": 5.9375,
+    "score": 34.67635336344301
+  },
+  "00216": {
+    "trainerId": "00216",
+    "countNum": 67,
+    "recoveryRate": 5.522388059701493,
+    "score": 34.58112588361193
+  },
+  "00380": {
+    "trainerId": "00380",
+    "countNum": 258,
+    "recoveryRate": 5.271317829457365,
+    "score": 34.52352988849416
+  },
+  "00119": {
+    "trainerId": "00119",
+    "countNum": 103,
+    "recoveryRate": 5.145631067961165,
+    "score": 34.49469710296454
+  },
+  "00393": {
+    "trainerId": "00393",
+    "countNum": 105,
+    "recoveryRate": 4.761904761904762,
+    "score": 34.406669548169646
+  },
+  "00370": {
+    "trainerId": "00370",
+    "countNum": 234,
+    "recoveryRate": 3.4615384615384617,
+    "score": 34.10836301053523
+  },
+  "00180": {
+    "trainerId": "00180",
+    "countNum": 76,
+    "recoveryRate": 2.236842105263158,
+    "score": 33.827415304038176
+  }
+}

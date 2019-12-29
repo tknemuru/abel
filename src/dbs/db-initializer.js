@@ -9,8 +9,8 @@ module.exports = {
    * @returns {void}
    */
   init () {
-    const accessor = require('@/services/db-accessor')
-    const reader = require('@/services/sql-reader')
+    const accessor = require('@d/db-accessor')
+    const reader = require('@d/sql-reader')
     const sqls = []
     sqls.push(reader.read('create_race_info'))
     sqls.push(reader.read('create_race_result'))
