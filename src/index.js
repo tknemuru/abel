@@ -17,6 +17,9 @@ const creator = require('@an/eval-param-creator')
 const simulator = require('@s/purchase-simulator')
 const futureScraper = require('@ac/future-race-scraper')
 const futureSimulator = require('@s/future-purchase-simulator')
+const horseHistCreator = require('@an/horse-race-history-creator')
+const additionalResultCreator = require('@an/race-result-additional-creator')
+const additionalInfoCreator = require('@an/race-info-additional-creator')
 
 switch (options.target) {
   case 'init-db':
@@ -36,6 +39,15 @@ switch (options.target) {
     break
   case 'future-simulate':
     futureSimulator.simulate()
+    break
+  case 'create-horse-hist':
+    horseHistCreator.create()
+    break
+  case 'create-result-additional':
+    additionalResultCreator.create()
+    break
+  case 'create-info-additional':
+    additionalInfoCreator.create()
     break
   default:
     throw new Error('unexpected target.')

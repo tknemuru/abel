@@ -1,5 +1,8 @@
 'use strict'
 
+/**
+ * @module 素性の調査機能を提供します。
+ */
 module.exports = {
   /**
    * @description 素性の調査を行います。

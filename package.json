@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --recursive",
     "init-db": "node ./src/index.js -t init-db",
     "create-param": "node ./src/index.js -t create-param",
     "simulate": "node ./src/index.js -t simulate",
     "future-scrape": "node ./src/index.js -t future-scrape",
-    "future-simulate": "node ./src/index.js -t future-simulate"
+    "future-simulate": "node ./src/index.js -t future-simulate",
+    "create-horse-hist": "node ./src/index.js -t create-horse-hist",
+    "create-result-additional": "node ./src/index.js -t create-result-additional",
+    "create-info-additional": "node ./src/index.js -t create-info-additional"
   },
   "repository": {
     "type": "git",
@@ -24,10 +27,12 @@
   "dependencies": {
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",
+    "chai": "^4.2.0",
     "command-line-args": "^5.1.1",
     "jsdom": "^15.2.1",
     "lodash": "^4.17.15",
     "lodash-math": "0.0.7",
+    "mocha": "^6.2.2",
     "module-alias": "^2.2.2",
     "node-dev": "^4.0.0",
     "puppeteer": "^2.0.0",
