@@ -12,7 +12,8 @@
     "future-simulate": "node ./src/index.js -t future-simulate",
     "create-horse-hist": "node ./src/index.js -t create-horse-hist",
     "create-result-additional": "node ./src/index.js -t create-result-additional",
-    "create-info-additional": "node ./src/index.js -t create-info-additional"
+    "create-info-additional": "node ./src/index.js -t create-info-additional",
+    "learn-pre": "node ./src/index.js -t learn-pre"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "lodash-math": "0.0.7",
     "mocha": "^6.2.2",
     "module-alias": "^2.2.2",
+    "moment": "^2.24.0",
     "node-dev": "^4.0.0",
     "puppeteer": "^2.0.0",
     "sqlite3": "^4.1.1",

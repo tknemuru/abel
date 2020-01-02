@@ -2,6 +2,7 @@
 db/
 resources/htmls/
 resources/races/
+resources/learnings/
 
 # Logs
 logs

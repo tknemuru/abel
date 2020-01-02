@@ -20,6 +20,7 @@ const futureSimulator = require('@s/future-purchase-simulator')
 const horseHistCreator = require('@an/horse-race-history-creator')
 const additionalResultCreator = require('@an/race-result-additional-creator')
 const additionalInfoCreator = require('@an/race-info-additional-creator')
+const learningInputCreator = require('@an/learning-input-creator')
 
 switch (options.target) {
   case 'init-db':
@@ -48,6 +49,9 @@ switch (options.target) {
     break
   case 'create-info-additional':
     additionalInfoCreator.create()
+    break
+  case 'learn-pre':
+    learningInputCreator.create()
     break
   default:
     throw new Error('unexpected target.')

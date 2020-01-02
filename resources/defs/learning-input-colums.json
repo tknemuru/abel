@@ -1,0 +1,39 @@
+{
+  "pre0": {
+    "inf": [
+      "distance",
+      "race_number"
+    ],
+    "inf_add": [
+      "digit_surface",
+      "digit_direction",
+      "digit_weather",
+      "digit_surface_state"
+    ],
+    "ret": [
+      "frame_number",
+      "age",
+      "basis_weight",
+      "odds",
+      "popularity"
+    ],
+    "ret_add": [
+      "digit_sex",
+      "pure_horse_weight",
+      "diff_horse_weight"
+    ]
+  },
+  "others": {
+    "inf": [
+    ],
+    "inf_add": [
+    ],
+    "ret": [
+      "order_of_finish"
+    ],
+    "ret_add": [
+      "digit_finishing_time",
+      "digit_length"
+    ]
+  }
+}
