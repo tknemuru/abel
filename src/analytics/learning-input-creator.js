@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @module 学習用インプット情報の作成機能を提供します。
+ * @module 学習用情報の作成機能を提供します。
  */
 module.exports = {
   /**
@@ -9,10 +9,13 @@ module.exports = {
    */
   RaceUnit: 1000,
   /**
-   * @description 学習用インプット情報を作成します。
+   * @description 学習用情報を作成します。
+   * @param {Object} config - 設定情報
    * @returns {void}
    */
-  async create () {
+  async create (config) {
+    const validator = require('@h/validation-helper')
+    validator.required(config)
     const moment = require('moment')
     const timestamp = moment().format('YYYYMMDDHHmmss')
     console.log(timestamp)
@@ -20,7 +23,7 @@ module.exports = {
     const accessor = require('@d/db-accessor')
 
     // 全レースIDを取得
-    let sql = reader.read('select_all_race_id')
+    let sql = reader.read(config.preSelect)
     const raceIds = await accessor.all(sql)
     let fromIdx = 0
     let toIdx = module.exports.RaceUnit - 1
@@ -36,12 +39,24 @@ module.exports = {
       }
       console.log(param)
       // レース結果を取得
-      sql = reader.read('select_range_race_result_history')
+      sql = reader.read(config.select)
       const hists = await accessor.all(sql, param)
       console.log(hists.length)
 
       // 学習データを作成
-      module.exports._create(hists, timestamp)
+      if (config.input) {
+        module.exports._createInput(hists, timestamp, config)
+      }
+
+      // 正解データを作成
+      if (config.answer) {
+        module.exports._createAnswer(hists, timestamp, config)
+      }
+
+      // 紐付きデータを作成
+      if (config.relation) {
+        module.exports._createRelation(hists, timestamp, config)
+      }
 
       fromIdx = toIdx + 1
       toIdx += module.exports.RaceUnit
@@ -51,9 +66,10 @@ module.exports = {
    * @description 学習用インプット情報を作成します。
    * @param {Array} hists - 履歴情報
    * @param {String} timestamp - タイムスタンプ
+   * @param {Object} config - 設定情報
    * @returns {void}
    */
-  async _create (hists, timestamp) {
+  async _createInput (hists, timestamp, config) {
     // 対象カラム情報を読み込む
     const fs = require('fs')
     const targetsSrc = JSON.parse(fs.readFileSync('resources/defs/learning-input-colums.json', { encoding: 'utf-8' }))
@@ -62,16 +78,12 @@ module.exports = {
     validationCols = module.exports._extractValidationCols(validationCols)
     const scoreParams = module.exports._createScoreParams()
     let dataList = []
-    let ansList = []
     let i = 1
     for (const hist of hists) {
-      if (!module.exports._validation(hist, validationCols)) {
-        // console.log('validation error')
-        // console.log(hist)
+      if (!config.validation(hist, validationCols)) {
         continue
       }
       const data = []
-      const ans = []
       const cols = Object.keys(hist)
       for (const col of cols) {
         if (targets.includes(col)) {
@@ -80,21 +92,90 @@ module.exports = {
       }
       // 付加情報
       module.exports._addInfo(data, hist, scoreParams)
-      // 正解情報
-      ans.push(module.exports._createAnswer(hist))
       dataList.push(data)
+      if (i % 1000 === 0) {
+        console.log(i)
+        // データを書き込む
+        module.exports._writeInput(dataList, timestamp)
+        dataList = []
+      }
+      i++
+    }
+    // データを書き込む
+    module.exports._writeInput(dataList, timestamp)
+  },
+  /**
+   * @description 学習用正解情報を作成します。
+   * @param {Array} hists - 履歴情報
+   * @param {String} timestamp - タイムスタンプ
+   * @param {Object} config - 設定情報
+   * @returns {void}
+   */
+  _createAnswer (hists, timestamp, config) {
+    // 対象カラム情報を読み込む
+    const fs = require('fs')
+    let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-colums.json', { encoding: 'utf-8' }))
+    validationCols = module.exports._extractValidationCols(validationCols)
+    let ansList = []
+    let i = 1
+    for (const hist of hists) {
+      if (!config.validation(hist, validationCols)) {
+        continue
+      }
+      const ans = []
+      // 正解情報
+      ans.push(config.createAnswer(hist))
       ansList.push(ans)
       if (i % 1000 === 0) {
         console.log(i)
         // データを書き込む
-        module.exports._write(dataList, ansList, timestamp)
-        dataList = []
+        module.exports._writeAnswer(ansList, timestamp)
         ansList = []
       }
       i++
     }
     // データを書き込む
-    module.exports._write(dataList, ansList, timestamp)
+    module.exports._writeAnswer(ansList, timestamp)
+  },
+  /**
+   * @description 紐付き情報を作成します。
+   * @param {Array} hists - 履歴情報
+   * @param {String} timestamp - タイムスタンプ
+   * @param {Object} config - 設定情報
+   * @returns {void}
+   */
+  _createRelation (hists, timestamp, config) {
+    // 対象カラム情報を読み込む
+    const fs = require('fs')
+    let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-colums.json', { encoding: 'utf-8' }))
+    validationCols = module.exports._extractValidationCols(validationCols)
+    let i = 1
+    let rels = []
+    for (const hist of hists) {
+      if (!config.validation(hist, validationCols)) {
+        continue
+      }
+      const rel = {
+        raceId: hist.inf_pre0_race_id,
+        raceName: hist.inf_pre0_race_name,
+        horseNumber: hist.ret_pre0_horse_number,
+        horseId: hist.ret_pre0_horse_id,
+        horseName: hist.ret_pre0_horse_name || '',
+        orderOfFinish: hist.ret_pre0_order_of_finish || -1,
+        popularity: hist.ret_pre0_popularity || -1,
+        odds: hist.ret_pre0_odds || -1
+      }
+      rels.push(rel)
+      if (i % 1000 === 0) {
+        console.log(i)
+        // データを書き込む
+        module.exports._writeRelation(rels, timestamp)
+        rels = []
+      }
+      i++
+    }
+    // データを書き込む
+    module.exports._writeRelation(rels, timestamp)
   },
   /**
    * @description 全出力カラムリストを抽出します。
@@ -156,21 +237,6 @@ module.exports = {
     return retCols.reduce((pre, cur) => pre.concat(cur))
   },
   /**
-   * @description 履歴情報のバリデーションを行います。
-   * @param {Object} hist - 履歴情報
-   * @param {Array} validationCols - バリデーション対象のカラムリスト
-   */
-  _validation (hist, validationCols) {
-    const err = validationCols.some(key => {
-      // 4レース揃っていないデータは一旦除外する
-      // return hist[key] && Number(hist[key]) <= 0
-      return Number.isNaN(Number(hist[key])) || Number(hist[key]) <= 0
-    }) ||
-      // 4位未満は除外
-      Number(hist.ret_pre0_order_of_finish) > 4
-    return !err
-  },
-  /**
    * @description 評価パラメータを作成します。
    */
   _createScoreParams () {
@@ -207,50 +273,6 @@ module.exports = {
     }
   },
   /**
-   * @description 正解データを作成します。
-   * @param {Object} data 学習用データ
-   * @returns {Number} 正解データ
-   */
-  _createAnswer (data) {
-    const order = data.ret_pre0_order_of_finish
-    const odds = data.ret_pre0_odds
-    if (!order || !odds) {
-      throw new Error(`order or odds is empty. order: ${order} odds: ${odds}`)
-    }
-    const _order = Number(order)
-    if (!_order) {
-      console.log(order)
-      console.log(_order)
-    }
-    if (_order > 4) {
-      throw new Error('unexpected order')
-    }
-    return _order - 1
-    // if (_order <= 1) {
-    //   label = 3
-    // } else if (_order <= 6) {
-    //   label = 2
-    // } else {
-    //   label = 1
-    // }
-    // return (label * odds * 100)
-    // const answer = ((_order === 1) ? odds : 0) * 100
-    // let label = 0
-    // if (answer <= 0) {
-    //   label = 3
-    // } else if (answer < 500) {
-    //   label = 2
-    // } else if (answer < 3000) {
-    //   label = 0
-    // } else {
-    //   label = 1
-    // }
-    // return label
-
-    // const answer = (_order === 1) ? 1 : 0
-    // return answer
-  },
-  /**
    * 値を数値に変換します。
    * @param {Any} val - 値
    */
@@ -261,22 +283,45 @@ module.exports = {
     return !val || !Number(val) ? 0 : Number(val)
   },
   /**
-   * @description データの書き込みを行います。
-   * @param {Array} dataList - 学習データ
-   * @param {Array} ansList - 正解データ
+   * @description インプットデータの書き込みを行います。
+   * @param {Array} data - 学習データ
    * @param {String} timestamp - タイムスタンプ
    */
-  _write (dataList, ansList, timestamp) {
-    const csvHelper = require('@h/csv-helper')
+  _writeInput (data, timestamp) {
+    module.exports._write(data, timestamp, 'input')
+  },
+  /**
+   * @description 正解データの書き込みを行います。
+   * @param {Array} data - 正解データ
+   * @param {String} timestamp - タイムスタンプ
+   */
+  _writeAnswer (data, timestamp) {
+    module.exports._write(data, timestamp, 'answer')
+  },
+  /**
+   * @description 紐付きデータの書き込みを行います。
+   * @param {Array} data - 紐付きデータ
+   * @param {String} timestamp - タイムスタンプ
+   */
+  _writeRelation (data, timestamp) {
     const fs = require('fs')
-    const dataCsv = csvHelper.toCsv(dataList)
-    const ansCsv = csvHelper.toCsv(ansList)
-    fs.appendFileSync(`resources/learnings/input_${timestamp}.csv`
-      , dataCsv
+    fs.appendFileSync(`resources/learnings/relation_${timestamp}.json`
+      , JSON.stringify(data, null, '  ')
       , { encoding: 'utf-8' }
     )
-    fs.appendFileSync(`resources/learnings/answer_${timestamp}.csv`
-      , ansCsv
+  },
+  /**
+   * @description データの書き込みを行います。
+   * @param {Array} data - データ
+   * @param {String} timestamp - タイムスタンプ
+   * @param {String} prefix - ファイル名のプレフィックス
+   */
+  _write (data, timestamp, prefix) {
+    const csvHelper = require('@h/csv-helper')
+    const fs = require('fs')
+    const dataCsv = csvHelper.toCsv(data)
+    fs.appendFileSync(`resources/learnings/${prefix}_${timestamp}.csv`
+      , dataCsv
       , { encoding: 'utf-8' }
     )
   }

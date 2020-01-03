@@ -1,0 +1,81 @@
+insert or replace into future_race_info (
+  race_id,
+  horse_name,
+  -- race_info
+  race_name,
+  surface,
+  distance,
+  weather,
+  surface_state,
+  race_start,
+  race_number,
+  surface_score,
+  date,
+  place_detail,
+  race_class,
+  -- race_info_additional
+  digit_surface,
+  digit_direction,
+  digit_weather,
+  digit_surface_state,
+  -- race_result
+  frame_number,
+  horse_number,
+  horse_id,
+  sex,
+  age,
+  basis_weight,
+  jockey_id,
+  speed_figure,
+  odds,
+  popularity,
+  horse_weight,
+  trainer_id,
+  -- race_result_additional
+  digit_sex,
+  pure_horse_weight,
+  diff_horse_weight,
+  -- horse_race_history
+  pre_race_id,
+  pre_horse_number
+) values (
+  $raceId,
+  $horseName,
+  -- race_info
+  $raceName,
+  $surface,
+  $distance,
+  $weather,
+  $surfaceState,
+  $raceStart,
+  $raceNumber,
+  $surfaceScore,
+  $date,
+  $placeDetail,
+  $raceClass,
+  -- race_info_additional
+  $digitSurface,
+  $digitDirection,
+  $digitWeather,
+  $digitSurfaceState,
+  -- race_result
+  $frameNumber,
+  $horseNumber,
+  $horseId,
+  $sex,
+  $age,
+  $basisWeight,
+  $jockeyId,
+  $speedFigure,
+  $odds,
+  $popularity,
+  $horseWeight,
+  $trainerId,
+  -- race_result_additional
+  $digitSex,
+  $pureHorseWeight,
+  $diffHorseWeight,
+ -- horse_race_history
+  $preRaceId,
+  $preHorseNumber
+)

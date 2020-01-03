@@ -28,6 +28,9 @@ module.exports = {
     horses = module.exports._extractPopularity(dom, horses)
     horses = module.exports._extractTrainerId(dom, horses)
     horses = module.exports._numberingHorseNumber(horses)
+    horses = module.exports._extractFrameNumber(dom, horses)
+    horses = module.exports._extractBasisWeight(dom, horses)
+    horses = module.exports._extractHorseWeight(dom, horses)
     return {
       race,
       horses
@@ -194,6 +197,51 @@ module.exports = {
       }
     })
     return module.exports._merge(data, sexAndAges)
+  },
+  /**
+   * @description 枠番を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Array} 抽出データ
+   */
+  _extractFrameNumber (dom, data) {
+    const tags = dom.window.document.querySelectorAll('.Waku>span')
+    const _data = [].slice.call(tags).map(tag => {
+      return {
+        frameNumber: module.exports._convNum(tag.textContent)
+      }
+    })
+    return module.exports._merge(data, _data)
+  },
+  /**
+   * @description 斤量を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Array} 抽出データ
+   */
+  _extractBasisWeight (dom, data) {
+    const tags = dom.window.document.querySelectorAll('.HorseInfo+td+td')
+    const _data = [].slice.call(tags).map(tag => {
+      return {
+        basisWeight: module.exports._convNum(tag.textContent)
+      }
+    })
+    return module.exports._merge(data, _data)
+  },
+  /**
+   * @description 馬体重を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Array} 抽出データ
+   */
+  _extractHorseWeight (dom, data) {
+    const tags = dom.window.document.querySelectorAll('.HorseList .Weight')
+    const _data = [].slice.call(tags).map(tag => {
+      return {
+        horseWeight: tag.textContent.replace(/\n/g, '') || '計不'
+      }
+    })
+    return module.exports._merge(data, _data)
   },
   /**
    * @description オッズを抽出します。

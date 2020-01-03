@@ -19,6 +19,9 @@ module.exports = {
     sqls.push(reader.read('create_race_result_history'))
     sqls.push(reader.read('create_race_result_additional'))
     sqls.push(reader.read('create_race_info_additional'))
+    sqls.push(reader.read('create_future_race_info'))
+    sqls.push(reader.read('create_view_race_result_history'))
+    sqls.push(reader.read('create_view_future_race_history'))
     accessor.run(sqls)
   }
 }

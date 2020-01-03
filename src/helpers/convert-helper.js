@@ -262,6 +262,9 @@ module.exports = {
    */
   convSurfaceState (val) {
     const ret = module.exports.SurfaceState.Untargeted
+    if (val === '未定') {
+      return ret.value
+    }
     const status = val.split('  ')
     if (status.length > 1) {
       return ret.value

@@ -1,8 +1,8 @@
-create view if not exists race_result_history
+create view if not exists future_race_history
 as
 select
   -- info
-  inf_pre0.id            as inf_pre0_race_id,
+  inf_pre0.race_id       as inf_pre0_race_id,
   inf_pre0.race_name     as inf_pre0_race_name,
   inf_pre0.surface       as inf_pre0_surface,
   inf_pre0.distance      as inf_pre0_distance,
@@ -14,37 +14,27 @@ select
   inf_pre0.place_detail  as inf_pre0_place_detail,
   inf_pre0.race_class    as inf_pre0_race_class,
   -- info_additional
-  inf_add_pre0.digit_surface              as inf_add_pre0_digit_surface,
-  inf_add_pre0.digit_direction            as inf_add_pre0_digit_direction,
-  inf_add_pre0.digit_weather              as inf_add_pre0_digit_weather,
-  inf_add_pre0.digit_surface_state        as inf_add_pre0_digit_surface_state,
+  inf_pre0.digit_surface              as inf_add_pre0_digit_surface,
+  inf_pre0.digit_direction            as inf_add_pre0_digit_direction,
+  inf_pre0.digit_weather              as inf_add_pre0_digit_weather,
+  inf_pre0.digit_surface_state        as inf_add_pre0_digit_surface_state,
   -- result
-  ret_pre0.order_of_finish as ret_pre0_order_of_finish,
-  ret_pre0.frame_number       as ret_pre0_frame_number,
-  ret_pre0.horse_number       as ret_pre0_horse_number,
-  ret_pre0.horse_id           as ret_pre0_horse_id,
-  ret_pre0.sex                as ret_pre0_sex,
-  ret_pre0.age                as ret_pre0_age,
-  ret_pre0.basis_weight       as ret_pre0_basis_weight,
-  ret_pre0.jockey_id          as ret_pre0_jockey_id,
-  ret_pre0.finishing_time     as ret_pre0_finishing_time,
-  ret_pre0.length             as ret_pre0_length,
-  ret_pre0.pass               as ret_pre0_pass,
-  ret_pre0.last_phase         as ret_pre0_last_phase,
-  ret_pre0.odds               as ret_pre0_odds,
-  ret_pre0.popularity         as ret_pre0_popularity,
-  ret_pre0.horse_weight       as ret_pre0_horse_weight,
-  ret_pre0.remark             as ret_pre0_remark,
-  ret_pre0.stable             as ret_pre0_stable,
-  ret_pre0.trainer_id         as ret_pre0_trainer_id,
-  ret_pre0.owner_id           as ret_pre0_owner_id,
-  ret_pre0.earning_money      as ret_pre0_earning_money,
+  inf_pre0.horse_name         as ret_pre0_horse_name,
+  inf_pre0.frame_number       as ret_pre0_frame_number,
+  inf_pre0.horse_number       as ret_pre0_horse_number,
+  inf_pre0.horse_id           as ret_pre0_horse_id,
+  inf_pre0.sex                as ret_pre0_sex,
+  inf_pre0.age                as ret_pre0_age,
+  inf_pre0.basis_weight       as ret_pre0_basis_weight,
+  inf_pre0.jockey_id          as ret_pre0_jockey_id,
+  inf_pre0.odds               as ret_pre0_odds,
+  inf_pre0.popularity         as ret_pre0_popularity,
+  inf_pre0.horse_weight       as ret_pre0_horse_weight,
+  inf_pre0.trainer_id         as ret_pre0_trainer_id,
   -- result_additional
-  ret_add_pre0.digit_sex                       as ret_add_pre0_digit_sex,
-  ret_add_pre0.digit_finishing_time            as ret_add_pre0_digit_finishing_time,
-  ret_add_pre0.digit_length                    as ret_add_pre0_digit_length,
-  ret_add_pre0.pure_horse_weight               as ret_add_pre0_pure_horse_weight,
-  ret_add_pre0.diff_horse_weight               as ret_add_pre0_diff_horse_weight,
+  inf_pre0.digit_sex                       as ret_add_pre0_digit_sex,
+  inf_pre0.pure_horse_weight               as ret_add_pre0_pure_horse_weight,
+  inf_pre0.diff_horse_weight               as ret_add_pre0_diff_horse_weight,
   -- >>>>>pre1
   -- info
   inf_pre1.id            as inf_pre1_race_id,
@@ -226,31 +216,13 @@ select
   ret_add_pre4.pure_horse_weight               as ret_add_pre4_pure_horse_weight,
   ret_add_pre4.diff_horse_weight               as ret_add_pre4_diff_horse_weight
 from
-  race_result ret_pre0
-inner join
-  race_info inf_pre0
-on
-  ret_pre0.race_id = inf_pre0.id
-left join
-  race_info_additional inf_add_pre0
-on
-  inf_pre0.id = inf_add_pre0.race_id
-inner join
-  race_result_additional ret_add_pre0
-on
-  ret_pre0.race_id = ret_add_pre0.race_id
-  and ret_pre0.horse_number = ret_add_pre0.horse_number
+  future_race_info inf_pre0
 -- pre1
-inner join
-  horse_race_history his_pre0
-on
-  ret_pre0.race_id = his_pre0.race_id
-  and ret_pre0.horse_number = his_pre0.horse_number
 left join
   race_result ret_pre1
 on
-  ret_pre1.race_id = his_pre0.pre_race_id
-  and ret_pre1.horse_number = his_pre0.pre_horse_number
+  ret_pre1.race_id = inf_pre0.pre_race_id
+  and ret_pre1.horse_number = inf_pre0.pre_horse_number
 left join
   race_info inf_pre1
 on

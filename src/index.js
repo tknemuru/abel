@@ -17,11 +17,15 @@ const creator = require('@an/eval-param-creator')
 const simulator = require('@s/purchase-simulator')
 const futureDownloader = require('@ac/future-race-page-downloader')
 const futureScraper = require('@ac/future-race-scraper')
+const futureRegister = require('@ac/future-race-register')
 const futureSimulator = require('@s/future-purchase-simulator')
 const horseHistCreator = require('@an/horse-race-history-creator')
 const additionalResultCreator = require('@an/race-result-additional-creator')
 const additionalInfoCreator = require('@an/race-info-additional-creator')
 const learningInputCreator = require('@an/learning-input-creator')
+const learningConfig = require('@an/configs/learning-config')
+const predictionConfig = require('@an/configs/prediction-config')
+const predAdjuster = require('@an/prediction-result-adjuster')
 
 switch (options.target) {
   case 'init-db':
@@ -55,6 +59,9 @@ switch (options.target) {
       }
     })()
     break
+  case 'future-register':
+    futureRegister.register()
+    break
   case 'future-simulate':
     futureSimulator.simulate()
     break
@@ -68,7 +75,13 @@ switch (options.target) {
     additionalInfoCreator.create()
     break
   case 'learn-pre':
-    learningInputCreator.create()
+    learningInputCreator.create(learningConfig)
+    break
+  case 'pred-pre':
+    learningInputCreator.create(predictionConfig)
+    break
+  case 'pred-adjust':
+    predAdjuster.adjust()
     break
   default:
     throw new Error('unexpected target.')

@@ -17,7 +17,7 @@ module.exports = {
     const path = require('path')
 
     // レースページのURLリストを取得
-    const files = fs.readdirSync('resources/htmls/future-races')
+    const files = fs.readdirSync(module.exports.HtmlDir)
       .map(f => path.join(module.exports.HtmlDir, f))
 
     // 抽出

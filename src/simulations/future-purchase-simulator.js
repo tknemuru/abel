@@ -8,14 +8,33 @@ module.exports = {
    * @description 開催予定レース購入のシミュレーションを行います。
    * @returns {void}
    */
-  async simulate () {
+  simulate () {
     const fs = require('fs')
-    const races = JSON.parse(fs.readFileSync('resources/races/test.json', { encoding: 'utf-8' }))
-    const simlator = require('@s/purchase-simulator')
-    const result = await simlator.simulate({
-      races,
-      requiredReturnResult: true
-    })
-    console.log(result)
+    const preds = JSON.parse(fs.readFileSync('resources/learnings/pred-result.json', { encoding: 'utf-8' }))
+
+    // シミュレーション結果を整形
+    const adjuster = require('@s/race-adjuster')
+    const races = Object.values(adjuster.adjust(preds))
+
+    // 購入対象を決める
+    const results = []
+    for (const horses of races) {
+      if (horses.length <= 0) {
+        continue
+      }
+      const purchases = horses.filter(h => h.eval > 30)
+      const ret = {
+        raceId: horses[0].raceId,
+        raceName: horses[0].raceName,
+        purchases
+      }
+      results.push(ret)
+    }
+
+    // ファイルに書き出し
+    fs.writeFileSync('resources/simulations/sim-result.json'
+      , JSON.stringify(results, null, '  ')
+      , { encoding: 'utf-8' }
+    )
   }
 }
