@@ -11,7 +11,10 @@ module.exports = {
   async adjust () {
     const validator = require('@h/validation-helper')
     const fs = require('fs')
-    const relations = JSON.parse(fs.readFileSync('resources/learnings/relation.json', { encoding: 'utf-8' }))
+    const orgRelations = fs.readFileSync('resources/learnings/relation.json', { encoding: 'utf-8' })
+    // 分割して書き込んでいるため不正な箇所が出てしまうので修正しておく
+    let relations = orgRelations.replace(/\]\[/g, ',')
+    relations = JSON.parse(relations)
     let predResults = fs.readFileSync('resources/learnings/pred-result.txt', { encoding: 'utf-8' })
     predResults = predResults
       .split(/\n/)

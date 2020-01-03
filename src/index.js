@@ -14,7 +14,7 @@ console.log(options)
 
 const dbInit = require('@d/db-initializer')
 const creator = require('@an/eval-param-creator')
-const simulator = require('@s/purchase-simulator')
+const testSimulator = require('@s/test-purchase-simulator')
 const futureDownloader = require('@ac/future-race-page-downloader')
 const futureScraper = require('@ac/future-race-scraper')
 const futureRegister = require('@ac/future-race-register')
@@ -24,6 +24,7 @@ const additionalResultCreator = require('@an/race-result-additional-creator')
 const additionalInfoCreator = require('@an/race-info-additional-creator')
 const learningInputCreator = require('@an/learning-input-creator')
 const learningConfig = require('@an/configs/learning-config')
+const testConfig = require('@an/configs/test-config')
 const predictionConfig = require('@an/configs/prediction-config')
 const predAdjuster = require('@an/prediction-result-adjuster')
 
@@ -33,9 +34,6 @@ switch (options.target) {
     break
   case 'create-param':
     creator.create()
-    break
-  case 'simulate':
-    simulator.simulate()
     break
   case 'future-download':
     (async () => {
@@ -65,6 +63,9 @@ switch (options.target) {
   case 'future-simulate':
     futureSimulator.simulate()
     break
+  case 'test-simulate':
+    testSimulator.simulate()
+    break
   case 'create-horse-hist':
     horseHistCreator.create()
     break
@@ -79,6 +80,9 @@ switch (options.target) {
     break
   case 'pred-pre':
     learningInputCreator.create(predictionConfig)
+    break
+  case 'test-pre':
+    learningInputCreator.create(testConfig)
     break
   case 'pred-adjust':
     predAdjuster.adjust()

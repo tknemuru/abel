@@ -36,5 +36,7 @@ module.exports = {
       , JSON.stringify(results, null, '  ')
       , { encoding: 'utf-8' }
     )
+
+    return results
   }
 }

@@ -7,16 +7,17 @@
     "test": "mocha --recursive",
     "init-db": "node ./src/index.js -t init-db",
     "create-param": "node ./src/index.js -t create-param",
-    "simulate": "node ./src/index.js -t simulate",
     "future-scrape": "node ./src/index.js -t future-scrape",
     "future-download": "node ./src/index.js -t future-download",
     "future-register": "node ./src/index.js -t future-register",
     "future-simulate": "node ./src/index.js -t future-simulate",
+    "test-simulate": "node ./src/index.js -t test-simulate",
     "create-horse-hist": "node ./src/index.js -t create-horse-hist",
     "create-result-additional": "node ./src/index.js -t create-result-additional",
     "create-info-additional": "node ./src/index.js -t create-info-additional",
     "learn-pre": "node ./src/index.js -t learn-pre",
     "pred-pre": "node ./src/index.js -t pred-pre",
+    "test-pre": "node ./src/index.js -t test-pre",
     "pred-adjust": "node ./src/index.js -t pred-adjust"
   },
   "repository": {

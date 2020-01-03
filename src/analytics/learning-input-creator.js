@@ -147,6 +147,7 @@ module.exports = {
   _createRelation (hists, timestamp, config) {
     // 対象カラム情報を読み込む
     const fs = require('fs')
+    const conv = require('@h/convert-helper')
     let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-colums.json', { encoding: 'utf-8' }))
     validationCols = module.exports._extractValidationCols(validationCols)
     let i = 1
@@ -161,9 +162,9 @@ module.exports = {
         horseNumber: hist.ret_pre0_horse_number,
         horseId: hist.ret_pre0_horse_id,
         horseName: hist.ret_pre0_horse_name || '',
-        orderOfFinish: hist.ret_pre0_order_of_finish || -1,
-        popularity: hist.ret_pre0_popularity || -1,
-        odds: hist.ret_pre0_odds || -1
+        orderOfFinish: conv.convNum(hist.ret_pre0_order_of_finish),
+        popularity: conv.convNum(hist.ret_pre0_popularity),
+        odds: conv.convNum(hist.ret_pre0_odds)
       }
       rels.push(rel)
       if (i % 1000 === 0) {
