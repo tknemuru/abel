@@ -5,6 +5,10 @@
  */
 module.exports = {
   /**
+   * @description 対象外の数値
+   */
+  UntargetedNum: -1,
+  /**
    * @description レース場種別
    */
   RaceSurface: {
@@ -105,6 +109,14 @@ module.exports = {
    * @description 1馬身(cm)
    */
   HorseLength: 240,
+  /**
+   * @description 値を数値に変換します。
+   * @param {String} val 値
+   */
+  convNum (val) {
+    return Number.isNaN(Number(val))
+      ? module.exports.UntargetedNum : Number(val)
+  },
   /**
    * @description 性別の変換を行います。
    * @param {String} val - 値

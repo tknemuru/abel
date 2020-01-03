@@ -15,6 +15,7 @@ console.log(options)
 const dbInit = require('@d/db-initializer')
 const creator = require('@an/eval-param-creator')
 const simulator = require('@s/purchase-simulator')
+const futureDownloader = require('@ac/future-race-page-downloader')
 const futureScraper = require('@ac/future-race-scraper')
 const futureSimulator = require('@s/future-purchase-simulator')
 const horseHistCreator = require('@an/horse-race-history-creator')
@@ -32,10 +33,26 @@ switch (options.target) {
   case 'simulate':
     simulator.simulate()
     break
+  case 'future-download':
+    (async () => {
+      try {
+        await futureDownloader.download()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
   case 'future-scrape':
     (async () => {
-      await futureScraper.scrape()
-      process.exit()
+      try {
+        await futureScraper.scrape()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
     })()
     break
   case 'future-simulate':

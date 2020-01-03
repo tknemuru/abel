@@ -13,15 +13,132 @@ module.exports = {
    * @returns {void}
    */
   extract (dom) {
-    let data = []
-    data = module.exports._extractHorseIdAndName(dom, data)
-    data = module.exports._extractSexAndAge(dom, data)
-    data = module.exports._extractJockeyId(dom, data)
-    data = module.exports._extractOdds(dom, data)
-    data = module.exports._extractPopularity(dom, data)
-    data = module.exports._extractTrainerId(dom, data)
-    data = module.exports._numberingHorseNumber(data)
-    return data
+    let race = {}
+    race = module.exports._extractRaceName(dom, race)
+    race = module.exports._extractRaceInfo1(dom, race)
+    race = module.exports._extractRaceInfo2(dom, race)
+    race = module.exports._extractWeather(dom, race)
+    race = module.exports._extractSurfaceState(dom, race)
+    race = module.exports._extractRaceNumber(dom, race)
+    let horses = []
+    horses = module.exports._extractHorseIdAndName(dom, horses)
+    horses = module.exports._extractSexAndAge(dom, horses)
+    horses = module.exports._extractJockeyId(dom, horses)
+    horses = module.exports._extractOdds(dom, horses)
+    horses = module.exports._extractPopularity(dom, horses)
+    horses = module.exports._extractTrainerId(dom, horses)
+    horses = module.exports._numberingHorseNumber(horses)
+    return {
+      race,
+      horses
+    }
+  },
+  /**
+   * @description レース名を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractRaceName (dom, data) {
+    const tag = dom.window.document.querySelector('.RaceName')
+    const _data = {
+      raceName: tag.textContent.replace(/\n/g, '')
+    }
+    return Object.assign(data, _data)
+  },
+  /**
+   * @description レース情報(1行目)を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractRaceInfo1 (dom, data) {
+    const tag = dom.window.document.querySelector('.RaceData01')
+    const texts = tag.textContent
+      .replace(/\n/g, '')
+      .split('/')
+    const time = texts.length > 1 ? texts[0] : '未定'
+    const surfaceUnit = texts.length > 1 ? texts[1] : texts[0]
+    const raceStart = time
+      .trim()
+      .replace('発走', '')
+    const surface = surfaceUnit
+      .split('(')[0]
+      .trim()
+      .substring(0, 1)
+    const distance = surfaceUnit
+      .split('(')[0]
+      .trim()
+      .replace(surface, '')
+      .replace('m', '')
+    const direction = surfaceUnit
+      .split('(')[1]
+      .trim()
+      .replace(' ', '')
+      .replace(')', '')
+    const _data = {
+      surface: `${surface}${direction}`,
+      distance,
+      raceStart
+    }
+    return Object.assign(data, _data)
+  },
+  /**
+   * @description レース情報(2行目)を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractRaceInfo2 (dom, data) {
+    let tags = dom.window.document.querySelectorAll('.RaceData02>span')
+    tags = [].slice.call(tags)
+    const placeDetail = `${tags[0].textContent}${tags[1].textContent}${tags[2].textContent}`
+    let raceClass = '未定'
+    if ([3, 4, 5, 6].some(i => !!tags[i].textContent)) {
+      raceClass = `${tags[3].textContent}${tags[4].textContent}${tags[5].textContent}(${tags[6].textContent})`
+    }
+    const info = {
+      placeDetail,
+      raceClass
+    }
+    return Object.assign(data, info)
+  },
+  /**
+   * @description 天気を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractWeather (dom, data) {
+    const _data = {
+      weather: '未定'
+    }
+    return Object.assign(data, _data)
+  },
+  /**
+   * @description 馬場の状態を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractSurfaceState (dom, data) {
+    const _data = {
+      surfaceState: '未定'
+    }
+    return Object.assign(data, _data)
+  },
+  /**
+   * @description レース番号を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Array} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractRaceNumber (dom, data) {
+    const tag = dom.window.document.querySelector('.RaceNum')
+    const _data = {
+      raceNumber: module.exports._convNum(tag.textContent.replace('R', ''))
+    }
+    return Object.assign(data, _data)
   },
   /**
    * @description 馬名と馬IDを抽出します。
@@ -88,7 +205,7 @@ module.exports = {
     const tags = dom.window.document.querySelectorAll('span[id^="odds-"]')
     const odds = [].slice.call(tags).map(tag => {
       return {
-        odds: Number(tag.textContent)
+        odds: module.exports._convNum(tag.textContent)
       }
     })
     return module.exports._merge(data, odds)
@@ -103,7 +220,7 @@ module.exports = {
     const tags = dom.window.document.querySelectorAll('span[id^="ninki-"]')
     const popularity = [].slice.call(tags).map(tag => {
       return {
-        popularity: Number(tag.textContent)
+        popularity: module.exports._convNum(tag.textContent)
       }
     })
     return module.exports._merge(data, popularity)
@@ -141,18 +258,32 @@ module.exports = {
     })
   },
   /**
-   * @description 抽出年齢をマージします。
+   * @description データをマージします。
    * @param {Object} dom - DOM
    * @param {Array} data - 抽出データ
    * @returns {Array} 抽出データ
    */
   _merge (org, add) {
     const length = org.length
-    return add.map((a, i) => {
+    let _add = add
+    // 開催予定段階ではaddの方が少ない場合がある
+    if (add.length < org.length) {
+      _add = org.map((o, i) => {
+        return (add.length <= i) ? {} : add[i]
+      })
+    }
+    return _add.map((a, i) => {
       if (length <= i) {
         org.push({})
       }
       return Object.assign(org[i], a)
     })
+  },
+  /**
+   * @description 値を数値に変換します。
+   * @param {String} val 値
+   */
+  _convNum (val) {
+    return require('@h/convert-helper').convNum(val)
   }
 }

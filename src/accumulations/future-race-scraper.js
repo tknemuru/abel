@@ -5,30 +5,35 @@
  */
 module.exports = {
   /**
+   * @description HTMLファイル配置ディレクトリ
+   */
+  HtmlDir: 'resources/htmls/future-races',
+  /**
    * @description 開催予定レースのスクレイピングを行います。
    * @returns {void}
    */
   async scrape () {
-    // ページをダウンロード
-    const downloader = require('@ac/page-downloader')
-    await downloader.download({
-      urls: [
-        // 'https://racev3.netkeiba.com/race/shutuba.html?race_id=202006010109&rf=race_list'
-        // 'https://racev3.netkeiba.com/race/shutuba.html?race_id=202006010110&rf=race_list'
-        // 'https://racev3.netkeiba.com/race/shutuba.html?race_id=202006010111&rf=race_list'
-        // 'https://racev3.netkeiba.com/race/shutuba.html?race_id=202008010109&rf=race_list'
-        // 'https://racev3.netkeiba.com/race/shutuba.html?race_id=202008010110&rf=race_list'
-        'https://racev3.netkeiba.com/race/shutuba.html?race_id=202008010111&rf=race_list'
-      ]
-    })
+    const fs = require('fs')
+    const path = require('path')
+
+    // レースページのURLリストを取得
+    const files = fs.readdirSync('resources/htmls/future-races')
+      .map(f => path.join(module.exports.HtmlDir, f))
+
+    // 抽出
+    for (const file of files) {
+      module.exports._extract(file)
+    }
+  },
+  /**
+   * @description HTMLファイルから必要な情報を抽出します。
+   * @param {String} file ファイル名
+   */
+  _extract (file) {
+    const fs = require('fs')
 
     // dom化
-    const fs = require('fs')
-    const html = fs.readFileSync('resources/htmls/test.html', { encoding: 'utf-8' })
-    const jsdom = require('jsdom')
-    const { JSDOM } = jsdom
-    const dom = new JSDOM(html)
-    console.log('gen dom end')
+    const dom = require('@h/html-helper').toDom(file)
 
     // 情報を抽出
     const extractor = require('@ac/future-race-extractor')
@@ -36,11 +41,18 @@ module.exports = {
     console.log(data)
 
     // 結果を出力
-    fs.writeFileSync('resources/races/test.json'
+    fs.writeFileSync(module.exports._genResultFileName(file)
       , JSON.stringify(data, null, '  ')
       , { encoding: 'utf-8' }
     )
-
-    return dom
+  },
+  /**
+   * @description スクレイピング結果のファイル名を生成します。
+   * @param {String} htmlFile HTMLファイル名
+   */
+  _genResultFileName (htmlFile) {
+    return htmlFile
+      .replace('/htmls/', '/races/')
+      .replace('.html', '.json')
   }
 }

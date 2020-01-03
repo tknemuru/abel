@@ -9,6 +9,7 @@
     "create-param": "node ./src/index.js -t create-param",
     "simulate": "node ./src/index.js -t simulate",
     "future-scrape": "node ./src/index.js -t future-scrape",
+    "future-download": "node ./src/index.js -t future-download",
     "future-simulate": "node ./src/index.js -t future-simulate",
     "create-horse-hist": "node ./src/index.js -t create-horse-hist",
     "create-result-additional": "node ./src/index.js -t create-result-additional",
@@ -39,7 +40,9 @@
     "node-dev": "^4.0.0",
     "puppeteer": "^2.0.0",
     "sqlite3": "^4.1.1",
-    "utf-8-validate": "^5.0.2"
+    "thread-sleep": "^2.2.0",
+    "utf-8-validate": "^5.0.2",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
