@@ -42,5 +42,16 @@ module.exports = {
       label = 1
     }
     return label
+  },
+  /**
+   * @description オッズによって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByOdds (data) {
+    const validator = require('@h/validation-helper')
+    const odds = data.ret_pre0_odds
+    validator.required(odds)
+    return odds
   }
 }

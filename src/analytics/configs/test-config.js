@@ -25,6 +25,13 @@ module.exports = {
    */
   select: 'select_range_race_result_history',
   /**
+   * @description 出力対象のカラム定義を取得します。
+   * @returns {String} 出力対象のカラム定義名
+   */
+  colums () {
+    return require('@an/configs/learning-config').colums()
+  },
+  /**
    * @description ソルト
    */
   salt: null,
@@ -39,12 +46,13 @@ module.exports = {
       console.log(module.exports.salt)
     }
     const err = validationCols.some(key => {
-      // 4レース揃っていないデータは一旦除外する
-      // return data[key] && Number(data[key]) <= 0
-      return Number.isNaN(Number(data[key])) || Number(data[key]) <= 0
-    }) ||
-      data.inf_pre0_race_id % module.exports.salt !== 0
-    return !err
+      if (!data[key]) {
+        return false
+      }
+      return Number.isNaN(Number(data[key])) ||
+        Number(data[key]) <= 0
+    })
+    return !err && data.inf_pre0_race_id % module.exports.salt === 0
   },
   /**
    * @description 正解データを作成します。

@@ -22,6 +22,13 @@ module.exports = {
     const reader = require('@d/sql-reader')
     const accessor = require('@d/db-accessor')
 
+    // 対象カラム情報を読み込む
+    const fs = require('fs')
+    const targetsSrc = JSON.parse(fs.readFileSync(`resources/defs/${config.colums()}.json`, { encoding: 'utf-8' }))
+    const targets = module.exports._extractAllTargets(targetsSrc)
+    let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-colums.json', { encoding: 'utf-8' }))
+    validationCols = module.exports._extractValidationCols(validationCols)
+
     // 全レースIDを取得
     let sql = reader.read(config.preSelect)
     const raceIds = await accessor.all(sql)
@@ -45,17 +52,17 @@ module.exports = {
 
       // 学習データを作成
       if (config.input) {
-        module.exports._createInput(hists, timestamp, config)
+        module.exports._createInput(hists, targets, validationCols, timestamp, config)
       }
 
       // 正解データを作成
       if (config.answer) {
-        module.exports._createAnswer(hists, timestamp, config)
+        module.exports._createAnswer(hists, validationCols, timestamp, config)
       }
 
       // 紐付きデータを作成
       if (config.relation) {
-        module.exports._createRelation(hists, timestamp, config)
+        module.exports._createRelation(hists, validationCols, timestamp, config)
       }
 
       fromIdx = toIdx + 1
@@ -65,17 +72,13 @@ module.exports = {
   /**
    * @description 学習用インプット情報を作成します。
    * @param {Array} hists - 履歴情報
+   * @param {Array} targets - インプット対象のカラム
+   * @param {Array} validationCols - 検証対象のカラム
    * @param {String} timestamp - タイムスタンプ
    * @param {Object} config - 設定情報
    * @returns {void}
    */
-  async _createInput (hists, timestamp, config) {
-    // 対象カラム情報を読み込む
-    const fs = require('fs')
-    const targetsSrc = JSON.parse(fs.readFileSync('resources/defs/learning-input-colums.json', { encoding: 'utf-8' }))
-    const targets = module.exports._extractAllTargets(targetsSrc)
-    let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-colums.json', { encoding: 'utf-8' }))
-    validationCols = module.exports._extractValidationCols(validationCols)
+  async _createInput (hists, targets, validationCols, timestamp, config) {
     const scoreParams = module.exports._createScoreParams()
     let dataList = []
     let i = 1
@@ -107,15 +110,12 @@ module.exports = {
   /**
    * @description 学習用正解情報を作成します。
    * @param {Array} hists - 履歴情報
+   * @param {Array} validationCols - 検証対象のカラム
    * @param {String} timestamp - タイムスタンプ
    * @param {Object} config - 設定情報
    * @returns {void}
    */
-  _createAnswer (hists, timestamp, config) {
-    // 対象カラム情報を読み込む
-    const fs = require('fs')
-    let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-colums.json', { encoding: 'utf-8' }))
-    validationCols = module.exports._extractValidationCols(validationCols)
+  _createAnswer (hists, validationCols, timestamp, config) {
     let ansList = []
     let i = 1
     for (const hist of hists) {
@@ -140,16 +140,13 @@ module.exports = {
   /**
    * @description 紐付き情報を作成します。
    * @param {Array} hists - 履歴情報
+   * @param {Array} validationCols - 検証対象のカラム
    * @param {String} timestamp - タイムスタンプ
    * @param {Object} config - 設定情報
    * @returns {void}
    */
-  _createRelation (hists, timestamp, config) {
-    // 対象カラム情報を読み込む
-    const fs = require('fs')
+  _createRelation (hists, validationCols, timestamp, config) {
     const conv = require('@h/convert-helper')
-    let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-colums.json', { encoding: 'utf-8' }))
-    validationCols = module.exports._extractValidationCols(validationCols)
     let i = 1
     let rels = []
     for (const hist of hists) {

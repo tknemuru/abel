@@ -5,11 +5,34 @@
  */
 module.exports = {
   /**
+   * @description バージョン
+   */
+  version: 2,
+  /**
+   * @description 評価を行います。
+   * @param {Array} horses - 出馬情報
+   * @returns {Array} 評価値
+   */
+  evaluate (horses) {
+    let evals = []
+    switch (module.exports.version) {
+      case 1:
+        evals = module.exports.evaluateV1(horses)
+        break
+      case 2:
+        evals = module.exports.evaluateV2(horses)
+        break
+      default:
+        evals = horses.map(h => h.eval)
+    }
+    return evals
+  },
+  /**
    * @description 評価を行います。
    * @param {Array} race - レース情報
    * @returns {Array} 評価値
    */
-  evaluate (race) {
+  evaluateV1 (race) {
     const fs = require('fs')
     const cols = JSON.parse(fs.readFileSync('resources/defs/identity-eval-param-colums.json', { encoding: 'utf-8' }))
     const dic = {}
@@ -37,5 +60,26 @@ module.exports = {
       }
     })
     return evals
+  },
+  /**
+   * @description 評価を行います。
+   * @param {Array} horses - 出馬情報
+   * @returns {Array} 評価値
+   */
+  evaluateV2 (horses) {
+    const calc = require('@h/calc-helper')
+    // オッズの偏差値を求める
+    const oddsSs = calc.standardScore(horses.map(h => h.odds))
+    // 評価値の偏差値を求める
+    const evalSs = calc.standardScore(horses.map(h => h.eval))
+    // 偏差値の差を求める
+    const diffs = oddsSs.map((o, i) => o - evalSs[i])
+    return diffs.map((d, i) => {
+      return {
+        oddsSs: oddsSs[i],
+        evalSs: evalSs[i],
+        score: d
+      }
+    })
   }
 }

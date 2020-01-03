@@ -5,6 +5,10 @@
  */
 module.exports = {
   /**
+   * @description 学習バージョン
+   */
+  version: 2,
+  /**
    * @description インプット情報を作成するかどうか
    */
   input: true,
@@ -25,18 +29,48 @@ module.exports = {
    */
   select: 'select_range_race_result_history',
   /**
+   * @description 出力対象のカラム定義を取得します。
+   * @returns {String} 出力対象のカラム定義名
+   */
+  colums () {
+    let def = ''
+    switch (module.exports.version) {
+      case 2:
+        def = 'learning-input-colums-v2'
+        break
+      default:
+        def = 'learning-input-colums-v1'
+    }
+    return def
+  },
+  /**
    * @description 学習情報の検証を行います。
    * @param {Object} data - 学習情報
    * @param {Array} validationCols - 検証対象のカラムリスト
    */
   validation (data, validationCols) {
-    const err = validationCols.some(key => {
-      // 4レース揃っていないデータは一旦除外する
-      // return data[key] && Number(data[key]) <= 0
-      return Number.isNaN(Number(data[key])) || Number(data[key]) <= 0
-    }) ||
-      // 4位未満は除外
-      Number(data.ret_pre0_order_of_finish) > 4
+    let err = false
+    switch (module.exports.version) {
+      case 2:
+        err = validationCols.some(key => {
+          if (!data[key]) {
+            return false
+          }
+          return Number.isNaN(Number(data[key])) ||
+            Number(data[key]) <= 0 ||
+            // 4位未満は除外
+            Number(data.ret_pre0_order_of_finish) > 4
+        })
+        break
+      default:
+        err = validationCols.some(key => {
+          // 4レース揃っていないデータは一旦除外する
+          // return data[key] && Number(data[key]) <= 0
+          return Number.isNaN(Number(data[key])) || Number(data[key]) <= 0
+        }) ||
+          // 4位未満は除外
+          Number(data.ret_pre0_order_of_finish) > 4
+    }
     return !err
   },
   /**
@@ -46,6 +80,14 @@ module.exports = {
    */
   createAnswer (data) {
     const creator = require('@an/learning-answer-creator')
-    return creator.createAnswerByTopOrder(data)
+    let answer = -1
+    switch (module.exports.version) {
+      case 2:
+        answer = creator.createAnswerByOdds(data)
+        break
+      default:
+        answer = creator.createAnswerByTopOrder(data)
+    }
+    return answer
   }
 }

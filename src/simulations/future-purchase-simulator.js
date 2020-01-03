@@ -17,12 +17,25 @@ module.exports = {
     const races = Object.values(adjuster.adjust(preds))
 
     // 購入対象を決める
+    const evaluator = require('@s/score-evaluator')
     const results = []
     for (const horses of races) {
       if (horses.length <= 0) {
         continue
       }
-      const purchases = horses.filter(h => h.eval > 30)
+      const scores = evaluator.evaluate(horses)
+      const purchases = horses
+        .map((h, i) => {
+          h.oddsSs = scores[i].oddsSs
+          h.evalSs = scores[i].evalSs
+          h.score = scores[i].score
+          return h
+        })
+        .filter(h => {
+          return h.score > 10 &&
+            // 人気が10位未満は足切りする
+            h.popularity <= 10
+        })
       const ret = {
         raceId: horses[0].raceId,
         raceName: horses[0].raceName,

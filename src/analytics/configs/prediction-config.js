@@ -25,6 +25,13 @@ module.exports = {
    */
   select: 'select_range_future_race_history',
   /**
+   * @description 出力対象のカラム定義を取得します。
+   * @returns {String} 出力対象のカラム定義名
+   */
+  colums () {
+    return require('@an/configs/learning-config').colums()
+  },
+  /**
    * @description 学習情報の検証を行います。
    * @param {Object} data - 学習情報
    * @param {Array} validationCols - 検証対象のカラムリスト
