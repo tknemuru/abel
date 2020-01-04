@@ -7,7 +7,7 @@ module.exports = {
   /**
    * @description バージョン
    */
-  version: 3,
+  version: 0,
   /**
    * @description 評価を行います。
    * @param {Array} horses - 出馬情報
@@ -26,7 +26,11 @@ module.exports = {
         evals = module.exports.evaluateV3(horses)
         break
       default:
-        evals = horses.map(h => h.eval)
+        evals = horses.map(h => {
+          return {
+            score: h.eval
+          }
+        })
     }
     return evals
   },

@@ -63,8 +63,8 @@ switch (options.target) {
     break
   case 'future-simulate':
     futureSimulator.simulate({
-      minScore: 121,
-      maxPopularity: 15
+      // minScore: 119
+      minScore: 100
     })
     break
   case 'test-simulate':

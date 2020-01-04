@@ -36,7 +36,7 @@ module.exports = {
     let def = ''
     switch (module.exports.version) {
       case 2:
-        def = 'learning-input-colums-v2'
+        def = 'learning-input-colums-v1'
         break
       default:
         def = 'learning-input-colums-v1'
@@ -53,13 +53,17 @@ module.exports = {
     switch (module.exports.version) {
       case 2:
         err = validationCols.some(key => {
-          if (!data[key]) {
-            return false
-          }
+          // 4レース揃っていないデータは一旦除外する
+          // if (!data[key]) {
+          //   return false
+          // }
           return Number.isNaN(Number(data[key])) ||
             Number(data[key]) <= 0 ||
             // 4位未満は除外
-            Number(data.ret_pre0_order_of_finish) > 4
+            // Number(data.ret_pre0_order_of_finish) > 4 ||
+            data.inf_pre0_race_name.includes('2歳') ||
+            data.inf_pre0_race_name.includes('3歳') ||
+            data.inf_pre0_race_name.includes('4歳')
         })
         break
       default:
@@ -83,7 +87,7 @@ module.exports = {
     let answer = -1
     switch (module.exports.version) {
       case 2:
-        answer = creator.createAnswerByOdds(data)
+        answer = creator.createAnswerByRecoveryRate(data)
         break
       default:
         answer = creator.createAnswerByTopOrder(data)

@@ -19,8 +19,8 @@ module.exports = {
       const { purchases } = ret
       for (const purchase of purchases) {
         const p = purchase.popularity
-        const o = Math.floor(purchase.odds / 100) * 100
-        const s = Math.floor(purchase.score / 100) * 100
+        const o = Math.floor(purchase.odds / 10) * 10
+        const s = Math.floor(purchase.score / 10) * 10
         module.exports._add(popularitys, p, purchase)
         module.exports._add(oddses, o, purchase)
         module.exports._add(scores, s, purchase)

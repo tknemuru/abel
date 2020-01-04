@@ -53,5 +53,33 @@ module.exports = {
     const odds = data.ret_pre0_odds
     validator.required(odds)
     return odds
+  },
+  /**
+   * @description オッズと順位によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByOddsAndOrder (data) {
+    const validator = require('@h/validation-helper')
+    const odds = data.ret_pre0_odds
+    const order = data.ret_pre0_order_of_finish
+    validator.required(odds)
+    validator.required(order)
+    const _order = Number(order)
+    return Math.round((odds * _order) * 10) / 10
+  },
+  /**
+   * @description 回収率によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByRecoveryRate (data) {
+    const validator = require('@h/validation-helper')
+    const odds = data.ret_pre0_odds
+    const order = data.ret_pre0_order_of_finish
+    validator.required(odds)
+    validator.required(order)
+    const _order = Number(order)
+    return (_order === 1) ? odds : 0
   }
 }

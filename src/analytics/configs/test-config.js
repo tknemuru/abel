@@ -47,11 +47,14 @@ module.exports = {
       console.log(module.exports.salt)
     }
     const err = validationCols.some(key => {
-      if (!data[key]) {
-        return false
-      }
+      // if (!data[key]) {
+      //   return false
+      // }
       return Number.isNaN(Number(data[key])) ||
-        Number(data[key]) <= 0
+        Number(data[key]) <= 0 ||
+        data.inf_pre0_race_name.includes('2歳') ||
+        data.inf_pre0_race_name.includes('3歳') ||
+        data.inf_pre0_race_name.includes('4歳')
     })
     return !err && data.inf_pre0_race_id % module.exports.salt === 0
   },

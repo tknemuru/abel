@@ -11,7 +11,7 @@ module.exports = {
   /**
    * @description 正解情報を作成するかどうか
    */
-  answer: true,
+  answer: false,
   /**
    * @description 紐付き情報を作成するかどうか
    */
@@ -37,8 +37,17 @@ module.exports = {
    * @param {Array} validationCols - 検証対象のカラムリスト
    */
   validation (data, validationCols) {
-    // 全レースを対象にする
-    return true
+    const err = validationCols.some(key => {
+      if (key.includes('pre0')) {
+        return false
+      }
+      return Number.isNaN(Number(data[key])) ||
+        Number(data[key]) <= 0 ||
+        data.inf_pre0_race_name.includes('2歳') ||
+        data.inf_pre0_race_name.includes('3歳') ||
+        data.inf_pre0_race_name.includes('4歳')
+    })
+    return !err
   },
   /**
    * @description 正解データを作成します。

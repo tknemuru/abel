@@ -5,10 +5,10 @@
  */
 module.exports = {
   async simulate () {
-    for (let i = 216; i < 217; i++) {
-      for (let p = 14; p < 15; p++) {
-        for (let o = 600; o < 601; o++) {
-          for (let s = 600; s < 601; s++) {
+    for (let i = 119; i < 120; i++) {
+      for (let p = 104; p < 105; p++) {
+        for (let o = 9000; o < 9001; o++) {
+          for (let s = 9000; s < 9001; s++) {
             module.exports._simulate({
               minScore: i,
               maxPopularity: p,
@@ -33,10 +33,17 @@ module.exports = {
     // 購入対象を取得
     const sims = require('@s/future-purchase-simulator').simulate(params)
 
+    const calculator = require('@s/recovery-rate-calculator')
     let allRates = []
+    let allCount = 0
+    let winCount = 0
+    let winRate = 0
     for (const sim of sims) {
+      allCount += sim.purchases.length
+      winCount += sim.purchases.filter(p => Number(p.orderOfFinish === 1)).length
+      winRate = Math.round((winCount / allCount) * 1000) / 10
       // 購入した馬券から回収率を算出
-      const rates = sim.purchases.map(s => s.orderOfFinish === 1 ? s.odds : 0)
+      const rates = calculator.calc(sim.purchases)
       allRates = allRates.concat(rates)
     }
 
@@ -44,6 +51,6 @@ module.exports = {
     const _ = require('lodash')
     const sum = _.reduce(allRates, (sum, rate) => sum + rate)
     const avg = (sum / allRates.length) * 100
-    console.log(`minS: ${params.minScore} maxP: ${params.maxPopularity} maxO: ${params.maxOdds} maxS: ${params.maxScore} avg: ${avg}`)
+    console.log(`minS: ${params.minScore} maxP: ${params.maxPopularity} maxO: ${params.maxOdds} maxS: ${params.maxScore} avg: ${avg} allC: ${allCount} winC: ${winCount} winR: ${winRate}%`)
   }
 }

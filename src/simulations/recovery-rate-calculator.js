@@ -6,14 +6,19 @@
 module.exports = {
   /**
    * @description 回収率を算出します。
-   * @param {Array} race - レース情報
-   * @param {Array} horses - 購入対象の馬情報
+   * @param {Array} purchases - 購入情報
    * @returns {Array} 回収率
    */
-  calc (race, horses) {
-    const rates = race
-      .filter(r => horses.some(h => h === r.horseNumber))
-      .map(r => r.orderOfFinish === 1 ? r.odds : 0)
+  calc (purchases) {
+    const rates = purchases
+      .map(p => {
+        if (p.orderOfFinish !== 1) {
+          return 0
+        }
+        const ticketNum = p.ticketNum || 1
+        // return p.orgOdds * ticketNum
+        return p.odds * ticketNum
+      })
     return rates
   }
 }
