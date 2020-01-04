@@ -11,7 +11,7 @@ module.exports = {
   /**
    * @description 正解情報を作成するかどうか
    */
-  answer: false,
+  answer: true,
   /**
    * @description 紐付き情報を作成するかどうか
    */
@@ -46,7 +46,6 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswer (data) {
-    // 正解を作ることはない
-    throw new Error('unexpected call')
+    return require('@an/configs/learning-config').createAnswer(data)
   }
 }

@@ -5,20 +5,60 @@
  */
 module.exports = {
   /**
-   * @description 購入します。
-   * @param {Object} params - パラメータ
-   * @param {Object} params.evals - 評価値
-   * @param {Number} params.minEval - 最低評価値
-   * @returns {Array} 購入する枠番
+   * バージョン
    */
-  purchase (params) {
-    const horses = params.evals
-      .filter(e => e.eval >= params.minEval)
-      .map(e => e.horseNumber)
-    if (horses.length > 0) {
-      console.log(params.evals)
-      console.log(horses)
+  version: 2,
+  /**
+   * @description 購入します。
+   * @param {Array} horses - 出馬リスト
+   * @param {Array} scores - 評価値リスト
+   * @returns {Array} 購入リスト
+   */
+  purchase (horses, scores) {
+    let purchases = []
+    switch (module.exports.version) {
+      case 2:
+        purchases = module.exports.purchaseV2(horses, scores)
+        break
+      default:
+        purchases = module.exports.purchaseV1(horses, scores)
     }
-    return horses
+    return purchases
+  },
+  /**
+   * @description 購入します。
+   * @param {Array} horses - 出馬リスト
+   * @param {Array} scores - 評価値リスト
+   * @returns {Array} 購入リスト
+   */
+  purchaseV1 (horses, scores) {
+    const purchases = horses
+      .map((h, i) => {
+        h.oddsSs = scores[i].oddsSs
+        h.evalSs = scores[i].evalSs
+        h.score = scores[i].score
+        return h
+      })
+      .filter(h => {
+        return h.score > 10
+      })
+    return purchases
+  },
+  /**
+   * @description 購入します。
+   * @param {Array} horses - 出馬リスト
+   * @param {Array} scores - 評価値リスト
+   * @returns {Array} 購入リスト
+   */
+  purchaseV2 (horses, scores) {
+    const purchases = horses
+      .map((h, i) => {
+        h.score = scores[i].score
+        return h
+      })
+      .filter(h => {
+        return h.score > 32
+      })
+    return purchases
   }
 }

@@ -15,14 +15,25 @@ module.exports = {
     // 分割して書き込んでいるため不正な箇所が出てしまうので修正しておく
     let relations = orgRelations.replace(/\]\[/g, ',')
     relations = JSON.parse(relations)
+
+    // 予測結果の読み込み
     let predResults = fs.readFileSync('resources/learnings/pred-result.txt', { encoding: 'utf-8' })
     predResults = predResults
       .split(/\n/)
       .map(p => p.split(' '))
     // 結果の方は最後に空行が入っている
     validator.expect(relations.length === predResults.length - 1)
+
+    // 正規化予測オッズの読み込み
+    let odds = fs.readFileSync('resources/learnings/odds.txt', { encoding: 'utf-8' })
+    odds = odds
+      .split(/\n/)
+    validator.expect(relations.length === odds.length - 1)
+
     const ret = relations.map((r, i) => {
       r.eval = Math.round(Number(predResults[i][0]) * 1000) / 10
+      r.orgOdds = r.odds
+      r.odds = Math.round(Number(odds[i]) * 1000) / 10
       return r
     })
     fs.writeFileSync('resources/learnings/pred-result.json'

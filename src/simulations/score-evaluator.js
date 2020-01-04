@@ -7,7 +7,7 @@ module.exports = {
   /**
    * @description バージョン
    */
-  version: 2,
+  version: 3,
   /**
    * @description 評価を行います。
    * @param {Array} horses - 出馬情報
@@ -21,6 +21,9 @@ module.exports = {
         break
       case 2:
         evals = module.exports.evaluateV2(horses)
+        break
+      case 3:
+        evals = module.exports.evaluateV3(horses)
         break
       default:
         evals = horses.map(h => h.eval)
@@ -69,7 +72,7 @@ module.exports = {
   evaluateV2 (horses) {
     const calc = require('@h/calc-helper')
     // オッズの偏差値を求める
-    const oddsSs = calc.standardScore(horses.map(h => h.odds))
+    const oddsSs = calc.standardScore(horses.map(h => h.orgOdds))
     // 評価値の偏差値を求める
     const evalSs = calc.standardScore(horses.map(h => h.eval))
     // 偏差値の差を求める
@@ -79,6 +82,20 @@ module.exports = {
         oddsSs: oddsSs[i],
         evalSs: evalSs[i],
         score: d
+      }
+    })
+  },
+  /**
+   * @description 評価を行います。
+   * @param {Array} horses - 出馬情報
+   * @returns {Array} 評価値
+   */
+  evaluateV3 (horses) {
+    // 差を求める
+    const diffs = horses.map((h, i) => h.odds - h.eval)
+    return diffs.map((d, i) => {
+      return {
+        score: Math.round(Number(d) * 10) / 10
       }
     })
   }

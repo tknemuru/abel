@@ -11,7 +11,7 @@ module.exports = {
   /**
    * @description 正解情報を作成するかどうか
    */
-  answer: false,
+  answer: true,
   /**
    * @description 紐付き情報を作成するかどうか
    */
@@ -42,7 +42,8 @@ module.exports = {
    */
   validation (data, validationCols) {
     if (!module.exports.salt) {
-      module.exports.salt = Math.floor(Math.random() * 100) + 100
+      // module.exports.salt = Math.floor(Math.random() * 50) + 50
+      module.exports.salt = 5
       console.log(module.exports.salt)
     }
     const err = validationCols.some(key => {
@@ -60,7 +61,6 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswer (data) {
-    // 正解を作ることはない
-    throw new Error('unexpected call')
+    return require('@an/configs/learning-config').createAnswer(data)
   }
 }
