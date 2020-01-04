@@ -11,9 +11,9 @@ module.exports = {
           for (let s = 9000; s < 9001; s++) {
             module.exports._simulate({
               minScore: i,
-              maxPopularity: p,
-              maxOdds: o,
-              maxScore: s
+              maxPopularity: null,
+              maxOdds: null,
+              maxScore: null
             })
           }
         }

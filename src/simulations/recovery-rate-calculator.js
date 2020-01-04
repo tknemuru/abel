@@ -12,10 +12,10 @@ module.exports = {
   calc (purchases) {
     const rates = purchases
       .map(p => {
-        if (p.orderOfFinish !== 1) {
-          return 0
-        }
         const ticketNum = p.ticketNum || 1
+        if (p.orderOfFinish !== 1) {
+          return ticketNum * -1
+        }
         // return p.orgOdds * ticketNum
         return p.odds * ticketNum
       })
