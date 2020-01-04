@@ -43,7 +43,7 @@ module.exports = {
   validation (data, validationCols) {
     if (!module.exports.salt) {
       // module.exports.salt = Math.floor(Math.random() * 50) + 50
-      module.exports.salt = 5
+      module.exports.salt = 3
       console.log(module.exports.salt)
     }
     const err = validationCols.some(key => {

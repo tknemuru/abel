@@ -67,7 +67,9 @@ module.exports = {
       })
       .filter(h => {
         return h.score > params.minScore &&
-          (!params.maxPopularity || h.popularity < params.maxPopularity)
+          (!params.maxPopularity || h.popularity < params.maxPopularity) &&
+          (!params.maxOdds || h.odds < params.maxOdds) &&
+          (!params.maxScore || h.score < params.maxScore)
       })
     return purchases
   }

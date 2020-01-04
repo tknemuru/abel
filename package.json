@@ -18,7 +18,8 @@
     "learn-pre": "node ./src/index.js -t learn-pre",
     "pred-pre": "node ./src/index.js -t pred-pre",
     "test-pre": "node ./src/index.js -t test-pre",
-    "pred-adjust": "node ./src/index.js -t pred-adjust"
+    "pred-adjust": "node ./src/index.js -t pred-adjust",
+    "sim-analyze": "node ./src/index.js -t sim-analyze"
   },
   "repository": {
     "type": "git",

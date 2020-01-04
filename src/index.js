@@ -27,6 +27,7 @@ const learningConfig = require('@an/configs/learning-config')
 const testConfig = require('@an/configs/test-config')
 const predictionConfig = require('@an/configs/prediction-config')
 const predAdjuster = require('@an/prediction-result-adjuster')
+const simAnalyzer = require('@an/simulation-result-analyzer')
 
 switch (options.target) {
   case 'init-db':
@@ -89,6 +90,9 @@ switch (options.target) {
     break
   case 'pred-adjust':
     predAdjuster.adjust()
+    break
+  case 'sim-analyze':
+    simAnalyzer.analyze()
     break
   default:
     throw new Error('unexpected target.')
