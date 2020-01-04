@@ -6,9 +6,11 @@
 module.exports = {
   /**
    * @description 開催予定レース購入のシミュレーションを行います。
+   * @param {Object} params - パラメータ
+   * @param {Number} params.minScore - 最小スコア
    * @returns {void}
    */
-  simulate () {
+  simulate (params = {}) {
     const fs = require('fs')
     const preds = JSON.parse(fs.readFileSync('resources/learnings/pred-result.json', { encoding: 'utf-8' }))
 
@@ -25,7 +27,7 @@ module.exports = {
         continue
       }
       const scores = evaluator.evaluate(horses)
-      const purchases = purchaser.purchase(horses, scores)
+      const purchases = purchaser.purchase(horses, scores, params)
       const ret = {
         raceId: horses[0].raceId,
         raceName: horses[0].raceName,

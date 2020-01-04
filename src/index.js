@@ -61,7 +61,10 @@ switch (options.target) {
     futureRegister.register()
     break
   case 'future-simulate':
-    futureSimulator.simulate()
+    futureSimulator.simulate({
+      minScore: 121,
+      maxPopularity: 15
+    })
     break
   case 'test-simulate':
     testSimulator.simulate()

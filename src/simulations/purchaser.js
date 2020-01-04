@@ -12,13 +12,16 @@ module.exports = {
    * @description 購入します。
    * @param {Array} horses - 出馬リスト
    * @param {Array} scores - 評価値リスト
+   * @param {Object} params - パラメータ
+   * @param {Number} params.minScore - 最小スコア
+   * @param {Number} params.maxPopularity - 最大人気順
    * @returns {Array} 購入リスト
    */
-  purchase (horses, scores) {
+  purchase (horses, scores, params) {
     let purchases = []
     switch (module.exports.version) {
       case 2:
-        purchases = module.exports.purchaseV2(horses, scores)
+        purchases = module.exports.purchaseV2(horses, scores, params)
         break
       default:
         purchases = module.exports.purchaseV1(horses, scores)
@@ -48,16 +51,23 @@ module.exports = {
    * @description 購入します。
    * @param {Array} horses - 出馬リスト
    * @param {Array} scores - 評価値リスト
+   * @param {Object} params - パラメータ
+   * @param {Number} params.minScore - 最小スコア
+   * @param {Number} params.maxPopularity - 最大人気順
    * @returns {Array} 購入リスト
    */
-  purchaseV2 (horses, scores) {
+  purchaseV2 (horses, scores, params) {
+    const validator = require('@h/validation-helper')
+    validator.required(params)
+    validator.required(params.minScore)
     const purchases = horses
       .map((h, i) => {
         h.score = scores[i].score
         return h
       })
       .filter(h => {
-        return h.score > 32
+        return h.score > params.minScore &&
+          (!params.maxPopularity || h.popularity < params.maxPopularity)
       })
     return purchases
   }
