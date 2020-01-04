@@ -5,10 +5,10 @@
  */
 module.exports = {
   async simulate () {
-    for (let i = 121; i < 122; i++) {
+    for (let i = 216; i < 217; i++) {
       for (let p = 14; p < 15; p++) {
-        for (let o = 900; o < 901; o++) {
-          for (let s = 900; s < 901; s++) {
+        for (let o = 600; o < 601; o++) {
+          for (let s = 600; s < 601; s++) {
             module.exports._simulate({
               minScore: i,
               maxPopularity: p,
