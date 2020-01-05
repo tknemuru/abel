@@ -36,7 +36,7 @@ module.exports = {
     let def = ''
     switch (module.exports.version) {
       case 2:
-        def = 'learning-input-colums-v1'
+        def = 'learning-input-colums-v3'
         break
       default:
         def = 'learning-input-colums-v1'

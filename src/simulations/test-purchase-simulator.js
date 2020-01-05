@@ -5,8 +5,8 @@
  */
 module.exports = {
   async simulate () {
-    for (let i = 121; i < 122; i++) {
-      for (let p = 102; p < 103; p++) {
+    for (let i = 999; i < 1000; i++) {
+      for (let p = 80; p < 81; p++) {
         module.exports._simulate({
           minScore: i,
           minPlaceScore: p
@@ -36,7 +36,7 @@ module.exports = {
     let placeRate = 0
     for (const sim of sims) {
       allCount += sim.purchases.length
-      winCount += sim.purchases.filter(p => Number(p.orderOfFinish === 1)).length
+      winCount += sim.purchases.filter(p => Number(p.orderOfFinish === 1 && p.score > params.minScore)).length
       winRate = Math.round((winCount / allCount) * 1000) / 10
       placeCount += sim.purchases.filter(p => Number(p.orderOfFinish <= 3)).length
       placeRate = Math.round((placeCount / allCount) * 1000) / 10

@@ -64,8 +64,8 @@ switch (options.target) {
     break
   case 'future-simulate':
     futureSimulator.simulate({
-      minScore: 121,
-      minPlaceScore: 102
+      minScore: 999,
+      minPlaceScore: 60
     })
     break
   case 'test-simulate':
