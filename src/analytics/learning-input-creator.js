@@ -16,11 +16,13 @@ module.exports = {
   async create (config) {
     const validator = require('@h/validation-helper')
     validator.required(config)
-    const moment = require('moment')
-    const timestamp = moment().format('YYYYMMDDHHmmss')
-    console.log(timestamp)
     const reader = require('@d/sql-reader')
     const accessor = require('@d/db-accessor')
+
+    // 既存ファイルを削除する
+    module.exports._clearFile('input.csv')
+    module.exports._clearFile('answer.csv')
+    module.exports._clearFile('relation.json')
 
     // 対象カラム情報を読み込む
     const fs = require('fs')
@@ -52,17 +54,17 @@ module.exports = {
 
       // 学習データを作成
       if (config.input) {
-        module.exports._createInput(hists, targets, validationCols, timestamp, config)
+        module.exports._createInput(hists, targets, validationCols, config)
       }
 
       // 正解データを作成
       if (config.answer) {
-        module.exports._createAnswer(hists, validationCols, timestamp, config)
+        module.exports._createAnswer(hists, validationCols, config)
       }
 
       // 紐付きデータを作成
       if (config.relation) {
-        module.exports._createRelation(hists, validationCols, timestamp, config)
+        module.exports._createRelation(hists, validationCols, config)
       }
 
       fromIdx = toIdx + 1
@@ -74,11 +76,10 @@ module.exports = {
    * @param {Array} hists - 履歴情報
    * @param {Array} targets - インプット対象のカラム
    * @param {Array} validationCols - 検証対象のカラム
-   * @param {String} timestamp - タイムスタンプ
    * @param {Object} config - 設定情報
    * @returns {void}
    */
-  async _createInput (hists, targets, validationCols, timestamp, config) {
+  async _createInput (hists, targets, validationCols, config) {
     const scoreParams = module.exports._createScoreParams()
     let dataList = []
     let i = 1
@@ -99,23 +100,22 @@ module.exports = {
       if (i % 1000 === 0) {
         console.log(i)
         // データを書き込む
-        module.exports._writeInput(dataList, timestamp)
+        module.exports._writeInput(dataList)
         dataList = []
       }
       i++
     }
     // データを書き込む
-    module.exports._writeInput(dataList, timestamp)
+    module.exports._writeInput(dataList)
   },
   /**
    * @description 学習用正解情報を作成します。
    * @param {Array} hists - 履歴情報
    * @param {Array} validationCols - 検証対象のカラム
-   * @param {String} timestamp - タイムスタンプ
    * @param {Object} config - 設定情報
    * @returns {void}
    */
-  _createAnswer (hists, validationCols, timestamp, config) {
+  _createAnswer (hists, validationCols, config) {
     let ansList = []
     let i = 1
     for (const hist of hists) {
@@ -129,23 +129,22 @@ module.exports = {
       if (i % 1000 === 0) {
         console.log(i)
         // データを書き込む
-        module.exports._writeAnswer(ansList, timestamp)
+        module.exports._writeAnswer(ansList)
         ansList = []
       }
       i++
     }
     // データを書き込む
-    module.exports._writeAnswer(ansList, timestamp)
+    module.exports._writeAnswer(ansList)
   },
   /**
    * @description 紐付き情報を作成します。
    * @param {Array} hists - 履歴情報
    * @param {Array} validationCols - 検証対象のカラム
-   * @param {String} timestamp - タイムスタンプ
    * @param {Object} config - 設定情報
    * @returns {void}
    */
-  _createRelation (hists, validationCols, timestamp, config) {
+  _createRelation (hists, validationCols, config) {
     const conv = require('@h/convert-helper')
     let i = 1
     let rels = []
@@ -167,13 +166,13 @@ module.exports = {
       if (i % 1000 === 0) {
         console.log(i)
         // データを書き込む
-        module.exports._writeRelation(rels, timestamp)
+        module.exports._writeRelation(rels)
         rels = []
       }
       i++
     }
     // データを書き込む
-    module.exports._writeRelation(rels, timestamp)
+    module.exports._writeRelation(rels)
   },
   /**
    * @description 全出力カラムリストを抽出します。
@@ -281,29 +280,38 @@ module.exports = {
     return !val || !Number(val) ? 0 : Number(val)
   },
   /**
+   * @description ファイルを削除します。
+   * @param {String} fileName ファイル名
+   */
+  _clearFile (fileName) {
+    const path = `resources/learnings/${fileName}`
+    if (!require('@h/html-helper').existsFile(path)) {
+      return
+    }
+    const fs = require('fs')
+    fs.unlinkSync(`resources/learnings/${fileName}`)
+  },
+  /**
    * @description インプットデータの書き込みを行います。
    * @param {Array} data - 学習データ
-   * @param {String} timestamp - タイムスタンプ
    */
-  _writeInput (data, timestamp) {
-    module.exports._write(data, timestamp, 'input')
+  _writeInput (data) {
+    module.exports._write(data, 'input')
   },
   /**
    * @description 正解データの書き込みを行います。
    * @param {Array} data - 正解データ
-   * @param {String} timestamp - タイムスタンプ
    */
-  _writeAnswer (data, timestamp) {
-    module.exports._write(data, timestamp, 'answer')
+  _writeAnswer (data) {
+    module.exports._write(data, 'answer')
   },
   /**
    * @description 紐付きデータの書き込みを行います。
    * @param {Array} data - 紐付きデータ
-   * @param {String} timestamp - タイムスタンプ
    */
-  _writeRelation (data, timestamp) {
+  _writeRelation (data) {
     const fs = require('fs')
-    fs.appendFileSync(`resources/learnings/relation_${timestamp}.json`
+    fs.appendFileSync('resources/learnings/relation.json'
       , JSON.stringify(data, null, '  ')
       , { encoding: 'utf-8' }
     )
@@ -311,14 +319,13 @@ module.exports = {
   /**
    * @description データの書き込みを行います。
    * @param {Array} data - データ
-   * @param {String} timestamp - タイムスタンプ
    * @param {String} prefix - ファイル名のプレフィックス
    */
-  _write (data, timestamp, prefix) {
+  _write (data, prefix) {
     const csvHelper = require('@h/csv-helper')
     const fs = require('fs')
     const dataCsv = csvHelper.toCsv(data)
-    fs.appendFileSync(`resources/learnings/${prefix}_${timestamp}.csv`
+    fs.appendFileSync(`resources/learnings/${prefix}.csv`
       , dataCsv
       , { encoding: 'utf-8' }
     )
