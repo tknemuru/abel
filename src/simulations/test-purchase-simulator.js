@@ -5,18 +5,12 @@
  */
 module.exports = {
   async simulate () {
-    for (let i = 119; i < 120; i++) {
-      for (let p = 104; p < 105; p++) {
-        for (let o = 9000; o < 9001; o++) {
-          for (let s = 9000; s < 9001; s++) {
-            module.exports._simulate({
-              minScore: i,
-              maxPopularity: null,
-              maxOdds: null,
-              maxScore: null
-            })
-          }
-        }
+    for (let i = 121; i < 122; i++) {
+      for (let p = 102; p < 103; p++) {
+        module.exports._simulate({
+          minScore: i,
+          minPlaceScore: p
+        })
       }
     }
   },
@@ -38,10 +32,14 @@ module.exports = {
     let allCount = 0
     let winCount = 0
     let winRate = 0
+    let placeCount = 0
+    let placeRate = 0
     for (const sim of sims) {
       allCount += sim.purchases.length
       winCount += sim.purchases.filter(p => Number(p.orderOfFinish === 1)).length
       winRate = Math.round((winCount / allCount) * 1000) / 10
+      placeCount += sim.purchases.filter(p => Number(p.orderOfFinish <= 3)).length
+      placeRate = Math.round((placeCount / allCount) * 1000) / 10
       // 購入した馬券から回収率を算出
       const rates = calculator.calc(sim.purchases)
       allRates = allRates.concat(rates)
@@ -51,6 +49,6 @@ module.exports = {
     const _ = require('lodash')
     const sum = _.reduce(allRates, (sum, rate) => sum + rate)
     const avg = (sum / allRates.length) * 100
-    console.log(`minS: ${params.minScore} maxP: ${params.maxPopularity} maxO: ${params.maxOdds} maxS: ${params.maxScore} avg: ${avg} allC: ${allCount} winC: ${winCount} winR: ${winRate}%`)
+    console.log(`minS: ${params.minScore} maxP: ${params.minPlaceScore} avg: ${avg} allC: ${allCount} winC: ${winCount} winR: ${winRate}% placeC: ${placeCount} placeR: ${placeRate}%`)
   }
 }

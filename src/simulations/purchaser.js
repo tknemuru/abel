@@ -7,7 +7,7 @@ module.exports = {
   /**
    * バージョン
    */
-  version: 3,
+  version: 4,
   /**
    * @description 購入します。
    * @param {Array} horses - 出馬リスト
@@ -25,6 +25,9 @@ module.exports = {
         break
       case 3:
         purchases = module.exports.purchaseV3(horses, scores, params)
+        break
+      case 4:
+        purchases = module.exports.purchaseV4(horses, scores, params)
         break
       default:
         purchases = module.exports.purchaseV1(horses, scores)
@@ -122,5 +125,55 @@ module.exports = {
           (!params.maxScore || h.score < params.maxScore)
       })
     return purchases
+  },
+  /**
+   * @description 購入します。
+   * @param {Array} horses - 出馬リスト
+   * @param {Array} scores - 評価値リスト
+   * @param {Object} params - パラメータ
+   * @param {Number} params.minScore - 最小スコア
+   * @param {Number} params.maxPopularity - 最大人気順
+   * @returns {Array} 購入リスト
+   */
+  purchaseV4 (horses, scores, params) {
+    const validator = require('@h/validation-helper')
+    validator.required(params)
+    validator.required(params.minScore)
+    validator.required(params.minPlaceScore)
+    const purchases = horses
+      .map((h, i) => {
+        h.score = scores[i].score
+        let ticketNum = 0
+        let placeTicketNum = 0
+        if (h.score > params.minScore) {
+          ticketNum = module.exports._purchaseWinTicket(h)
+        }
+        placeTicketNum = 1
+        h.ticketNum = ticketNum
+        h.placeTicketNum = placeTicketNum
+        return h
+      })
+      .filter(h => {
+        return h.score > params.minPlaceScore
+      })
+    return purchases
+  },
+  /**
+   * @description 単勝チケットを購入します。
+   * @param {Object} horse 購入馬
+   */
+  _purchaseWinTicket (horse) {
+    let ticketNum = 1
+    switch (horse.popularity) {
+      case 1:
+        ticketNum = 3
+        break
+      case 2:
+        ticketNum = 2
+        break
+      default:
+        ticketNum = 1
+    }
+    return ticketNum
   }
 }

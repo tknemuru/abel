@@ -13,11 +13,17 @@ module.exports = {
     const rates = purchases
       .map(p => {
         const ticketNum = p.ticketNum || 1
-        if (p.orderOfFinish !== 1) {
-          return ticketNum * -1
+        const placeTicketNum = p.placeTicketNum || 0
+        let odds = 0
+        odds += ticketNum * -1
+        if (p.orderOfFinish <= 3) {
+          odds += Math.max(p.odds * 0.3, 1.0) * placeTicketNum
         }
-        // return p.orgOdds * ticketNum
-        return p.odds * ticketNum
+        if (p.orderOfFinish === 1) {
+          odds += p.odds * ticketNum
+        }
+        // 払い戻し率を考慮
+        return odds * 0.8
       })
     return rates
   }
