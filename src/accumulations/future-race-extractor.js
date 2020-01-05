@@ -17,29 +17,57 @@ module.exports = {
     race = module.exports._extractRaceName(dom, race)
     race = module.exports._extractRaceInfo1(dom, race)
     race = module.exports._extractRaceInfo2(dom, race)
-    race = module.exports._extractWeather(dom, race)
-    race = module.exports._extractSurfaceState(dom, race)
     race = module.exports._extractRaceNumber(dom, race)
-    let horses = []
-    horses = module.exports._extractHorseIdAndName(dom, horses)
-    horses = module.exports._extractSexAndAge(dom, horses)
-    horses = module.exports._extractJockeyId(dom, horses)
-    horses = module.exports._extractOdds(dom, horses)
-    horses = module.exports._extractPopularity(dom, horses)
-    horses = module.exports._extractTrainerId(dom, horses)
-    horses = module.exports._numberingHorseNumber(horses)
-    horses = module.exports._extractFrameNumber(dom, horses)
-    horses = module.exports._extractBasisWeight(dom, horses)
-    horses = module.exports._extractHorseWeight(dom, horses)
+
+    const horses = []
+    let horseNumber = 1
+    const horseListDoms = module.exports._extractHorseList(dom)
+    for (const horseDom of horseListDoms) {
+      if (module.exports._isCancel(horseDom)) {
+        continue
+      }
+      let horse = {
+        horseNumber
+      }
+      horse = module.exports._extractHorseIdAndName(horseDom, horse)
+      horse = module.exports._extractSexAndAge(horseDom, horse)
+      horse = module.exports._extractJockeyId(horseDom, horse)
+      horse = module.exports._extractOdds(horseDom, horse)
+      horse = module.exports._extractPopularity(horseDom, horse)
+      horse = module.exports._extractTrainerId(horseDom, horse)
+      horse = module.exports._extractFrameNumber(horseDom, horse)
+      horse = module.exports._extractBasisWeight(horseDom, horse)
+      horse = module.exports._extractHorseWeight(horseDom, horse)
+      horses.push(horse)
+      horseNumber++
+    }
     return {
       race,
       horses
     }
   },
   /**
+   * @description 馬行リストを抽出します。
+   * @param {Object} dom DOM
+   */
+  _extractHorseList (dom) {
+    let tags = dom.window.document.querySelectorAll('.HorseList')
+    tags = [].slice.call(tags)
+    return tags
+  },
+  /**
+   * @description 対象の馬が取り消しかどうか
+   * @param {Object} horseListDom 馬行のDOM
+   */
+  _isCancel (horseListDom) {
+    let cancelTag = horseListDom.querySelectorAll('.Cancel_Txt')
+    cancelTag = [].slice.call(cancelTag)
+    return cancelTag.length > 0
+  },
+  /**
    * @description レース名を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
+   * @param {Object} data - 抽出データ
    * @returns {Object} 抽出データ
    */
   _extractRaceName (dom, data) {
@@ -52,7 +80,7 @@ module.exports = {
   /**
    * @description レース情報(1行目)を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
+   * @param {Object} data - 抽出データ
    * @returns {Object} 抽出データ
    */
   _extractRaceInfo1 (dom, data) {
@@ -62,6 +90,8 @@ module.exports = {
       .split('/')
     const time = texts.length > 1 ? texts[0] : '未定'
     const surfaceUnit = texts.length > 1 ? texts[1] : texts[0]
+    const weatherUnit = texts.length > 2 ? texts[2] : '未定'
+    const stateUnit = texts.length > 3 ? texts[3] : '未定'
     const raceStart = time
       .trim()
       .replace('発走', '')
@@ -79,17 +109,28 @@ module.exports = {
       .trim()
       .replace(' ', '')
       .replace(')', '')
+    const weather = weatherUnit
+      .trim()
+      .replace('天候:', '')
+    let surfaceState = stateUnit
+      .trim()
+      .replace('馬場:', '')
+      .replace('稍', '稍重')
+      .replace('不', '不良')
+    surfaceState = `${surface}:${surfaceState}`
     const _data = {
       surface: `${surface}${direction}`,
       distance,
-      raceStart
+      raceStart,
+      weather,
+      surfaceState
     }
     return Object.assign(data, _data)
   },
   /**
    * @description レース情報(2行目)を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
+   * @param {Object} data - 抽出データ
    * @returns {Object} 抽出データ
    */
   _extractRaceInfo2 (dom, data) {
@@ -107,33 +148,9 @@ module.exports = {
     return Object.assign(data, info)
   },
   /**
-   * @description 天気を抽出します。
-   * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Object} 抽出データ
-   */
-  _extractWeather (dom, data) {
-    const _data = {
-      weather: '未定'
-    }
-    return Object.assign(data, _data)
-  },
-  /**
-   * @description 馬場の状態を抽出します。
-   * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Object} 抽出データ
-   */
-  _extractSurfaceState (dom, data) {
-    const _data = {
-      surfaceState: '未定'
-    }
-    return Object.assign(data, _data)
-  },
-  /**
    * @description レース番号を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
+   * @param {Object} data - 抽出データ
    * @returns {Object} 抽出データ
    */
   _extractRaceNumber (dom, data) {
@@ -146,11 +163,11 @@ module.exports = {
   /**
    * @description 馬名と馬IDを抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractHorseIdAndName (dom, data) {
-    const tags = dom.window.document.querySelectorAll('.HorseList .HorseName>a')
+    const tags = dom.querySelectorAll('.HorseList .HorseName>a')
     const idAndNames = [].slice.call(tags).map(tag => {
       const url = tag.href
       const horseId = url.replace(`${module.exports.BaseUrl}/horse/`, '')
@@ -165,11 +182,11 @@ module.exports = {
   /**
    * @description 騎手IDを抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractJockeyId (dom, data) {
-    const tags = dom.window.document.querySelectorAll('.Jockey>a')
+    const tags = dom.querySelectorAll('.Jockey>a')
     const ids = [].slice.call(tags).map(tag => {
       const url = tag.href
       const jockeyId = url
@@ -184,11 +201,11 @@ module.exports = {
   /**
    * @description 性別と年齢を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractSexAndAge (dom, data) {
-    const tags = dom.window.document.querySelectorAll('.HorseInfo + td')
+    const tags = dom.querySelectorAll('.HorseInfo + td')
     const sexAndAges = [].slice.call(tags).map(tag => {
       const texts = tag.textContent.split('')
       return {
@@ -201,11 +218,11 @@ module.exports = {
   /**
    * @description 枠番を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractFrameNumber (dom, data) {
-    const tags = dom.window.document.querySelectorAll('.Waku>span')
+    const tags = dom.querySelectorAll('.Waku>span')
     const _data = [].slice.call(tags).map(tag => {
       return {
         frameNumber: module.exports._convNum(tag.textContent)
@@ -216,11 +233,11 @@ module.exports = {
   /**
    * @description 斤量を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractBasisWeight (dom, data) {
-    const tags = dom.window.document.querySelectorAll('.HorseInfo+td+td')
+    const tags = dom.querySelectorAll('.HorseInfo+td+td')
     const _data = [].slice.call(tags).map(tag => {
       return {
         basisWeight: module.exports._convNum(tag.textContent)
@@ -231,11 +248,11 @@ module.exports = {
   /**
    * @description 馬体重を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractHorseWeight (dom, data) {
-    const tags = dom.window.document.querySelectorAll('.HorseList .Weight')
+    const tags = dom.querySelectorAll('.HorseList .Weight')
     const _data = [].slice.call(tags).map(tag => {
       return {
         horseWeight: tag.textContent.replace(/\n/g, '') || '計不'
@@ -246,11 +263,11 @@ module.exports = {
   /**
    * @description オッズを抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractOdds (dom, data) {
-    const tags = dom.window.document.querySelectorAll('span[id^="odds-"]')
+    const tags = dom.querySelectorAll('span[id^="odds-"]')
     const odds = [].slice.call(tags).map(tag => {
       return {
         odds: module.exports._convNum(tag.textContent)
@@ -261,11 +278,11 @@ module.exports = {
   /**
    * @description 人気を抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractPopularity (dom, data) {
-    const tags = dom.window.document.querySelectorAll('span[id^="ninki-"]')
+    const tags = dom.querySelectorAll('span[id^="ninki-"]')
     const popularity = [].slice.call(tags).map(tag => {
       return {
         popularity: module.exports._convNum(tag.textContent)
@@ -276,11 +293,11 @@ module.exports = {
   /**
    * @description 調教師IDを抽出します。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _extractTrainerId (dom, data) {
-    const tags = dom.window.document.querySelectorAll('.Trainer a')
+    const tags = dom.querySelectorAll('.Trainer a')
     const trainerIds = [].slice.call(tags).map(tag => {
       const url = tag.href
       const trainerId = url
@@ -293,39 +310,20 @@ module.exports = {
     return module.exports._merge(data, trainerIds)
   },
   /**
-   * @description 馬番号採番します。
-   * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 採番後の抽出データ
-   */
-  _numberingHorseNumber (data) {
-    return data.map((d, i) => {
-      i++
-      d.horseNumber = i
-      return d
-    })
-  },
-  /**
    * @description データをマージします。
    * @param {Object} dom - DOM
-   * @param {Array} data - 抽出データ
-   * @returns {Array} 抽出データ
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
    */
   _merge (org, add) {
-    const length = org.length
-    let _add = add
-    // 開催予定段階ではaddの方が少ない場合がある
-    if (add.length < org.length) {
-      _add = org.map((o, i) => {
-        return (add.length <= i) ? {} : add[i]
-      })
+    const validator = require('@h/validation-helper')
+    validator.required(org)
+    validator.expect(Array.isArray(add))
+    validator.expect(add.length <= 1)
+    if (add.length <= 0) {
+      return org
     }
-    return _add.map((a, i) => {
-      if (length <= i) {
-        org.push({})
-      }
-      return Object.assign(org[i], a)
-    })
+    return Object.assign(org, add[0])
   },
   /**
    * @description 値を数値に変換します。

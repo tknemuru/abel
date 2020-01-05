@@ -49,6 +49,9 @@ module.exports = {
       console.log('page goto start')
       await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
       console.log('page goto end')
+      console.log('manual update button click start')
+      await page.click('#act-manual_update')
+      console.log('manual update button click end')
       const outerHTML = await page.evaluate(() => {
         return document.documentElement.outerHTML
       })
