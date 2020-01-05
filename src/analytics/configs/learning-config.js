@@ -59,11 +59,8 @@ module.exports = {
           // }
           return Number.isNaN(Number(data[key])) ||
             Number(data[key]) <= 0 ||
-            // 4位未満は除外
-            // Number(data.ret_pre0_order_of_finish) > 4 ||
-            data.inf_pre0_race_name.includes('2歳') ||
-            data.inf_pre0_race_name.includes('3歳') ||
-            data.inf_pre0_race_name.includes('4歳')
+            data.inf_pre0_race_name.includes('新馬') ||
+            data.inf_pre0_race_name.includes('障害')
         })
         break
       default:

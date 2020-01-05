@@ -40,12 +40,6 @@ switch (options.target) {
     (async () => {
       try {
         await futureDownloader.download({
-          raceIds: [
-            '202006010110',
-            '202008010110',
-            '202006010111',
-            '202008010111'
-          ]
         })
       } catch (e) {
         console.log(e)

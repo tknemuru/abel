@@ -80,7 +80,7 @@ module.exports = {
    * @returns {void}
    */
   async _createInput (hists, targets, validationCols, config) {
-    const scoreParams = module.exports._createScoreParams()
+    // const scoreParams = module.exports._createScoreParams()
     let dataList = []
     let i = 1
     for (const hist of hists) {
@@ -95,7 +95,7 @@ module.exports = {
         }
       }
       // 付加情報
-      module.exports._addInfo(data, hist, scoreParams)
+      // module.exports._addInfo(data, hist, scoreParams)
       dataList.push(data)
       if (i % 1000 === 0) {
         console.log(i)
