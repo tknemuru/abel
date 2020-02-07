@@ -148,7 +148,9 @@ module.exports = {
         if (h.score > params.minScore) {
           ticketNum = module.exports._purchaseWinTicket(h)
         }
-        placeTicketNum = 1
+        if (h.popularity < 12) {
+          placeTicketNum = module.exports._purchasePalceTicket(h, params.minPlaceScore)
+        }
         h.ticketNum = ticketNum
         h.placeTicketNum = placeTicketNum
         return h
@@ -175,5 +177,19 @@ module.exports = {
         ticketNum = 1
     }
     return ticketNum
+  },
+  /**
+   * @description 複勝チケットを購入します。
+   * @param {Object} horse 購入馬
+   */
+  _purchasePalceTicket (horse, minPlaceScore) {
+    // let ticketNum = 1
+    // if (horse.score >= minPlaceScore + 50) {
+    //   ticketNum = 3
+    // } else if (horse.score >= minPlaceScore + 30) {
+    //   ticketNum = 2
+    // }
+    // return ticketNum
+    return 1
   }
 }

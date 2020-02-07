@@ -6,7 +6,7 @@
 module.exports = {
   async simulate () {
     for (let i = 999; i < 1000; i++) {
-      for (let p = 80; p < 81; p++) {
+      for (let p = 60; p < 61; p++) {
         module.exports._simulate({
           minScore: i,
           minPlaceScore: p
