@@ -31,6 +31,7 @@ module.exports = {
    */
   _extract (file) {
     const fs = require('fs')
+    const path = require('path')
 
     // dom化
     const dom = require('@h/html-helper').toDom(file)
@@ -38,7 +39,7 @@ module.exports = {
     // 情報を抽出
     const extractor = require('@ac/result-race-extractor')
     const data = extractor.extract(dom)
-    console.log(data)
+    data.race.raceId = path.basename(file, path.extname(file))
 
     // 結果を出力
     fs.writeFileSync(module.exports._genResultFileName(file)

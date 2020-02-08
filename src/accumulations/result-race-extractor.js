@@ -40,19 +40,25 @@ module.exports = {
       horse = module.exports._extractNumber(cols, horse, 'basisWeight', 5)
       horse = module.exports._extractIdAndName(cols, horse, 'jockey', 6)
       horse = module.exports._extractStr(cols, horse, 'finishingTime', 7)
-      horse = module.exports._extractStr(cols, horse, 'length', 8)
+      horse = module.exports._extractStr(cols, horse, 'lengthDiff', 8)
       // タイム指数
-      horse = module.exports._extractStr(cols, horse, 'pass', 10)
+      horse = module.exports._extractPass(cols, horse)
       horse = module.exports._extractNumber(cols, horse, 'lastPhase', 11)
       horse = module.exports._extractNumber(cols, horse, 'odds', 12)
       horse = module.exports._extractNumber(cols, horse, 'popularity', 13)
-      horse = module.exports._extractStr(cols, horse, 'horseWeight', 14, '計不')
+      horse = module.exports._extractHorseWeight(cols, horse)
       // 調教タイム
       // 厩舎コメント
       // 備考
       horse = module.exports._extractIdAndName(cols, horse, 'trainer', 18)
       horse = module.exports._extractIdAndName(cols, horse, 'owner', 19)
-      horse = module.exports._extractStr(cols, horse, 'earningMoney', 20)
+      horse = module.exports._extractNumber(cols, horse, 'earningMoney', 20)
+
+      const converter = require('@h/convert-helper')
+      horse.sexDigit = converter.convSex(horse.sex)
+      horse.finishingTimeDigit = converter.convFinishingTime(horse.finishingTime)
+      horse.lengthDiffDigit = converter.convLength(horse.lengthDiff)
+
       horses.push(horse)
       horseNumber++
     }
@@ -105,6 +111,7 @@ module.exports = {
   _extractRaceInfo1 (dom, data) {
     // eslint-disable-next-line no-irregular-whitespace
     // ダ右1800m / 天候 : 晴 / ダート : 良 / 発走 : 14:40
+    const converter = require('@h/convert-helper')
     const tag = dom.window.document.querySelector('.racedata>dd>p>diary_snap_cut>span')
     const texts = tag.textContent
       .replace(/\n/g, '')
@@ -112,6 +119,7 @@ module.exports = {
       .map(t => t.trim())
     const raceStart = texts[3]
       .replace('発走 : ', '')
+      .replace(':', '')
     const surface = texts[0]
       .substring(0, 2)
     const distance = texts[0]
@@ -119,19 +127,23 @@ module.exports = {
       .replace('m', '')
     const weather = texts[1]
       .replace('天候 : ', '')
-    let surfaceState = texts[2]
+    const surfaceState = texts[2]
       .split(':')[1]
       .trim()
       .replace('馬場:', '')
       .replace('稍', '稍重')
       .replace('不', '不良')
-    surfaceState = `${surface}:${surfaceState}`
+    const surfaceStateDigit = converter.convRaceSurface(surface)
     const _data = {
       surface: `${surface}`,
-      distance,
-      raceStart,
+      distance: Number(distance),
+      raceStart: Number(raceStart),
       weather,
-      surfaceState
+      surfaceState,
+      surfaceDigit: surfaceStateDigit.surface,
+      directionDigit: surfaceStateDigit.direction,
+      weatherDigit: converter.convWeather(weather),
+      surfaceStateDigit: converter.convSurfaceState(`:${surfaceState}`)
     }
     return Object.assign(data, _data)
   },
@@ -152,8 +164,11 @@ module.exports = {
       .replace('年', '-')
       .replace('月', '-')
       .replace('日', '')
+      .split('-')
     const info = {
-      raceDate,
+      raceDateYear: Number(raceDate[0]),
+      raceDateMonth: Number(raceDate[1]),
+      raceDateDay: Number(raceDate[2]),
       placeDetail: texts[1],
       raceClass1: texts[2],
       raceClass2: texts[3]
@@ -187,23 +202,6 @@ module.exports = {
     const _data = {}
     _data[key] = dom[index].textContent.trim() || defaultVal
     return module.exports._merge(data, _data)
-  },
-  /**
-   * @description 単純な構造のデータを抽出します。
-   * @param {Object} dom - DOM
-   * @param {Object} data - 抽出データ
-   * @param {String} key - データのキー
-   * @param {Number} index - 列順
-   * @param {Number|String} defaultVal - デフォルト値
-   * @param {Boolean} isNum - 数値かどうか
-   * @returns {Object} 抽出データ
-   */
-  _extractSimpleData (dom, data, key, index, defaultVal, isNum) {
-    if (isNum) {
-      return module.exports._extractNumber(dom, data, key, index, defaultVal)
-    } else {
-      return module.exports._extractStr(dom, data, key, index, defaultVal)
-    }
   },
   /**
    * @description IDと名称を抽出します。
@@ -250,9 +248,37 @@ module.exports = {
       .split('')
     const sexAndAges = {
       sex: texts[0],
-      age: texts[1]
+      age: Number(texts[1])
     }
     return module.exports._merge(data, sexAndAges)
+  },
+  /**
+   * @description 通過を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractPass (dom, data) {
+    data = module.exports._extractStr(dom, data, 'pass', 10)
+    const pass = data.pass.split('-')
+    for (let i = 0; i < pass.length; i++) {
+      data[`pass${i + 1}`] = Number(pass[i])
+    }
+    delete data.pass
+    return data
+  },
+  /**
+   * @description 馬体重を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractHorseWeight (dom, data) {
+    data = module.exports._extractStr(dom, data, 'horseWeight', 14, '計不')
+    const weight = require('@h/convert-helper').convHorseWeight(data.horseWeight)
+    data.horseWeight = weight.weight
+    data.horseWeightDiff = weight.diff
+    return data
   },
   /**
    * @description 払い戻しテーブルを抽出します。
@@ -266,56 +292,61 @@ module.exports = {
     let trs = tables[0].querySelectorAll('tr')
     trs = [].slice.call(trs)
     // 単勝
-    const tan = module.exports._extractPay(trs[0])
+    const tan = module.exports._extractPay(trs[0], 'tran')
     // 複勝
-    const fuku = module.exports._extractPay(trs[1])
+    const fuku = module.exports._extractPay(trs[1], 'fuku')
     // 枠連
-    const waku = module.exports._extractPay(trs[2])
+    const waku = module.exports._extractPay(trs[2], 'waku')
     // 馬蓮
-    const uren = module.exports._extractPay(trs[3])
+    const uren = module.exports._extractPay(trs[3], 'uren')
 
     trs = tables[1].querySelectorAll('tr')
     // ワイド
-    const wide = module.exports._extractPay(trs[0])
+    const wide = module.exports._extractPay(trs[0], 'wide')
     // 馬単
-    const utan = module.exports._extractPay(trs[1])
+    const utan = module.exports._extractPay(trs[1], 'utan')
     // 三連複
-    const sanfuku = module.exports._extractPay(trs[2])
+    const sanfuku = module.exports._extractPay(trs[2], 'sanfuku')
     // 三連単
-    const santan = module.exports._extractPay(trs[3])
+    const santan = module.exports._extractPay(trs[3], 'santan')
 
-    const _data = {
-      tan,
-      fuku,
-      waku,
-      uren,
-      wide,
-      utan,
-      sanfuku,
-      santan
-    }
-    return module.exports._merge(data, _data)
+    module.exports._merge(data, tan)
+    module.exports._merge(data, fuku)
+    module.exports._merge(data, waku)
+    module.exports._merge(data, uren)
+    module.exports._merge(data, wide)
+    module.exports._merge(data, utan)
+    module.exports._merge(data, sanfuku)
+    return module.exports._merge(data, santan)
   },
   /**
    * @description 払い戻しを抽出します。
    * @param {Object} tr - 払い戻し行
+   * @param {String} prefix - キーに付与するプレフィックス
    * @returns {Object} 抽出データ
    */
-  _extractPay (tr) {
+  _extractPay (tr, prefix) {
     const tds = [].slice.call(tr.querySelectorAll('td'))
     const horseNumbers = module.exports._extractPayColumn(tds[0])
     const pays = module.exports._extractPayColumn(tds[1])
     const popularity = module.exports._extractPayColumn(tds[2])
-    const ret = []
+    const ret = {}
     const length = horseNumbers.length
     for (let i = 0; i < length; i++) {
-      ret.push({
-        horseNumber: horseNumbers[i],
-        pay: pays[i],
-        popularity: popularity[i]
-      })
+      const suffixNum = length > 1 ? i + 1 : ''
+      const innerHorseNumbers = horseNumbers[i]
+        .replace(/→/g, '-')
+        .split('-')
+        .map(num => num.trim())
+      const hLength = innerHorseNumbers.length
+      for (let h = 0; h < hLength; h++) {
+        const suffixHorseNum = hLength > 1 ? h + 1 : ''
+        ret[`${prefix}HorseNumber${suffixNum}${suffixHorseNum}`] = Number(innerHorseNumbers[h])
+      }
+      ret[`${prefix}Pay${suffixNum}`] = Number(pays[i].replace(/,/g, ''))
+      ret[`${prefix}Popularity${suffixNum}`] = Number(popularity[i])
     }
-    return ret.length === 1 ? ret[0] : ret
+    return ret
   },
   /**
    * @description 払い戻しのカラムを抽出します。

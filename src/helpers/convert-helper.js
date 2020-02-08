@@ -114,8 +114,10 @@ module.exports = {
    * @param {String} val 値
    */
   convNum (val) {
-    return Number.isNaN(Number(val))
-      ? module.exports.UntargetedNum : Number(val)
+    if (!val) return module.exports.UntargetedNum
+    const _val = val.replace(/,/g, '')
+    return Number.isNaN(Number(_val))
+      ? module.exports.UntargetedNum : Number(_val)
   },
   /**
    * @description 性別の変換を行います。
@@ -153,8 +155,12 @@ module.exports = {
    */
   convLength (val) {
     let ret = -1
+    // 一位は値が存在しない
+    if (!val) {
+      return 0
+    }
     // 判断不能の値は-1を返して処理終了
-    if (!val || val.includes('+')) {
+    if (val.includes('+')) {
       return ret
     }
 
