@@ -285,7 +285,7 @@ module.exports = {
    */
   _clearFile (fileName) {
     const path = `resources/learnings/${fileName}`
-    if (!require('@h/html-helper').existsFile(path)) {
+    if (!require('@h/file-helper').existsFile(path)) {
       return
     }
     const fs = require('fs')

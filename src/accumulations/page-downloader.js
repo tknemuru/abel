@@ -5,6 +5,10 @@
  */
 module.exports = {
   /**
+   * @description リトライ回数
+   */
+  RetryLimit: 3,
+  /**
    * @description ページをダウンロードします。
    * @param {Object} params - パラメータ
    * @param {Array} params.urls - URLリスト
@@ -18,37 +22,53 @@ module.exports = {
     const puppeteer = require('puppeteer')
     const uuid = require('uuid/v4')
     const sleep = require('thread-sleep')
-    const html = require('@h/html-helper')
+    const file = require('@h/file-helper')
 
     const fileNames = []
-    let i = 0
     for (const url of params.urls) {
       let fileName = `resources/htmls/${uuid()}.html`
       if (params.fileNameGen) {
         fileName = params.fileNameGen(url)
       }
       if (!params.override) {
-        if (html.existsFile(fileName)) {
+        if (file.existsFile(fileName)) {
           console.log(`file already exists ${fileName}`)
           fileNames.push(fileName)
           continue
         }
       }
-      if (i > 0) {
-        console.log('start sleep...')
-        sleep(5000)
-        console.log('end sleep')
+      let count = 0
+      let success = true
+      let page = {}
+      while (count < module.exports.RetryLimit) {
+        try {
+          console.log('start sleep...')
+          sleep(3000)
+          console.log('end sleep')
+          const browser = await puppeteer.launch({
+            args: ['--lang=ja,en-US,en']
+          })
+          page = await browser.newPage()
+          await page.setExtraHTTPHeaders({
+            'Accept-Language': 'ja-JP'
+          })
+          console.log('page goto start')
+          // await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
+          await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 })
+          console.log('page goto end')
+          success = true
+        } catch (e) {
+          console.log(e)
+          success = false
+        } finally {
+          count++
+        }
+        if (success) break
       }
-      const browser = await puppeteer.launch({
-        args: ['--lang=ja,en-US,en']
-      })
-      const page = await browser.newPage()
-      await page.setExtraHTTPHeaders({
-        'Accept-Language': 'ja-JP'
-      })
-      console.log('page goto start')
-      await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
-      console.log('page goto end')
+      if (!success) {
+        console.log('failed')
+        continue
+      }
       // console.log('manual update button click start')
       // await page.click('#act-manual_update')
       // console.log('manual update button click end')
@@ -61,7 +81,6 @@ module.exports = {
       )
       fileNames.push(fileName)
       console.log('write end')
-      i++
     }
     return fileNames
   }

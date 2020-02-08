@@ -19,6 +19,7 @@ const futureDownloader = require('@ac/future-race-page-downloader')
 const futureScraper = require('@ac/future-race-scraper')
 const futureRegister = require('@ac/future-race-register')
 const futureSimulator = require('@s/future-purchase-simulator')
+const databaseUrlExtractor = require('@ac/race-database-url-extractor')
 const horseHistCreator = require('@an/horse-race-history-creator')
 const additionalResultCreator = require('@an/race-result-additional-creator')
 const additionalInfoCreator = require('@an/race-info-additional-creator')
@@ -67,6 +68,19 @@ switch (options.target) {
       minScore: 999,
       minPlaceScore: 60
     })
+    break
+  case 'extract-database-url':
+    (async () => {
+      try {
+        await databaseUrlExtractor.extract({
+          // endDate: '202001'
+        })
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
     break
   case 'test-simulate':
     testSimulator.simulate()

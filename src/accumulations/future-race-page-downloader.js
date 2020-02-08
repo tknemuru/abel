@@ -48,8 +48,6 @@ module.exports = {
    * @returns {String} ファイル名
    */
   _genListFileName () {
-    // const uuid = require('uuid/v4')
-    // return `resources/htmls/future-race-list/${uuid()}.html`
     return 'resources/htmls/future-race-list/race-list.html'
   },
   /**

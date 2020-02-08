@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @module 開催予定レースのスクレイピング機能を提供します。
+ * @module 開催予定レースページHTMLの削除機能を提供します。
  */
 module.exports = {
   /**

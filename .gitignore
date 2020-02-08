@@ -6,6 +6,7 @@ resources/htmls/
 resources/races/
 resources/learnings/
 resources/simulations/
+resources/urls/
 
 # Logs
 logs
