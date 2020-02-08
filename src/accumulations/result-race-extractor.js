@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @module 開催予定レース情報の抽出機能を提供します。
+ * @module 開催済レース情報の抽出機能を提供します。
  */
 module.exports = {
   /**
@@ -9,11 +9,15 @@ module.exports = {
    */
   BaseUrl: 'https://db.netkeiba.com',
   /**
-   * @description 開催予定レースの情報を抽出します。
+   * @description 開催済レースの情報を抽出します。
+   * @param {Object} dom DOM
+   * @param {String} raceId レースID
    * @returns {void}
    */
-  extract (dom) {
-    let race = {}
+  extract (dom, raceId) {
+    let race = {
+      raceId
+    }
     race = module.exports._extractRaceName(dom, race)
     race = module.exports._extractRaceInfo1(dom, race)
     race = module.exports._extractRaceInfo2(dom, race)

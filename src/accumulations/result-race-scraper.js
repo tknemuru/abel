@@ -38,8 +38,7 @@ module.exports = {
 
     // 情報を抽出
     const extractor = require('@ac/result-race-extractor')
-    const data = extractor.extract(dom)
-    data.race.raceId = path.basename(file, path.extname(file))
+    const data = extractor.extract(dom, path.basename(file, path.extname(file)))
 
     // 結果を出力
     fs.writeFileSync(module.exports._genResultFileName(file)
