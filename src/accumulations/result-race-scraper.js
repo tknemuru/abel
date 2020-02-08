@@ -12,7 +12,7 @@ module.exports = {
    * @description 開催予定レースのスクレイピングを行います。
    * @returns {void}
    */
-  async scrape () {
+  scrape () {
     const fs = require('fs')
     const path = require('path')
 
@@ -36,7 +36,7 @@ module.exports = {
     const dom = require('@h/html-helper').toDom(file)
 
     // 情報を抽出
-    const extractor = require('@ac/future-race-extractor')
+    const extractor = require('@ac/result-race-extractor')
     const data = extractor.extract(dom)
     console.log(data)
 

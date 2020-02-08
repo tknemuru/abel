@@ -20,6 +20,7 @@ const futureScraper = require('@ac/future-race-scraper')
 const futureRegister = require('@ac/future-race-register')
 const futureSimulator = require('@s/future-purchase-simulator')
 const databaseUrlExtractor = require('@ac/race-database-url-extractor')
+const resultScraper = require('@ac/result-race-scraper')
 const horseHistCreator = require('@an/horse-race-history-creator')
 const additionalResultCreator = require('@an/race-result-additional-creator')
 const additionalInfoCreator = require('@an/race-info-additional-creator')
@@ -81,6 +82,9 @@ switch (options.target) {
         process.exit()
       }
     })()
+    break
+  case 'result-scrape':
+    resultScraper.scrape()
     break
   case 'test-simulate':
     testSimulator.simulate()

@@ -41,14 +41,18 @@ module.exports = {
       horse = module.exports._extractIdAndName(cols, horse, 'jockey', 6)
       horse = module.exports._extractStr(cols, horse, 'finishingTime', 7)
       horse = module.exports._extractStr(cols, horse, 'length', 8)
-      horse = module.exports._extractStr(cols, horse, 'pass', 9)
-      horse = module.exports._extractNumber(cols, horse, 'lastPhase', 10)
-      horse = module.exports._extractNumber(cols, horse, 'odds', 11)
-      horse = module.exports._extractNumber(cols, horse, 'popularity', 12)
-      horse = module.exports._extractStr(cols, horse, 'horseWeight', 13, '計不')
-      horse = module.exports._extractIdAndName(cols, horse, 'trainer', 14)
-      horse = module.exports._extractIdAndName(cols, horse, 'owner', 15)
-      horse = module.exports._extractStr(cols, horse, 'earningMoney', 16)
+      // タイム指数
+      horse = module.exports._extractStr(cols, horse, 'pass', 10)
+      horse = module.exports._extractNumber(cols, horse, 'lastPhase', 11)
+      horse = module.exports._extractNumber(cols, horse, 'odds', 12)
+      horse = module.exports._extractNumber(cols, horse, 'popularity', 13)
+      horse = module.exports._extractStr(cols, horse, 'horseWeight', 14, '計不')
+      // 調教タイム
+      // 厩舎コメント
+      // 備考
+      horse = module.exports._extractIdAndName(cols, horse, 'trainer', 18)
+      horse = module.exports._extractIdAndName(cols, horse, 'owner', 19)
+      horse = module.exports._extractStr(cols, horse, 'earningMoney', 20)
       horses.push(horse)
       horseNumber++
     }
@@ -86,7 +90,9 @@ module.exports = {
   _extractRaceName (dom, data) {
     const tag = dom.window.document.querySelector('.racedata>dd>h1')
     const _data = {
-      raceName: tag.textContent.replace(/\n/g, '')
+      raceName: tag.textContent
+        .replace(/\n/g, '')
+        .trim()
     }
     return Object.assign(data, _data)
   },
@@ -111,8 +117,6 @@ module.exports = {
     const distance = texts[0]
       .replace(surface, '')
       .replace('m', '')
-    const direction = surface
-      .substring(1, 2)
     const weather = texts[1]
       .replace('天候 : ', '')
     let surfaceState = texts[2]
@@ -123,7 +127,7 @@ module.exports = {
       .replace('不', '不良')
     surfaceState = `${surface}:${surfaceState}`
     const _data = {
-      surface: `${surface}${direction}`,
+      surface: `${surface}`,
       distance,
       raceStart,
       weather,
@@ -140,15 +144,19 @@ module.exports = {
   _extractRaceInfo2 (dom, data) {
     // 2019年12月15日 5回中山6日目 3歳以上1600万下  (混)[指](ハンデ)
     const tag = dom.window.document.querySelector('.data_intro>p')
-    const tags = tag.split(' ')
-    const raceDate = tags[0]
+    const texts = tag.textContent
+      .replace(/\n/g, '')
+      .trim()
+      .split(' ')
+    const raceDate = texts[0]
       .replace('年', '-')
       .replace('月', '-')
+      .replace('日', '')
     const info = {
       raceDate,
-      placeDetail: tags[1],
-      raceClass1: tags[2],
-      raceClass2: tags[3]
+      placeDetail: texts[1],
+      raceClass1: texts[2],
+      raceClass2: texts[3]
     }
     return Object.assign(data, info)
   },
@@ -236,7 +244,10 @@ module.exports = {
    * @returns {Object} 抽出データ
    */
   _extractSexAndAge (dom, data) {
-    const texts = dom[4].textContent.split('')
+    const texts = dom[4].textContent
+      .replace(/\n/g, '')
+      .trim()
+      .split('')
     const sexAndAges = {
       sex: texts[0],
       age: texts[1]
@@ -292,12 +303,9 @@ module.exports = {
    */
   _extractPay (tr) {
     const tds = [].slice.call(tr.querySelectorAll('td'))
-    const horseNumbers = tds[0].innerText
-      .split(/\n/)
-    const pays = tds[1].innerText
-      .split(/\n/)
-    const popularity = tds[2].innerText
-      .split(/\n/)
+    const horseNumbers = module.exports._extractPayColumn(tds[0])
+    const pays = module.exports._extractPayColumn(tds[1])
+    const popularity = module.exports._extractPayColumn(tds[2])
     const ret = []
     const length = horseNumbers.length
     for (let i = 0; i < length; i++) {
@@ -308,6 +316,18 @@ module.exports = {
       })
     }
     return ret.length === 1 ? ret[0] : ret
+  },
+  /**
+   * @description 払い戻しのカラムを抽出します。
+   * @param {Object} td - 払い戻しカラム
+   * @returns {Object} 抽出データ
+   */
+  _extractPayColumn (td) {
+    return td.textContent
+      .trim()
+      .split(/\n/)
+      .map(text => text.trim())
+      .filter(text => !!text)
   },
   /**
    * @description データをマージします。
