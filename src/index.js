@@ -86,8 +86,11 @@ switch (options.target) {
   case 'result-scrape':
     resultScraper.scrape()
     break
-  case 'gen-result-sql':
-    require('@ac/result-race-sql-generator').generate()
+  case 'result-register':
+    require('@ac/result-race-register').register()
+    break
+  case 'gen-race-sql':
+    require('@ac/race-sql-generator').generate()
     break
   case 'test-simulate':
     testSimulator.simulate()

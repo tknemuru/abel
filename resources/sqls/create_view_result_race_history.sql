@@ -1,4 +1,4 @@
-create view if not exists future_race_history
+create view if not exists result_race_history
 as
 select
   ret0.race_id as ret0_race_id,
@@ -467,7 +467,7 @@ select
   ret4.finishing_time_digit as ret4_finishing_time_digit,
   ret4.length_diff_digit as ret4_length_diff_digit
 from
-  race_future ret0
+  race_result ret0
 -- ret1
 left join
   horse_race_history his0

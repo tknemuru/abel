@@ -44,7 +44,7 @@ module.exports = {
       horse = module.exports._extractNumber(cols, horse, 'basisWeight', 5)
       horse = module.exports._extractIdAndName(cols, horse, 'jockey', 6)
       horse = module.exports._extractStr(cols, horse, 'finishingTime', 7)
-      horse = module.exports._extractStr(cols, horse, 'lengthDiff', 8)
+      horse = module.exports._extractStr(cols, horse, 'lengthDiff', 8, '')
       // タイム指数
       horse = module.exports._extractPass(cols, horse)
       horse = module.exports._extractNumber(cols, horse, 'lastPhase', 11)
@@ -373,9 +373,6 @@ module.exports = {
   _merge (org, add) {
     const validator = require('@h/validation-helper')
     validator.required(org)
-    if (!add) {
-      return org
-    }
     return Object.assign(org, add)
   },
   /**
