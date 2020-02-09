@@ -104,6 +104,9 @@ module.exports = {
       i++
     }
     // データを書き込む
+    if (dataList.length > 0) {
+      console.log(`param length: ${dataList[0].length}`)
+    }
     module.exports._writeInput(dataList)
   },
   /**
