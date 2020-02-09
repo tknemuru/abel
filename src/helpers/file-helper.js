@@ -12,7 +12,8 @@ module.exports = {
   existsFile (fileName) {
     try {
       const fs = require('fs')
-      fs.statSync(fileName)
+      const ret = fs.statSync(fileName)
+      if (ret.isDirectory()) return false
       return true
     } catch (err) {
       if (err.code === 'ENOENT') return false

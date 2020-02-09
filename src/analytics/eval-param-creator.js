@@ -11,7 +11,7 @@ module.exports = {
   async create () {
     // 対象のカラムを取得
     const fs = require('fs')
-    const columns = JSON.parse(fs.readFileSync('resources/defs/identity-eval-param-colums.json', { encoding: 'utf-8' }))
+    const columns = JSON.parse(fs.readFileSync('resources/defs/identity-eval-param-columns.json', { encoding: 'utf-8' }))
     console.log(columns)
 
     // テンプレートのSQLを取得

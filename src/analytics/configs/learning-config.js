@@ -27,21 +27,13 @@ module.exports = {
   /**
    * @description データセレクト文ファイル名
    */
-  select: 'select_range_race_result_history',
+  select: 'select_range_result_race_history',
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名
    */
-  colums () {
-    let def = ''
-    switch (module.exports.version) {
-      case 2:
-        def = 'learning-input-colums-v3'
-        break
-      default:
-        def = 'learning-input-colums-v1'
-    }
-    return def
+  columns () {
+    return 'learning-input-columns'
   },
   /**
    * @description 学習情報の検証を行います。
@@ -49,30 +41,19 @@ module.exports = {
    * @param {Array} validationCols - 検証対象のカラムリスト
    */
   validation (data, validationCols) {
-    let err = false
-    switch (module.exports.version) {
-      case 2:
-        err = validationCols.some(key => {
-          // 4レース揃っていないデータは一旦除外する
-          // if (!data[key]) {
-          //   return false
-          // }
-          return Number.isNaN(Number(data[key])) ||
-            Number(data[key]) <= 0 ||
-            data.inf_pre0_race_name.includes('新馬') ||
-            data.inf_pre0_race_name.includes('障害')
-        })
-        break
-      default:
-        err = validationCols.some(key => {
-          // 4レース揃っていないデータは一旦除外する
-          // return data[key] && Number(data[key]) <= 0
-          return Number.isNaN(Number(data[key])) || Number(data[key]) <= 0
-        }) ||
-          // 4位未満は除外
-          Number(data.ret_pre0_order_of_finish) > 4
-    }
-    return !err
+    // let err = false
+    // err = validationCols.some(key => {
+    //   // 4レース揃っていないデータは一旦除外する
+    //   // if (!data[key]) {
+    //   //   return false
+    //   // }
+    //   return Number.isNaN(Number(data[key])) ||
+    //     Number(data[key]) <= 0
+    // }) ||
+    //   data.ret0_race_name.includes('新馬') ||
+    //   data.ret0_race_name.includes('障害')
+    // return !err
+    return true
   },
   /**
    * @description 正解データを作成します。
@@ -81,14 +62,14 @@ module.exports = {
    */
   createAnswer (data) {
     const creator = require('@an/learning-answer-creator')
-    let answer = -1
-    switch (module.exports.version) {
-      case 2:
-        answer = creator.createAnswerByRecoveryRate(data)
-        break
-      default:
-        answer = creator.createAnswerByTopOrder(data)
+    const ans = {
+      tan: creator.createAnswerByTanPay(data),
+      fuku: creator.createAnswerByFukuPay(data),
+      waku: creator.createAnswerByWakuPay(data),
+      uren: creator.createAnswerByUrenPay(data),
+      wide: creator.createAnswerByWidePay(data),
+      sanfuku: creator.createAnswerBySanfukuPay(data)
     }
-    return answer
+    return ans
   }
 }

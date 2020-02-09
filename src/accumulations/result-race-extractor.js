@@ -26,15 +26,14 @@ module.exports = {
     race = module.exports._extractPayTable(dom, race)
 
     const horses = []
-    let horseNumber = 1
     const horseListDoms = module.exports._extractHorseList(dom)
+    const horseCount = horseListDoms.length
+    race.horseCount = horseCount
     for (const horseDom of horseListDoms) {
       if (module.exports._isCancel(horseDom)) {
         continue
       }
-      let horse = {
-        horseNumber
-      }
+      let horse = {}
       const cols = [].slice.call(horseDom.querySelectorAll('td'))
       horse = module.exports._extractNumber(cols, horse, 'orderOfFinish', 0)
       horse = module.exports._extractNumber(cols, horse, 'frameNumber', 1)
@@ -64,7 +63,6 @@ module.exports = {
       horse.lengthDiffDigit = converter.convLength(horse.lengthDiff)
 
       horses.push(horse)
-      horseNumber++
     }
     return {
       race,
@@ -296,7 +294,7 @@ module.exports = {
     let trs = tables[0].querySelectorAll('tr')
     trs = [].slice.call(trs)
     // 単勝
-    const tan = module.exports._extractPay(trs[0], 'tran')
+    const tan = module.exports._extractPay(trs[0], 'tan')
     // 複勝
     const fuku = module.exports._extractPay(trs[1], 'fuku')
     // 枠連

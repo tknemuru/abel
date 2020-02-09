@@ -41,7 +41,7 @@ module.exports = {
    */
   evaluateV1 (race) {
     const fs = require('fs')
-    const cols = JSON.parse(fs.readFileSync('resources/defs/identity-eval-param-colums.json', { encoding: 'utf-8' }))
+    const cols = JSON.parse(fs.readFileSync('resources/defs/identity-eval-param-columns.json', { encoding: 'utf-8' }))
     const dic = {}
     for (const col of cols) {
       dic[col.alias] = JSON.parse(fs.readFileSync(`resources/params/${col.name}.json`, { encoding: 'utf-8' }))

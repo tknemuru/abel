@@ -115,6 +115,7 @@ module.exports = {
    */
   convNum (val) {
     if (!val) return module.exports.UntargetedNum
+    if (typeof val === 'number') return val
     const _val = val.replace(/,/g, '')
     return Number.isNaN(Number(_val))
       ? module.exports.UntargetedNum : Number(_val)

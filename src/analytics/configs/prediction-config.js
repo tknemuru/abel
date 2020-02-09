@@ -28,8 +28,8 @@ module.exports = {
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名
    */
-  colums () {
-    return require('@an/configs/learning-config').colums()
+  columns () {
+    return require('@an/configs/learning-config').columns()
   },
   /**
    * @description 学習情報の検証を行います。

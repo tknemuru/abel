@@ -11,8 +11,8 @@ module.exports = {
    */
   createAnswerByTopOrder (data) {
     const validator = require('@h/validation-helper')
-    const order = data.ret_pre0_order_of_finish
-    const odds = data.ret_pre0_odds
+    const order = data.ret0_order_of_finish
+    const odds = data.ret0_odds
     validator.required(order)
     validator.required(odds)
     const _order = Number(order)
@@ -25,8 +25,8 @@ module.exports = {
    */
   createAnswerByOddsRank (data) {
     const validator = require('@h/validation-helper')
-    const order = data.ret_pre0_order_of_finish
-    const odds = data.ret_pre0_odds
+    const order = data.ret0_order_of_finish
+    const odds = data.ret0_odds
     validator.required(order)
     validator.required(odds)
     const _order = Number(order)
@@ -50,7 +50,7 @@ module.exports = {
    */
   createAnswerByOdds (data) {
     const validator = require('@h/validation-helper')
-    const odds = data.ret_pre0_odds
+    const odds = data.ret0_odds
     validator.required(odds)
     return odds
   },
@@ -61,8 +61,8 @@ module.exports = {
    */
   createAnswerByOddsAndOrder (data) {
     const validator = require('@h/validation-helper')
-    const odds = data.ret_pre0_odds
-    const order = data.ret_pre0_order_of_finish
+    const odds = data.ret0_odds
+    const order = data.ret0_order_of_finish
     validator.required(odds)
     validator.required(order)
     const _order = Number(order)
@@ -75,11 +75,119 @@ module.exports = {
    */
   createAnswerByRecoveryRate (data) {
     const validator = require('@h/validation-helper')
-    const odds = data.ret_pre0_odds
-    const order = data.ret_pre0_order_of_finish
+    const odds = data.ret0_odds
+    const order = data.ret0_order_of_finish
     validator.required(odds)
     validator.required(order)
     const _order = Number(order)
     return (_order === 1) ? odds : 0
+  },
+  /**
+   * @description 単勝の払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByTanPay (data) {
+    const horseNo = data.ret0_horse_number
+    const tanHorseNo = data.ret0_tan_horse_number
+    const pay = data.ret0_tan_pay
+    return horseNo === tanHorseNo ? pay : 0
+  },
+  /**
+   * @description 複勝の払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByFukuPay (data) {
+    const horseNo = data.ret0_horse_number
+    let ret = 0
+    for (let i = 0; i < 3; i++) {
+      const no = data[`ret0_fuku_horse_number_${i + 1}`]
+      const pay = data[`ret0_fuku_pay_${i + 1}`]
+      if (horseNo === no) {
+        ret = pay
+        break
+      }
+    }
+    return ret
+  },
+  /**
+   * @description 枠連の払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByWakuPay (data) {
+    const frameNo = data.ret0_frame_number
+    let ret = 0
+    for (let i = 0; i < 2; i++) {
+      const no = data[`ret0_waku_horse_number_${i + 1}`]
+      const pay = data.ret0_waku_pay
+      if (frameNo === no) {
+        ret = pay
+        break
+      }
+    }
+    return ret
+  },
+  /**
+   * @description 馬連の払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByUrenPay (data) {
+    const horseNo = data.ret0_horse_number
+    let ret = 0
+    for (let i = 0; i < 2; i++) {
+      const no = data[`ret0_uren_horse_number_${i + 1}`]
+      const pay = data.ret0_uren_pay
+      if (horseNo === no) {
+        ret = pay
+        break
+      }
+    }
+    return ret
+  },
+  /**
+   * @description ワイドの払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByWidePay (data) {
+    const horseNo = data.ret0_horse_number
+    const ret = []
+    for (let i = 0; i < 3; i++) {
+      for (let h = 0; h < 2; h++) {
+        const no = data[`ret0_wide_horse_number_${i + 1}${h + 1}`]
+        const pay = data[`ret0_wide_pay_${i + 1}`]
+        if (horseNo === no) {
+          ret.push(pay)
+          break
+        }
+      }
+    }
+    const len = ret.length
+    let sum = 0
+    for (let i = 0; i < len; i++) {
+      sum += ret[i]
+    }
+    return len > 0 ? sum / len : 0
+  },
+  /**
+   * @description 三連複の払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerBySanfukuPay (data) {
+    const horseNo = data.ret0_horse_number
+    let ret = 0
+    for (let i = 0; i < 3; i++) {
+      const no = data[`ret0_sanfuku_horse_number_${i + 1}`]
+      const pay = data.ret0_sanfuku_pay
+      if (horseNo === no) {
+        ret = pay
+        break
+      }
+    }
+    return ret
   }
 }

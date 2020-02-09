@@ -20,15 +20,13 @@ module.exports = {
     const accessor = require('@d/db-accessor')
 
     // 既存ファイルを削除する
-    module.exports._clearFile('input.csv')
-    module.exports._clearFile('answer.csv')
-    module.exports._clearFile('relation.json')
+    module.exports._clearFile()
 
     // 対象カラム情報を読み込む
     const fs = require('fs')
-    const targetsSrc = JSON.parse(fs.readFileSync(`resources/defs/${config.colums()}.json`, { encoding: 'utf-8' }))
+    const targetsSrc = JSON.parse(fs.readFileSync(`resources/defs/${config.columns()}.json`, { encoding: 'utf-8' }))
     const targets = module.exports._extractAllTargets(targetsSrc)
-    let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-colums.json', { encoding: 'utf-8' }))
+    let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-columns.json', { encoding: 'utf-8' }))
     validationCols = module.exports._extractValidationCols(validationCols)
 
     // 全レースIDを取得
@@ -116,26 +114,32 @@ module.exports = {
    * @returns {void}
    */
   _createAnswer (hists, validationCols, config) {
-    let ansList = []
+    let ansListSet = {}
     let i = 1
     for (const hist of hists) {
       if (!config.validation(hist, validationCols)) {
         continue
       }
-      const ans = []
       // 正解情報
-      ans.push(config.createAnswer(hist))
-      ansList.push(ans)
+      const ansSet = config.createAnswer(hist)
+      for (const key in ansSet) {
+        if (!ansListSet[key]) {
+          ansListSet[key] = []
+        }
+        const ans = []
+        ans.push(ansSet[key])
+        ansListSet[key].push(ans)
+      }
       if (i % 1000 === 0) {
         console.log(i)
         // データを書き込む
-        module.exports._writeAnswer(ansList)
-        ansList = []
+        module.exports._writeAnswer(ansListSet)
+        ansListSet = {}
       }
       i++
     }
     // データを書き込む
-    module.exports._writeAnswer(ansList)
+    module.exports._writeAnswer(ansListSet)
   },
   /**
    * @description 紐付き情報を作成します。
@@ -153,14 +157,14 @@ module.exports = {
         continue
       }
       const rel = {
-        raceId: hist.inf_pre0_race_id,
-        raceName: hist.inf_pre0_race_name,
-        horseNumber: hist.ret_pre0_horse_number,
-        horseId: hist.ret_pre0_horse_id,
-        horseName: hist.ret_pre0_horse_name || '',
-        orderOfFinish: conv.convNum(hist.ret_pre0_order_of_finish),
-        popularity: conv.convNum(hist.ret_pre0_popularity),
-        odds: conv.convNum(hist.ret_pre0_odds)
+        raceId: hist.ret0_race_id,
+        raceName: hist.ret0_race_name,
+        horseNumber: hist.ret0_horse_number,
+        horseId: hist.ret0_horse_id,
+        horseName: hist.ret0_horse_name || '',
+        orderOfFinish: conv.convNum(hist.ret0_order_of_finish),
+        popularity: conv.convNum(hist.ret0_popularity),
+        odds: conv.convNum(hist.ret0_odds)
       }
       rels.push(rel)
       if (i % 1000 === 0) {
@@ -180,29 +184,29 @@ module.exports = {
    * @returns 全出力カラムリスト
    */
   _extractAllTargets (targets) {
-    return module.exports._extractPre0Targets(targets)
+    return module.exports._extractPreTargets(targets)
       .concat(module.exports._extractOthersTargets(targets))
   },
   /**
-   * @description pre0の出力カラムリストを抽出します。
+   * @description 予定レースの出力カラムリストを抽出します。
    * @param {Array} targets - 出力対象カラム定義
-   * @returns pre0の出力カラムリスト
+   * @returns 予定の出力カラムリスト
    */
-  _extractPre0Targets (targets) {
-    return module.exports._extractTargets(targets.pre0, 'pre0')
+  _extractPreTargets (targets) {
+    return module.exports._extractTargets(targets.pre, 'ret0')
   },
   /**
-   * @description pre0以外の出力カラムリストを抽出します。
+   * @description 予定レース以外の出力カラムリストを抽出します。
    * @param {Array} targets - 出力対象カラム定義
-   * @returns pre0以外の出力カラムリスト
+   * @returns 予定レース以外の出力カラムリスト
    */
   _extractOthersTargets (targets) {
     let ret = []
     for (let i = 1; i <= 4; i++) {
-      const pre0 = module.exports._extractTargets(targets.pre0, `pre${i}`)
-      const others = module.exports._extractTargets(targets.others, `pre${i}`)
+      const pre = module.exports._extractTargets(targets.pre, `ret${i}`)
+      const others = module.exports._extractTargets(targets.others, `ret${i}`)
       ret = ret
-        .concat(pre0)
+        .concat(pre)
         .concat(others)
     }
     return ret
@@ -214,15 +218,9 @@ module.exports = {
    * @returns 出力カラムリスト
    */
   _extractTargets (targets, customPrefix) {
-    const targetsPrefix = Object.keys(targets)
-    let retTargets = []
-    for (const prefix of targetsPrefix) {
-      const _prefix = `${prefix}_${customPrefix}`
-      const _targets = targets[prefix]
-        .map(col => `${_prefix}_${col}`)
-      retTargets = retTargets.concat(_targets)
-    }
-    return retTargets
+    const _targets = targets
+      .map(col => `${customPrefix}_${col}`)
+    return _targets
   },
   /**
    * @description バリデーション対象のカラムを展開します。
@@ -259,7 +257,7 @@ module.exports = {
         'trainer'
       ]
       for (const key of keys) {
-        const columnKey = `ret_pre${i}_${key}_id`
+        const columnKey = `ret${i}_${key}_id`
         if (hist[columnKey] && params[`${key}`][hist[columnKey]]) {
           const val = Math.round(params[`${key}`][hist[columnKey]].recoveryRate)
           data.push(val)
@@ -281,15 +279,20 @@ module.exports = {
   },
   /**
    * @description ファイルを削除します。
-   * @param {String} fileName ファイル名
    */
-  _clearFile (fileName) {
-    const path = `resources/learnings/${fileName}`
-    if (!require('@h/file-helper').existsFile(path)) {
-      return
-    }
+  _clearFile () {
     const fs = require('fs')
-    fs.unlinkSync(`resources/learnings/${fileName}`)
+    const path = require('path')
+    const files = fs.readdirSync('resources/learnings/')
+      .map(f => path.join('resources/learnings/', f))
+
+    // 削除
+    for (const file of files) {
+      if (!require('@h/file-helper').existsFile(file)) {
+        continue
+      }
+      fs.unlinkSync(file)
+    }
   },
   /**
    * @description インプットデータの書き込みを行います。
@@ -303,7 +306,9 @@ module.exports = {
    * @param {Array} data - 正解データ
    */
   _writeAnswer (data) {
-    module.exports._write(data, 'answer')
+    for (const key in data) {
+      module.exports._write(data[key], `answer-${key}`)
+    }
   },
   /**
    * @description 紐付きデータの書き込みを行います。
