@@ -18,6 +18,18 @@ module.exports = {
     return dom
   },
   /**
+   * @description HTMLファイルからjQueryオブジェクトを生成します。
+   * @param {String} fileName - ファイル名
+   * @returns {Object} jQueryオブジェクト
+   */
+  toJQueryObj (fileName) {
+    const fs = require('fs')
+    const html = fs.readFileSync(fileName, { encoding: 'utf-8' })
+    const cheerio = require('cheerio')
+    const $ = cheerio.load(html)
+    return $
+  },
+  /**
    * @description ファイルが存在するかどうか。
    * @param {String} fileName - ファイル名
    * @returns {Boolean} ファイルが存在するかどうか

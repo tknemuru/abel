@@ -10,31 +10,38 @@ module.exports = {
   BaseUrl: 'https://db.netkeiba.com',
   /**
    * @description 開催済レースの情報を抽出します。
-   * @param {Object} dom DOM
+   * @param {Object} $ jQueryオブジェクト
    * @param {String} raceId レースID
    * @returns {void}
    */
-  extract (dom, raceId) {
+  extract ($, raceId) {
     let race = {
       raceId
     }
-    race = module.exports._extractRaceName(dom, race)
-    race = module.exports._extractRaceInfo1(dom, race)
-    race = module.exports._extractRaceInfo2(dom, race)
-    race = module.exports._extractRaceNumber(dom, race)
-    // 払い戻し
-    race = module.exports._extractPayTable(dom, race)
-
     const horses = []
-    const horseListDoms = module.exports._extractHorseList(dom)
-    const horseCount = horseListDoms.length
+    const horseListDoms = module.exports._extractHorseList($)
+    const horseCount = [].slice.call(horseListDoms).length
     race.horseCount = horseCount
-    for (const horseDom of horseListDoms) {
-      if (module.exports._isCancel(horseDom)) {
+    race = module.exports._extractRaceName($, race)
+    race = module.exports._extractRaceInfo1($, race)
+    race = module.exports._extractRaceInfo2($, race)
+    race = module.exports._extractRaceNumber($, race)
+    // 直線は対象外とする
+    if (race.surface.indexOf('直') > -1) {
+      console.log('this race straight')
+      return
+    }
+    // 払い戻し
+    race = module.exports._extractPayTable($, race, horseCount)
+
+    for (let i = 0; i < horseCount; i++) {
+      const horseDom = horseListDoms[i]
+      let horse = {}
+      // const cols = [].slice.call(horseDom.querySelectorAll('td'))
+      const cols = $(horseDom).find('td')
+      if (module.exports._isCancel(cols)) {
         continue
       }
-      let horse = {}
-      const cols = [].slice.call(horseDom.querySelectorAll('td'))
       horse = module.exports._extractNumber(cols, horse, 'orderOfFinish', 0)
       horse = module.exports._extractNumber(cols, horse, 'frameNumber', 1)
       horse = module.exports._extractNumber(cols, horse, 'horseNumber', 2)
@@ -71,34 +78,32 @@ module.exports = {
   },
   /**
    * @description 馬行リストを抽出します。
-   * @param {Object} dom DOM
+   * @param {Object} $ DOM
    */
-  _extractHorseList (dom) {
-    let tags = dom.window.document.querySelectorAll('.race_table_01 tr')
-    tags = [].slice.call(tags)
-      // 先頭はヘッダ行
-      .filter((t, i) => i > 0)
+  _extractHorseList ($) {
+    let tags = $('.race_table_01 tr')
+    // 先頭はヘッダ行
+    tags = tags.filter((i, el) => i > 0)
     return tags
   },
   /**
    * @description 対象の馬が取り消しかどうか
-   * @param {Object} horseListDom 馬行のDOM
+   * @param {Object} dom 馬行のDOM
    */
-  _isCancel (horseListDom) {
-    let cancelTag = horseListDom.querySelectorAll('.Cancel_Txt')
-    cancelTag = [].slice.call(cancelTag)
-    return cancelTag.length > 0
+  _isCancel (dom) {
+    const orderOfFinish = module.exports._convNum(dom.eq(0).text())
+    return orderOfFinish < 0
   },
   /**
    * @description レース名を抽出します。
-   * @param {Object} dom - DOM
+   * @param {Object} $ - DOM
    * @param {Object} data - 抽出データ
    * @returns {Object} 抽出データ
    */
-  _extractRaceName (dom, data) {
-    const tag = dom.window.document.querySelector('.racedata>dd>h1')
+  _extractRaceName ($, data) {
+    const tag = $('.racedata>dd>h1')
     const _data = {
-      raceName: tag.textContent
+      raceName: tag.text()
         .replace(/\n/g, '')
         .trim()
     }
@@ -106,16 +111,16 @@ module.exports = {
   },
   /**
    * @description レース情報(1行目)を抽出します。
-   * @param {Object} dom - DOM
+   * @param {Object} $ - DOM
    * @param {Object} data - 抽出データ
    * @returns {Object} 抽出データ
    */
-  _extractRaceInfo1 (dom, data) {
+  _extractRaceInfo1 ($, data) {
     // eslint-disable-next-line no-irregular-whitespace
     // ダ右1800m / 天候 : 晴 / ダート : 良 / 発走 : 14:40
     const converter = require('@h/convert-helper')
-    const tag = dom.window.document.querySelector('.racedata>dd>p>diary_snap_cut>span')
-    const texts = tag.textContent
+    const tag = $('.racedata>dd>p>diary_snap_cut>span')
+    const texts = tag.text()
       .replace(/\n/g, '')
       .split('/')
       .map(t => t.trim())
@@ -133,8 +138,6 @@ module.exports = {
       .split(':')[1]
       .trim()
       .replace('馬場:', '')
-      .replace('稍', '稍重')
-      .replace('不', '不良')
     const surfaceStateDigit = converter.convRaceSurface(surface)
     const _data = {
       surface: `${surface}`,
@@ -151,17 +154,18 @@ module.exports = {
   },
   /**
    * @description レース情報(2行目)を抽出します。
-   * @param {Object} dom - DOM
+   * @param {Object} $ - DOM
    * @param {Object} data - 抽出データ
    * @returns {Object} 抽出データ
    */
-  _extractRaceInfo2 (dom, data) {
+  _extractRaceInfo2 ($, data) {
     // 2019年12月15日 5回中山6日目 3歳以上1600万下  (混)[指](ハンデ)
-    const tag = dom.window.document.querySelector('.data_intro>p')
-    const texts = tag.textContent
+    const tag = $('.data_intro>p')
+    const texts = tag.text()
       .replace(/\n/g, '')
       .trim()
       .split(' ')
+      .map(t => t.trim())
     const raceDate = texts[0]
       .replace('年', '-')
       .replace('月', '-')
@@ -188,7 +192,7 @@ module.exports = {
    */
   _extractNumber (dom, data, key, index, defaultVal) {
     const _data = {}
-    _data[key] = module.exports._convNum(dom[index].textContent || defaultVal)
+    _data[key] = module.exports._convNum(dom.eq(index).text() || defaultVal)
     return module.exports._merge(data, _data)
   },
   /**
@@ -202,7 +206,7 @@ module.exports = {
    */
   _extractStr (dom, data, key, index, defaultVal) {
     const _data = {}
-    _data[key] = dom[index].textContent.trim() || defaultVal
+    _data[key] = dom.eq(index).text().trim() || defaultVal
     return module.exports._merge(data, _data)
   },
   /**
@@ -214,8 +218,9 @@ module.exports = {
    * @returns {Object} 抽出データ
    */
   _extractIdAndName (dom, data, key, index) {
-    const tag = dom[index].querySelector('a')
-    const url = tag.href
+    const tag = dom.eq(index).find('a')
+    // const url = tag.href
+    const url = tag.attr('href')
     const id = url
       .replace(`/${key}/`, '')
       .replace('/', '')
@@ -226,14 +231,14 @@ module.exports = {
   },
   /**
    * @description レース番号を抽出します。
-   * @param {Object} dom - DOM
+   * @param {Object} $ - DOM
    * @param {Object} data - 抽出データ
    * @returns {Object} 抽出データ
    */
-  _extractRaceNumber (dom, data) {
-    const tag = dom.window.document.querySelector('.data_intro>.racedata>dt')
+  _extractRaceNumber ($, data) {
+    const tag = $('.data_intro>.racedata>dt')
     const _data = {
-      raceNumber: module.exports._convNum(tag.textContent.replace('R', '').trim())
+      raceNumber: module.exports._convNum(tag.text().replace('R', '').trim())
     }
     return Object.assign(data, _data)
   },
@@ -244,7 +249,7 @@ module.exports = {
    * @returns {Object} 抽出データ
    */
   _extractSexAndAge (dom, data) {
-    const texts = dom[4].textContent
+    const texts = dom.eq(4).text()
       .replace(/\n/g, '')
       .trim()
       .split('')
@@ -262,6 +267,11 @@ module.exports = {
    */
   _extractPass (dom, data) {
     data = module.exports._extractStr(dom, data, 'pass', 10)
+    // 通過がない場合がある
+    // 【例】https://db.netkeiba.com/race/201104050509/
+    if (!data.pass) {
+      return {}
+    }
     const pass = data.pass.split('-')
     for (let i = 0; i < pass.length; i++) {
       data[`pass${i + 1}`] = Number(pass[i])
@@ -284,33 +294,67 @@ module.exports = {
   },
   /**
    * @description 払い戻しテーブルを抽出します。
-   * @param {Object} dom - DOM
+   * @param {Object} $ - DOM
    * @param {Object} data - 抽出データ
+   * @param {Object} horseCount - 出馬数
    * @returns {Object} 抽出データ
    */
-  _extractPayTable (dom, data) {
-    let tables = dom.window.document.querySelectorAll('.pay_table_01')
-    tables = [].slice.call(tables)
-    let trs = tables[0].querySelectorAll('tr')
-    trs = [].slice.call(trs)
+  _extractPayTable ($, data, horseCount) {
+    const tables = $('.pay_table_01')
+    let trs = tables.eq(0).find('tr')
+    let tan = {}
+    let fuku = {}
+    let waku = {}
+    let uren = {}
+    let wide = {}
+    let utan = {}
+    let sanfuku = {}
+    let santan = {}
+    let index = 0
     // 単勝
-    const tan = module.exports._extractPay(trs[0], 'tan')
+    if (horseCount >= 2) {
+      tan = module.exports._extractPay(trs.eq(index), 'tan')
+      index++
+    }
     // 複勝
-    const fuku = module.exports._extractPay(trs[1], 'fuku')
+    if (horseCount >= 5) {
+      fuku = module.exports._extractPay(trs.eq(index), 'fuku')
+      index++
+    }
     // 枠連
-    const waku = module.exports._extractPay(trs[2], 'waku')
+    if (horseCount >= 9) {
+      waku = module.exports._extractPay(trs.eq(index), 'waku')
+      index++
+    }
     // 馬蓮
-    const uren = module.exports._extractPay(trs[3], 'uren')
+    if (horseCount >= 3) {
+      uren = module.exports._extractPay(trs.eq(index), 'uren')
+      index++
+    }
 
-    trs = tables[1].querySelectorAll('tr')
+    // trs = tables[1].querySelectorAll('tr')
+    trs = tables.eq(1).find('tr')
+    index = 0
     // ワイド
-    const wide = module.exports._extractPay(trs[0], 'wide')
+    if (horseCount >= 4) {
+      wide = module.exports._extractPay(trs.eq(index), 'wide')
+      index++
+    }
     // 馬単
-    const utan = module.exports._extractPay(trs[1], 'utan')
+    if (horseCount >= 3) {
+      utan = module.exports._extractPay(trs.eq(index), 'utan')
+      index++
+    }
     // 三連複
-    const sanfuku = module.exports._extractPay(trs[2], 'sanfuku')
+    if (horseCount >= 4) {
+      sanfuku = module.exports._extractPay(trs.eq(index), 'sanfuku')
+      index++
+    }
     // 三連単
-    const santan = module.exports._extractPay(trs[3], 'santan')
+    if (horseCount >= 4) {
+      santan = module.exports._extractPay(trs.eq(index), 'santan')
+      index++
+    }
 
     module.exports._merge(data, tan)
     module.exports._merge(data, fuku)
@@ -328,10 +372,11 @@ module.exports = {
    * @returns {Object} 抽出データ
    */
   _extractPay (tr, prefix) {
-    const tds = [].slice.call(tr.querySelectorAll('td'))
-    const horseNumbers = module.exports._extractPayColumn(tds[0])
-    const pays = module.exports._extractPayColumn(tds[1])
-    const popularity = module.exports._extractPayColumn(tds[2])
+    // const tds = [].slice.call(tr.querySelectorAll('td'))
+    const tds = tr.children('td')
+    const horseNumbers = module.exports._extractPayColumn(tds.eq(0))
+    const pays = module.exports._extractPayColumn(tds.eq(1))
+    const popularity = module.exports._extractPayColumn(tds.eq(2))
     const ret = {}
     const length = horseNumbers.length
     for (let i = 0; i < length; i++) {
@@ -356,7 +401,7 @@ module.exports = {
    * @returns {Object} 抽出データ
    */
   _extractPayColumn (td) {
-    return td.textContent
+    return td.text()
       .trim()
       .split(/\n/)
       .map(text => text.trim())
@@ -364,8 +409,8 @@ module.exports = {
   },
   /**
    * @description データをマージします。
-   * @param {Object} dom - DOM
-   * @param {Object} data - 抽出データ
+   * @param {Object} org - 元オブジェクト
+   * @param {Object} add - マージオブジェクト
    * @returns {Object} 抽出データ
    */
   _merge (org, add) {

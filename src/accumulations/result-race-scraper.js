@@ -9,6 +9,12 @@ module.exports = {
    */
   HtmlDir: 'resources/htmls/result-races',
   /**
+   * @description 除外リスト
+   */
+  ExcludeRases: [
+    '201310010809'
+  ],
+  /**
    * @description 開催予定レースのスクレイピングを行います。
    * @returns {void}
    */
@@ -18,10 +24,17 @@ module.exports = {
 
     // レースページのURLリストを取得
     const files = fs.readdirSync(module.exports.HtmlDir)
+      .filter(f => module.exports.ExcludeRases.every(ex => f.indexOf(ex) < 0))
       .map(f => path.join(module.exports.HtmlDir, f))
 
     // 抽出
     for (const file of files) {
+      const retFile = module.exports._genResultFileName(file)
+      if (require('@h/file-helper').existsFile(retFile)) {
+        console.log(`already exists ${retFile}`)
+        continue
+      }
+      console.log(`scraping start ${file}`)
       module.exports._extract(file)
     }
   },
@@ -34,11 +47,16 @@ module.exports = {
     const path = require('path')
 
     // dom化
-    const dom = require('@h/html-helper').toDom(file)
+    // const dom = require('@h/html-helper').toDom(file)
+    const $ = require('@h/html-helper').toJQueryObj(file)
 
     // 情報を抽出
     const extractor = require('@ac/result-race-extractor')
-    const data = extractor.extract(dom, path.basename(file, path.extname(file)))
+    const data = extractor.extract($, path.basename(file, path.extname(file)))
+    // dataが空なら対象外
+    if (!data) {
+      return
+    }
 
     // 結果を出力
     fs.writeFileSync(module.exports._genResultFileName(file)
