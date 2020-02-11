@@ -1,1 +1,0 @@
-delete from future_race_info

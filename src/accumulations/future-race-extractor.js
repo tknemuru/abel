@@ -10,18 +10,24 @@ module.exports = {
   BaseUrl: 'https://db.netkeiba.com',
   /**
    * @description 開催予定レースの情報を抽出します。
+   * @param {Object} dom DOM
+   * @param {String} raceId レースID
    * @returns {void}
    */
-  extract (dom) {
-    let race = {}
+  extract (dom, raceId) {
+    let race = {
+      raceId
+    }
+    const horses = []
+    const horseListDoms = module.exports._extractHorseList(dom)
+    const horseCount = horseListDoms.length
+    race.horseCount = horseCount
     race = module.exports._extractRaceName(dom, race)
     race = module.exports._extractRaceInfo1(dom, race)
     race = module.exports._extractRaceInfo2(dom, race)
     race = module.exports._extractRaceNumber(dom, race)
 
-    const horses = []
     let horseNumber = 1
-    const horseListDoms = module.exports._extractHorseList(dom)
     for (const horseDom of horseListDoms) {
       if (module.exports._isCancel(horseDom)) {
         continue
@@ -38,6 +44,10 @@ module.exports = {
       horse = module.exports._extractFrameNumber(horseDom, horse)
       horse = module.exports._extractBasisWeight(horseDom, horse)
       horse = module.exports._extractHorseWeight(horseDom, horse)
+
+      const converter = require('@h/convert-helper')
+      horse.sexDigit = converter.convSex(horse.sex)
+
       horses.push(horse)
       horseNumber++
     }
@@ -84,6 +94,7 @@ module.exports = {
    * @returns {Object} 抽出データ
    */
   _extractRaceInfo1 (dom, data) {
+    const converter = require('@h/convert-helper')
     const tag = dom.window.document.querySelector('.RaceData01')
     const texts = tag.textContent
       .replace(/\n/g, '')
@@ -118,12 +129,18 @@ module.exports = {
       .replace('稍', '稍重')
       .replace('不', '不良')
     surfaceState = `${surface}:${surfaceState}`
+    const joinedSurface = `${surface}${direction}`
+    const surfaceStateDigit = converter.convRaceSurface(joinedSurface)
     const _data = {
-      surface: `${surface}${direction}`,
-      distance,
-      raceStart,
+      surface: joinedSurface,
+      distance: Number(distance),
+      raceStart: Number(raceStart),
       weather,
-      surfaceState
+      surfaceState,
+      surfaceDigit: surfaceStateDigit.surface,
+      directionDigit: surfaceStateDigit.direction,
+      weatherDigit: converter.convWeather(weather),
+      surfaceStateDigit: converter.convSurfaceState(surfaceState)
     }
     return Object.assign(data, _data)
   },
@@ -141,9 +158,18 @@ module.exports = {
     if ([3, 4, 5, 6].some(i => !!tags[i].textContent)) {
       raceClass = `${tags[3].textContent}${tags[4].textContent}${tags[5].textContent}(${tags[6].textContent})`
     }
+    const qs = require('querystring')
+    const dateTag = dom.window.document.querySelector('#RaceList_DateList .Active a')
+    const query = qs.parse(dateTag.href)
+    const raceDateYear = Number(query.kaisai_date.substring(0, 3))
+    const raceDateMonth = Number(query.kaisai_date.substring(4, 5))
+    const raceDateDay = Number(query.kaisai_date.substring(6, 7))
     const info = {
+      raceDateYear,
+      raceDateMonth,
+      raceDateDay,
       placeDetail,
-      raceClass
+      raceClass1: raceClass
     }
     return Object.assign(data, info)
   },
@@ -210,7 +236,7 @@ module.exports = {
       const texts = tag.textContent.split('')
       return {
         sex: texts[0],
-        age: texts[1]
+        age: Number(texts[1])
       }
     })
     return module.exports._merge(data, sexAndAges)
@@ -258,6 +284,9 @@ module.exports = {
         horseWeight: tag.textContent.replace(/\n/g, '') || '計不'
       }
     })
+    const weight = require('@h/convert-helper').convHorseWeight(_data.horseWeight)
+    _data.horseWeight = weight.weight
+    _data.horseWeightDiff = weight.diff
     return module.exports._merge(data, _data)
   },
   /**

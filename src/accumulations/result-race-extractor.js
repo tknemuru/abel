@@ -219,14 +219,13 @@ module.exports = {
    */
   _extractIdAndName (dom, data, key, index) {
     const tag = dom.eq(index).find('a')
-    // const url = tag.href
     const url = tag.attr('href')
     const id = url
       .replace(`/${key}/`, '')
       .replace('/', '')
     const idAndName = {}
     idAndName[`${key}Id`] = id
-    idAndName[`${key}Name`] = tag.title
+    idAndName[`${key}Name`] = tag.attr('title')
     return module.exports._merge(data, idAndName)
   },
   /**

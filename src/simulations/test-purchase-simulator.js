@@ -5,13 +5,12 @@
  */
 module.exports = {
   async simulate () {
-    for (let i = 999; i < 1000; i++) {
-      for (let p = 60; p < 61; p++) {
-        module.exports._simulate({
-          minScore: i,
-          minPlaceScore: p
-        })
-      }
+    let minScore = 100
+    for (let i = 0; i < 10; i++) {
+      console.log(`minScore: ${minScore}`)
+      const params = module.exports._genParams(minScore)
+      module.exports._simulate(params)
+      minScore += 10
     }
   },
   /**
@@ -25,30 +24,89 @@ module.exports = {
    */
   async _simulate (params) {
     // 購入対象を取得
-    const sims = require('@s/future-purchase-simulator').simulate(params)
+    const sims = require('@s/future-multi-ticket-type-purchase-simulator').simulate(params)
 
+    // 購入した馬券から回収率を算出
     const calculator = require('@s/recovery-rate-calculator')
-    let allRates = []
-    let allCount = 0
-    let winCount = 0
-    let winRate = 0
-    let placeCount = 0
-    let placeRate = 0
-    for (const sim of sims) {
-      allCount += sim.purchases.length
-      winCount += sim.purchases.filter(p => Number(p.orderOfFinish === 1 && p.score > params.minScore)).length
-      winRate = Math.round((winCount / allCount) * 1000) / 10
-      placeCount += sim.purchases.filter(p => Number(p.orderOfFinish <= 3)).length
-      placeRate = Math.round((placeCount / allCount) * 1000) / 10
-      // 購入した馬券から回収率を算出
-      const rates = calculator.calc(sim.purchases)
-      allRates = allRates.concat(rates)
-    }
+    const results = calculator.calc(sims)
 
     // 結果を表示
-    const _ = require('lodash')
-    const sum = _.reduce(allRates, (sum, rate) => sum + rate)
-    const avg = (sum / allRates.length) * 100
-    console.log(`minS: ${params.minScore} maxP: ${params.minPlaceScore} avg: ${avg} allC: ${allCount} winC: ${winCount} winR: ${winRate}% placeC: ${placeCount} placeR: ${placeRate}%`)
+    console.log('-----------------')
+    for (const type in results) {
+      const typeName = module.exports._getTypeJpName(type)
+      module.exports._dispResult(results[type], typeName)
+    }
+    console.log('-----------------')
+  },
+  /**
+   * @description 馬券の種類の日本語名を取得します。
+   * @param {String} type 馬券の種類
+   */
+  _getTypeJpName (type) {
+    let name = ''
+    switch (type) {
+      case 'tan':
+        name = '単勝'
+        break
+      case 'fuku':
+        name = '複勝'
+        break
+      case 'waku':
+        name = '枠連'
+        break
+      case 'uren':
+        name = '馬連'
+        break
+      case 'wide':
+        name = 'ワイド'
+        break
+      case 'sanfuku':
+        name = '三連複'
+        break
+      case 'sum':
+        name = '合計'
+        break
+      default:
+        throw new Error(`unexpected ticket type: ${type}`)
+    }
+    return name
+  },
+  /**
+   * @description シミュレーション結果を出力します。
+   * @param {Object} ret シミュレーション結果
+   * @param {String} typeName 馬券種類名
+   */
+  _dispResult (ret, typeName) {
+    const profitDiff = ret.profit + ret.loss
+    const profitRate = Math.round((ret.profit / (ret.loss * -1)) * 10000) / 100
+    const winRate = Math.round((ret.winTicketNum / ret.allTicketNum) * 10000) / 100
+    console.log(`[${typeName}] 収益: ${profitDiff} 収益率: ${profitRate}% 勝率: ${winRate}% 払い戻し金: ${ret.profit} 購入金: ${ret.loss} 購入枚数: ${ret.allTicketNum} 当たり枚数: ${ret.winTicketNum}`)
+  },
+  /**
+   * @description パラメータを生成します。
+   * @param {Number} val 値
+   */
+  _genParams (val) {
+    const params = {
+      tan: {
+        minScore: val
+      },
+      fuku: {
+        minScore: 9999
+      },
+      waku: {
+        minScore: 9999
+      },
+      uren: {
+        minScore: 9999
+      },
+      wide: {
+        minScore: 9999
+      },
+      sanfuku: {
+        minScore: 9999
+      }
+    }
+    return params
   }
 }

@@ -19,7 +19,7 @@ module.exports = {
     const path = require('path')
 
     // DBの開催予定レース情報を全クリア
-    const sql = reader.read('delete_all_future_race_info')
+    const sql = reader.read('delete_all_race_future')
     await accessor.run(sql)
 
     // レース情報を取得

@@ -9,33 +9,58 @@ module.exports = {
    * @param {Array} purchases - 購入情報
    * @returns {Array} 回収率
    */
-  calc (purchases) {
-    const rates = purchases
-      .map(p => {
-        const ticketNum = p.ticketNum || 1
-        const placeTicketNum = p.placeTicketNum || 0
-        let odds = 0
-        odds += (ticketNum + placeTicketNum) * -1
-        if (p.orderOfFinish <= 3) {
-          let rate = 0
-          if (p.popularity <= 4) {
-            rate = 0.4
-          } else if (p.popularity <= 7) {
-            rate = 0.3
-          } else if (p.popularity <= 11) {
-            rate = 0.2
-          } else {
-            rate = 0.1
+  calc (sims) {
+    const results = {}
+    const _sims = Object.values(sims)
+    for (const sim of _sims) {
+      for (const type in sim.purchases) {
+        if (!results[type]) {
+          results[type] = {
+            profit: 0,
+            loss: 0,
+            allTicketNum: 0,
+            winTicketNum: 0
           }
-          odds += Math.max(p.odds * rate, 1.0) * placeTicketNum
         }
-        if (p.orderOfFinish === 1) {
-          odds += p.odds * ticketNum
+        for (const ticket of sim.purchases[type]) {
+          const payMoneys = module.exports._calcPayMoneys(ticket.pays)
+          results[type].profit += payMoneys[type] * ticket.ticketNum
+          results[type].loss -= 100 * ticket.ticketNum
+          results[type].allTicketNum += ticket.ticketNum
+          results[type].winTicketNum += payMoneys[type] > 0 ? ticket.ticketNum : 0
         }
-        // 払い戻し率を考慮
-        // return odds * 0.8
-        return odds
-      })
-    return rates
+      }
+    }
+    const sum = {
+      profit: 0,
+      loss: 0,
+      allTicketNum: 0,
+      winTicketNum: 0
+    }
+    for (const type in results) {
+      sum.profit += results[type].profit
+      sum.loss += results[type].loss
+      sum.allTicketNum += results[type].allTicketNum
+      sum.winTicketNum += results[type].winTicketNum
+    }
+    results.sum = sum
+    return results
+  },
+  /**
+   * @description 払い戻し金額を算出します。
+   * @param {Object} pays 払い戻し情報
+   * @returns {Object} 払い戻し金額
+   */
+  _calcPayMoneys (pays) {
+    const creator = require('@an/learning-answer-creator')
+    const payMoneys = {
+      tan: creator.createAnswerByTanPay(pays),
+      fuku: creator.createAnswerByFukuPay(pays),
+      waku: creator.createAnswerByWakuPay(pays),
+      uren: creator.createAnswerByUrenPay(pays),
+      wide: creator.createAnswerByWidePay(pays),
+      sanfuku: creator.createAnswerBySanfukuPay(pays)
+    }
+    return payMoneys
   }
 }

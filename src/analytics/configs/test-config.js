@@ -23,7 +23,7 @@ module.exports = {
   /**
    * @description データセレクト文ファイル名
    */
-  select: 'select_range_race_result_history',
+  select: 'select_range_result_race_history',
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名
@@ -34,28 +34,16 @@ module.exports = {
   /**
    * @description ソルト
    */
-  salt: null,
+  salt: 0,
   /**
    * @description 学習情報の検証を行います。
    * @param {Object} data - 学習情報
    * @param {Array} validationCols - 検証対象のカラムリスト
    */
   validation (data, validationCols) {
-    if (!module.exports.salt) {
-      // module.exports.salt = Math.floor(Math.random() * 50) + 50
-      module.exports.salt = 3
-      console.log(module.exports.salt)
-    }
-    const err = validationCols.some(key => {
-      // if (!data[key]) {
-      //   return false
-      // }
-      return Number.isNaN(Number(data[key])) ||
-        Number(data[key]) <= 0 ||
-        data.inf_pre0_race_name.includes('新馬') ||
-        data.inf_pre0_race_name.includes('障害')
-    })
-    return !err && data.inf_pre0_race_id % module.exports.salt === 0
+    const err = data.ret0_race_name.includes('新馬') ||
+      data.ret0_race_name.includes('障害')
+    return !err
   },
   /**
    * @description 正解データを作成します。

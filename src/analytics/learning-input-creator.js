@@ -35,11 +35,22 @@ module.exports = {
     let fromIdx = 0
     let toIdx = module.exports.RaceUnit - 1
     let end = false
+    let i = 0
     while (!end) {
       if (toIdx >= raceIds.length) {
         toIdx = raceIds.length - 1
         end = true
       }
+
+      // スキップ判定
+      if (config.salt && i % config.salt !== 0) {
+        console.log('skip')
+        i++
+        fromIdx = toIdx + 1
+        toIdx += module.exports.RaceUnit
+        continue
+      }
+
       const param = {
         $from: raceIds[fromIdx].raceId,
         $to: raceIds[toIdx].raceId
@@ -65,6 +76,7 @@ module.exports = {
         module.exports._createRelation(hists, validationCols, config)
       }
 
+      i++
       fromIdx = toIdx + 1
       toIdx += module.exports.RaceUnit
     }
@@ -169,6 +181,23 @@ module.exports = {
         popularity: conv.convNum(hist.ret0_popularity),
         odds: conv.convNum(hist.ret0_odds)
       }
+      // 払い戻し情報の作成
+      const pays = {}
+      pays.ret0_horse_number = hist.ret0_horse_number
+      pays.ret0_frame_number = hist.ret0_frame_number
+      for (const key in hist) {
+        if (key.startsWith('ret0_tan_') ||
+        key.startsWith('ret0_fuku_') ||
+        key.startsWith('ret0_waku_') ||
+        key.startsWith('ret0_uren_') ||
+        key.startsWith('ret0_wide_') ||
+        key.startsWith('ret0_utan_') ||
+        key.startsWith('ret0_sanfuku_') ||
+        key.startsWith('ret0_santan_')) {
+          pays[key] = hist[key]
+        }
+      }
+      rel.pays = pays
       rels.push(rel)
       if (i % 1000 === 0) {
         console.log(i)

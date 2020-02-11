@@ -24,7 +24,11 @@ module.exports = {
             _sqls[i],
             _params ? _params[i] : null,
             (err, result) => {
-              if (err) return reject(err)
+              if (err) {
+                // console.log(_sqls[i])
+                // console.log(_params[i])
+                return reject(err)
+              }
 
               results.push(result)
               if (i >= _sqls.length - 1) {

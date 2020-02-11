@@ -53,7 +53,9 @@ module.exports = {
     //   data.ret0_race_name.includes('新馬') ||
     //   data.ret0_race_name.includes('障害')
     // return !err
-    return true
+    const err = data.ret0_race_name.includes('新馬') ||
+      data.ret0_race_name.includes('障害')
+    return !err
   },
   /**
    * @description 正解データを作成します。

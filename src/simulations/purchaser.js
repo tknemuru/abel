@@ -131,65 +131,24 @@ module.exports = {
    * @param {Array} horses - 出馬リスト
    * @param {Array} scores - 評価値リスト
    * @param {Object} params - パラメータ
-   * @param {Number} params.minScore - 最小スコア
-   * @param {Number} params.maxPopularity - 最大人気順
    * @returns {Array} 購入リスト
    */
   purchaseV4 (horses, scores, params) {
+    const _ = require('lodash')
     const validator = require('@h/validation-helper')
     validator.required(params)
-    validator.required(params.minScore)
-    validator.required(params.minPlaceScore)
+    validator.required(params.ticketType)
+    const type = params.ticketType
+    validator.required(params[type])
+    validator.required(params[type].minScore)
     const purchases = horses
       .map((h, i) => {
-        h.score = scores[i].score
-        let ticketNum = 0
-        let placeTicketNum = 0
-        if (h.score > params.minScore) {
-          ticketNum = module.exports._purchaseWinTicket(h)
-        }
-        if (h.popularity < 12) {
-          placeTicketNum = module.exports._purchasePalceTicket(h, params.minPlaceScore)
-        }
-        h.ticketNum = ticketNum
-        h.placeTicketNum = placeTicketNum
-        return h
+        const p = _.cloneDeep(h)
+        p.score = scores[i].score
+        p.ticketNum = 1
+        return p
       })
-      .filter(h => {
-        return h.score > params.minPlaceScore
-      })
+      .filter(p => params[type].minScore <= p.score)
     return purchases
-  },
-  /**
-   * @description 単勝チケットを購入します。
-   * @param {Object} horse 購入馬
-   */
-  _purchaseWinTicket (horse) {
-    let ticketNum = 1
-    switch (horse.popularity) {
-      case 1:
-        ticketNum = 3
-        break
-      case 2:
-        ticketNum = 2
-        break
-      default:
-        ticketNum = 1
-    }
-    return ticketNum
-  },
-  /**
-   * @description 複勝チケットを購入します。
-   * @param {Object} horse 購入馬
-   */
-  _purchasePalceTicket (horse, minPlaceScore) {
-    // let ticketNum = 1
-    // if (horse.score >= minPlaceScore + 50) {
-    //   ticketNum = 3
-    // } else if (horse.score >= minPlaceScore + 30) {
-    //   ticketNum = 2
-    // }
-    // return ticketNum
-    return 1
   }
 }
