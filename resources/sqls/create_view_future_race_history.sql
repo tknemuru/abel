@@ -2,6 +2,7 @@ create view if not exists future_race_history
 as
 select
   ret0.race_id as ret0_race_id,
+  ret0.horse_count as ret0_horse_count,
   ret0.race_name as ret0_race_name,
   ret0.surface as ret0_surface,
   ret0.distance as ret0_distance,
@@ -65,7 +66,6 @@ select
   ret0.santan_horse_number_3 as ret0_santan_horse_number_3,
   ret0.santan_pay as ret0_santan_pay,
   ret0.santan_popularity as ret0_santan_popularity,
-  ret0.horse_count as ret0_horse_count,
   ret0.order_of_finish as ret0_order_of_finish,
   ret0.frame_number as ret0_frame_number,
   ret0.horse_number as ret0_horse_number,
@@ -95,7 +95,10 @@ select
   ret0.sex_digit as ret0_sex_digit,
   ret0.finishing_time_digit as ret0_finishing_time_digit,
   ret0.length_diff_digit as ret0_length_diff_digit,
+  ret0.pre_race_id as ret0_pre_race_id,
+  ret0.pre_horse_number as ret0_pre_horse_number,
   ret1.race_id as ret1_race_id,
+  ret1.horse_count as ret1_horse_count,
   ret1.race_name as ret1_race_name,
   ret1.surface as ret1_surface,
   ret1.distance as ret1_distance,
@@ -159,7 +162,6 @@ select
   ret1.santan_horse_number_3 as ret1_santan_horse_number_3,
   ret1.santan_pay as ret1_santan_pay,
   ret1.santan_popularity as ret1_santan_popularity,
-  ret1.horse_count as ret1_horse_count,
   ret1.order_of_finish as ret1_order_of_finish,
   ret1.frame_number as ret1_frame_number,
   ret1.horse_number as ret1_horse_number,
@@ -189,7 +191,10 @@ select
   ret1.sex_digit as ret1_sex_digit,
   ret1.finishing_time_digit as ret1_finishing_time_digit,
   ret1.length_diff_digit as ret1_length_diff_digit,
+  ret1.pre_race_id as ret1_pre_race_id,
+  ret1.pre_horse_number as ret1_pre_horse_number,
   ret2.race_id as ret2_race_id,
+  ret2.horse_count as ret2_horse_count,
   ret2.race_name as ret2_race_name,
   ret2.surface as ret2_surface,
   ret2.distance as ret2_distance,
@@ -253,7 +258,6 @@ select
   ret2.santan_horse_number_3 as ret2_santan_horse_number_3,
   ret2.santan_pay as ret2_santan_pay,
   ret2.santan_popularity as ret2_santan_popularity,
-  ret2.horse_count as ret2_horse_count,
   ret2.order_of_finish as ret2_order_of_finish,
   ret2.frame_number as ret2_frame_number,
   ret2.horse_number as ret2_horse_number,
@@ -283,7 +287,10 @@ select
   ret2.sex_digit as ret2_sex_digit,
   ret2.finishing_time_digit as ret2_finishing_time_digit,
   ret2.length_diff_digit as ret2_length_diff_digit,
+  ret2.pre_race_id as ret2_pre_race_id,
+  ret2.pre_horse_number as ret2_pre_horse_number,
   ret3.race_id as ret3_race_id,
+  ret3.horse_count as ret3_horse_count,
   ret3.race_name as ret3_race_name,
   ret3.surface as ret3_surface,
   ret3.distance as ret3_distance,
@@ -347,7 +354,6 @@ select
   ret3.santan_horse_number_3 as ret3_santan_horse_number_3,
   ret3.santan_pay as ret3_santan_pay,
   ret3.santan_popularity as ret3_santan_popularity,
-  ret3.horse_count as ret3_horse_count,
   ret3.order_of_finish as ret3_order_of_finish,
   ret3.frame_number as ret3_frame_number,
   ret3.horse_number as ret3_horse_number,
@@ -377,7 +383,10 @@ select
   ret3.sex_digit as ret3_sex_digit,
   ret3.finishing_time_digit as ret3_finishing_time_digit,
   ret3.length_diff_digit as ret3_length_diff_digit,
+  ret3.pre_race_id as ret3_pre_race_id,
+  ret3.pre_horse_number as ret3_pre_horse_number,
   ret4.race_id as ret4_race_id,
+  ret4.horse_count as ret4_horse_count,
   ret4.race_name as ret4_race_name,
   ret4.surface as ret4_surface,
   ret4.distance as ret4_distance,
@@ -441,7 +450,6 @@ select
   ret4.santan_horse_number_3 as ret4_santan_horse_number_3,
   ret4.santan_pay as ret4_santan_pay,
   ret4.santan_popularity as ret4_santan_popularity,
-  ret4.horse_count as ret4_horse_count,
   ret4.order_of_finish as ret4_order_of_finish,
   ret4.frame_number as ret4_frame_number,
   ret4.horse_number as ret4_horse_number,
@@ -470,20 +478,17 @@ select
   ret4.earning_money as ret4_earning_money,
   ret4.sex_digit as ret4_sex_digit,
   ret4.finishing_time_digit as ret4_finishing_time_digit,
-  ret4.length_diff_digit as ret4_length_diff_digit
+  ret4.length_diff_digit as ret4_length_diff_digit,
+  ret4.pre_race_id as ret4_pre_race_id,
+  ret4.pre_horse_number as ret4_pre_horse_number
 from
   race_future ret0
 -- ret1
 left join
-  horse_race_history his0
-on
-  ret0.race_id = his0.race_id
-  and ret0.horse_number = his0.horse_number
-left join
   race_result ret1
 on
-  ret1.race_id = his0.pre_race_id
-  and ret1.horse_number = his0.pre_horse_number
+  ret1.race_id = ret0.pre_race_id
+  and ret1.horse_number = ret0.pre_horse_number
 -- ret2
 left join
   horse_race_history his1

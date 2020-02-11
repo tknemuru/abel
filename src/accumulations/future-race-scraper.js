@@ -31,13 +31,14 @@ module.exports = {
    */
   _extract (file) {
     const fs = require('fs')
+    const path = require('path')
 
     // dom化
     const dom = require('@h/html-helper').toDom(file)
 
     // 情報を抽出
     const extractor = require('@ac/future-race-extractor')
-    const data = extractor.extract(dom)
+    const data = extractor.extract(dom, path.basename(file, path.extname(file)))
     console.log(data)
 
     // 結果を出力

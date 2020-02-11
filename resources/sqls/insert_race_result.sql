@@ -1,5 +1,6 @@
 insert or replace into race_result (
   race_id,
+  horse_count,
   race_name,
   surface,
   distance,
@@ -63,7 +64,6 @@ insert or replace into race_result (
   santan_horse_number_3,
   santan_pay,
   santan_popularity,
-  horse_count,
   order_of_finish,
   frame_number,
   horse_number,
@@ -95,6 +95,7 @@ insert or replace into race_result (
   length_diff_digit
 ) values (
   $raceId,
+  $horseCount,
   $raceName,
   $surface,
   $distance,
@@ -158,7 +159,6 @@ insert or replace into race_result (
   $santanHorseNumber3,
   $santanPay,
   $santanPopularity,
-  $horseCount,
   $orderOfFinish,
   $frameNumber,
   $horseNumber,

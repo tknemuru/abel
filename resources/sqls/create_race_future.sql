@@ -1,5 +1,6 @@
 create table if not exists race_future (
   race_id text not null,
+  horse_count integer ,
   race_name text ,
   surface text ,
   distance integer ,
@@ -63,7 +64,6 @@ create table if not exists race_future (
   santan_horse_number_3 integer ,
   santan_pay integer ,
   santan_popularity integer ,
-  horse_count integer ,
   order_of_finish integer ,
   frame_number integer ,
   horse_number integer not null,
@@ -93,5 +93,7 @@ create table if not exists race_future (
   sex_digit integer ,
   finishing_time_digit integer ,
   length_diff_digit integer ,
+  pre_race_id text ,
+  pre_horse_number integer ,
   primary key (race_id, horse_number)
 )

@@ -7,7 +7,7 @@ module.exports = {
   /**
    * @description 開催済レースデータ配置ディレクトリ
    */
-  RaceDataDir: 'resources/races/result-races',
+  RaceDataDir: 'resources/races/result-races/template',
   /**
    * @description insert文ファイルパス
    */
@@ -51,8 +51,12 @@ module.exports = {
     const { horses } = raceAndHorses
     const horse = horses[1]
     const raceParam = sqlHelper.toParam(race)
-    const horseParam = sqlHelper.toParam(horse)
+    let horseParam = sqlHelper.toParam(horse)
     module.exports._generateSql(race, horse, raceParam, horseParam, true)
+    // 開催予定専用項目を追加
+    horse.preRaceId = ''
+    horse.preHorseNumber = -1
+    horseParam = sqlHelper.toParam(horse)
     module.exports._generateSql(race, horse, raceParam, horseParam, false)
   },
   /**
@@ -130,16 +134,24 @@ module.exports = {
     sql += `  ${tableName} ret0\n`
     for (let i = 0; i < 4; i++) {
       sql += `-- ret${i + 1}\n`
-      sql += 'left join\n'
-      sql += `  horse_race_history his${i}\n`
-      sql += 'on\n'
-      sql += `  ret${i}.race_id = his${i}.race_id\n`
-      sql += `  and ret${i}.horse_number = his${i}.horse_number\n`
-      sql += 'left join\n'
-      sql += `  race_result ret${i + 1}\n`
-      sql += 'on\n'
-      sql += `  ret${i + 1}.race_id = his${i}.pre_race_id\n`
-      sql += `  and ret${i + 1}.horse_number = his${i}.pre_horse_number\n`
+      if (!isResult && i <= 0) {
+        sql += 'left join\n'
+        sql += `  race_result ret${i + 1}\n`
+        sql += 'on\n'
+        sql += `  ret${i + 1}.race_id = ret${i}.pre_race_id\n`
+        sql += `  and ret${i + 1}.horse_number = ret${i}.pre_horse_number\n`
+      } else {
+        sql += 'left join\n'
+        sql += `  horse_race_history his${i}\n`
+        sql += 'on\n'
+        sql += `  ret${i}.race_id = his${i}.race_id\n`
+        sql += `  and ret${i}.horse_number = his${i}.horse_number\n`
+        sql += 'left join\n'
+        sql += `  race_result ret${i + 1}\n`
+        sql += 'on\n'
+        sql += `  ret${i + 1}.race_id = his${i}.pre_race_id\n`
+        sql += `  and ret${i + 1}.horse_number = his${i}.pre_horse_number\n`
+      }
     }
     sql += 'order by\n'
     sql += '  ret0_race_id,\n'

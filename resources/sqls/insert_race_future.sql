@@ -1,5 +1,6 @@
 insert or replace into race_future (
   race_id,
+  horse_count,
   race_name,
   surface,
   distance,
@@ -63,7 +64,6 @@ insert or replace into race_future (
   santan_horse_number_3,
   santan_pay,
   santan_popularity,
-  horse_count,
   order_of_finish,
   frame_number,
   horse_number,
@@ -92,9 +92,12 @@ insert or replace into race_future (
   earning_money,
   sex_digit,
   finishing_time_digit,
-  length_diff_digit
+  length_diff_digit,
+  pre_race_id,
+  pre_horse_number
 ) values (
   $raceId,
+  $horseCount,
   $raceName,
   $surface,
   $distance,
@@ -158,7 +161,6 @@ insert or replace into race_future (
   $santanHorseNumber3,
   $santanPay,
   $santanPopularity,
-  $horseCount,
   $orderOfFinish,
   $frameNumber,
   $horseNumber,
@@ -187,5 +189,7 @@ insert or replace into race_future (
   $earningMoney,
   $sexDigit,
   $finishingTimeDigit,
-  $lengthDiffDigit
+  $lengthDiffDigit,
+  $preRaceId,
+  $preHorseNumber
 )

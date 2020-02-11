@@ -66,8 +66,24 @@ switch (options.target) {
     break
   case 'future-simulate':
     futureSimulator.simulate({
-      minScore: 999,
-      minPlaceScore: 60
+      tan: {
+        minScore: 170
+      },
+      fuku: {
+        minScore: 9999
+      },
+      waku: {
+        minScore: 9999
+      },
+      uren: {
+        minScore: 9999
+      },
+      wide: {
+        minScore: 9999
+      },
+      sanfuku: {
+        minScore: 9999
+      }
     })
     break
   case 'extract-database-url':

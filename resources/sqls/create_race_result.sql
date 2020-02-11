@@ -1,5 +1,6 @@
 create table if not exists race_result (
   race_id text not null,
+  horse_count integer ,
   race_name text not null,
   surface text not null,
   distance integer ,
@@ -63,7 +64,6 @@ create table if not exists race_result (
   santan_horse_number_3 integer ,
   santan_pay integer ,
   santan_popularity integer ,
-  horse_count integer ,
   order_of_finish integer ,
   frame_number integer ,
   horse_number integer not null,
