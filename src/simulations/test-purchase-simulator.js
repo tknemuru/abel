@@ -5,8 +5,8 @@
  */
 module.exports = {
   async simulate () {
-    let minScore = 713
-    for (let i = 0; i < 1; i++) {
+    let minScore = 27
+    for (let i = 0; i < 100; i++) {
       console.log(`minScore: ${minScore}`)
       const params = module.exports._genParams(minScore)
       module.exports._simulate(params)

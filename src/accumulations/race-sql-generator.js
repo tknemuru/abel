@@ -71,7 +71,7 @@ module.exports = {
     const _ = require('lodash')
     const fs = require('fs')
     const tableName = isResult ? 'race_result' : 'race_future'
-    const viewName = isResult ? 'result_race_history' : 'future_race_history'
+    let viewName = isResult ? 'result_race_history' : 'future_race_history'
 
     // insert文
     let sql = `insert or replace into ${tableName} (\n`
@@ -117,7 +117,7 @@ module.exports = {
       , { encoding: 'utf-8' }
     )
 
-    // create view文
+    // create view文(pre)
     sql = `create view if not exists ${viewName}\n`
     sql += 'as\n'
     sql += 'select\n'
@@ -156,6 +156,48 @@ module.exports = {
     sql += 'order by\n'
     sql += '  ret0_race_id,\n'
     sql += '  ret0_horse_number'
+    fs.writeFileSync(module.exports.CreateViewFilePath.replace('$viewName', viewName)
+      , sql
+      , { encoding: 'utf-8' }
+    )
+
+    // 未来の場合はここで処理終了
+    if (!isResult) {
+      return
+    }
+
+    viewName = 'result_post_history'
+    // create view文(post)
+    sql = `create view if not exists ${viewName}\n`
+    sql += 'as\n'
+    sql += 'select\n'
+    for (let hisIdx = 0; hisIdx <= 4; hisIdx++) {
+      for (let i = 0; i < raceKeysLen; i++) {
+        sql += `  ret${hisIdx}.${_.snakeCase(raceKeys[i])} as ret${hisIdx}_${_.snakeCase(raceKeys[i])},\n`
+      }
+      for (let i = 0; i < horseKeysLen; i++) {
+        const comma = hisIdx < 4 || i < horseKeysLen - 1 ? ',' : ''
+        sql += `  ret${hisIdx}.${_.snakeCase(horseKeys[i])} as ret${hisIdx}_${_.snakeCase(horseKeys[i])}${comma}\n`
+      }
+    }
+    sql += 'from\n'
+    sql += `  ${tableName} ret0\n`
+    for (let i = 0; i < 4; i++) {
+      sql += `-- ret${i + 1}\n`
+      sql += 'left join\n'
+      sql += `  horse_race_history his${i}\n`
+      sql += 'on\n'
+      sql += `  ret${i}.race_id = his${i}.race_id\n`
+      sql += `  and ret${i}.horse_number = his${i}.horse_number\n`
+      sql += 'left join\n'
+      sql += `  race_result ret${i + 1}\n`
+      sql += 'on\n'
+      sql += `  ret${i + 1}.race_id = his${i}.post_race_id\n`
+      sql += `  and ret${i + 1}.horse_number = his${i}.post_horse_number\n`
+    }
+    sql += 'order by\n'
+    sql += '  ret0.race_id,\n'
+    sql += '  ret0.horse_number'
     fs.writeFileSync(module.exports.CreateViewFilePath.replace('$viewName', viewName)
       , sql
       , { encoding: 'utf-8' }

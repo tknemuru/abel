@@ -15,9 +15,12 @@ module.exports = {
     sqls.push(reader.read('create_race_result'))
     sqls.push(reader.read('create_race_future'))
     sqls.push(reader.read('create_horse_race_history'))
+    sqls.push(reader.read('create_view_result_post_history'))
     sqls.push(reader.read('create_view_result_race_history'))
     sqls.push(reader.read('create_view_future_race_history'))
     sqls.push(reader.read('create_idx_race_result_horse_id'))
+    sqls.push(reader.read('create_idx_horse_race_history_pre'))
+    sqls.push(reader.read('create_idx_horse_race_history_post'))
     accessor.run(sqls)
   }
 }

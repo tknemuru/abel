@@ -41,11 +41,12 @@ module.exports = {
       let success = true
       let page = {}
       while (count < module.exports.RetryLimit) {
+        let browser
         try {
           console.log('start sleep...')
           sleep(3000)
           console.log('end sleep')
-          const browser = await puppeteer.launch({
+          browser = await puppeteer.launch({
             args: ['--lang=ja,en-US,en']
           })
           page = await browser.newPage()
@@ -62,6 +63,9 @@ module.exports = {
           console.log(e)
           success = false
         } finally {
+          if (browser) {
+            browser.close()
+          }
           count++
         }
         if (success) break
