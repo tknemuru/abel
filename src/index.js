@@ -99,6 +99,32 @@ switch (options.target) {
       }
     })()
     break
+  case 'extract-result-race-url':
+    (async () => {
+      try {
+        await require('@ac/race-database-downloader').extract({
+          // endDate: '202001'
+        })
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
+  case 'download-result-race':
+    (async () => {
+      try {
+        await require('@ac/result-race-page-downloader').download({
+          // endDate: '202001'
+        })
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
   case 'result-scrape':
     resultScraper.scrape()
     break

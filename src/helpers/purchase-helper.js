@@ -10,12 +10,13 @@ module.exports = {
    */
   getPurchasingTicketType () {
     return [
+      // 'tan'
       'tan',
-      'fuku',
-      'waku',
-      'uren',
-      'wide',
-      'sanfuku'
+      'fuku'
+      // 'waku',
+      // 'uren',
+      // 'wide',
+      // 'sanfuku'
     ]
   }
 }

@@ -16,6 +16,7 @@ module.exports = {
    * @description 開催予定レース情報を登録します。
    * @param {Object} params パラメータ
    * @param {Boolean} params.clear データをクリアするかどうか
+   * @param {Number} params.minDate 遡る最過去日付
    * @returns {void}
    */
   async register (params = {}) {
@@ -24,6 +25,7 @@ module.exports = {
     const accessor = require('@d/db-accessor')
     const path = require('path')
     const clear = !!params.clear
+    const minDate = params.minDate || '201912'
 
     if (clear) {
       // DBの開催済レース情報を全クリア
@@ -44,6 +46,11 @@ module.exports = {
     let sqls = []
     let sqlParams = []
     for (const file of files) {
+      console.log(file)
+      if (module.exports._skip(file, minDate)) {
+        console.log('skip')
+        continue
+      }
       const sqlAndParams = module.exports._generateSqlAndParams(file, sql)
       const _sqls = sqlAndParams.sqls
       const _params = sqlAndParams.params.map(p => {
@@ -92,6 +99,23 @@ module.exports = {
       }
     }
     return template
+  },
+  /**
+   * @description 登録処理をスキップするかどうか
+   * @param {String} file ファイル名
+   * @param {Number} minDate 遡る最過去日付
+   */
+  _skip (file, minDate) {
+    if (!minDate) {
+      return false
+    }
+    const fs = require('fs')
+    const raceAndHorses = JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }))
+    const { race } = raceAndHorses
+    const date = Number(`${race.raceDateYear}${('0' + race.raceDateMonth).slice(-2)}`)
+    console.log(date)
+    const skip = date < minDate
+    return skip
   },
   /**
    * @description ファイルの情報からSQLとパラメータを生成します。

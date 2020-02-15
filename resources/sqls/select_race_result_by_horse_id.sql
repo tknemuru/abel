@@ -12,7 +12,7 @@ select
     --horse_id = '2008105524'
     and cast(order_of_finish as int) <> 0
   order by
-    race_date_year desc,
-    race_date_month desc,
-    race_date_day desc
+    race_date_year,
+    race_date_month,
+    race_date_day
 

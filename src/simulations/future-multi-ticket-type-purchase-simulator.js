@@ -20,6 +20,7 @@ module.exports = {
     const ticketTypes = require('@h/purchase-helper').getPurchasingTicketType()
 
     const results = {}
+    const scoreHorses = {}
     for (const type of ticketTypes) {
       params.ticketType = type
       const preds = JSON.parse(fs.readFileSync(
@@ -45,25 +46,47 @@ module.exports = {
             raceName,
             purchases: {}
           }
+          scoreHorses[raceId] = {
+            raceId,
+            raceName,
+            purchases: {}
+          }
         }
         const scores = evaluator.evaluate(horses)
-        const purchases = purchaser.purchase(horses, scores, params)
-        results[raceId].purchases[type] = purchases
+        const purchasesSet = purchaser.purchase(horses, scores, params)
+        results[raceId].purchases[type] = purchasesSet.purchases
+        scoreHorses[raceId].purchases[type] = purchasesSet.horses
       }
     }
 
     // ファイルに書き出し
-    module.exports._writeFile(results)
+    module.exports._writeResutls(results)
+    module.exports._writeHorses(scoreHorses)
 
     return results
   },
   /**
    * @description ファイルに結果を書き込みます。
-   * @param {Object} results シミュレーション結果
+   * @param {Object} data 結果情報
    */
-  _writeFile (results) {
+  _writeResutls (results) {
+    module.exports._writeFile(results, 'result')
+  },
+  /**
+   * @description ファイルに馬情報を書き込みます。
+   * @param {Object} horses 馬情報
+   */
+  _writeHorses (horses) {
+    module.exports._writeFile(horses, 'horses')
+  },
+  /**
+   * @description ファイルに結果を書き込みます。
+   * @param {Object} data 結果情報
+   * @param {String} fileKey ファイルキー
+   */
+  _writeFile (data, fileKey) {
     const _ = require('lodash')
-    const ret = _.cloneDeep(results)
+    const ret = _.cloneDeep(data)
     const retkeys = Object.keys(ret)
     for (const raceId of retkeys) {
       const purchasesKeys = Object.keys(ret[raceId].purchases)
@@ -76,7 +99,7 @@ module.exports = {
       }
     }
     const fs = require('fs')
-    fs.writeFileSync('resources/simulations/sim-result.json'
+    fs.writeFileSync(`resources/simulations/sim-${fileKey}.json`
       , JSON.stringify(ret, null, '  ')
       , { encoding: 'utf-8' }
     )

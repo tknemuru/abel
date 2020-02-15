@@ -51,13 +51,23 @@ module.exports = {
         continue
       }
 
-      const param = {
-        $from: raceIds[fromIdx].raceId,
-        $to: raceIds[toIdx].raceId
+      let param = {}
+
+      if (config.isInQuery) {
+        const ids = raceIds.map(r => r.raceId)
+        sql = reader.read(config.select)
+        sql = sql.replace('?#', ids.map(() => '?').join(','))
+        param = [ids]
+      } else {
+        param = {
+          $from: raceIds[fromIdx].raceId,
+          $to: raceIds[toIdx].raceId
+        }
+        sql = reader.read(config.select)
       }
-      console.log(param)
       // レース結果を取得
-      sql = reader.read(config.select)
+      console.log(param)
+      console.log(sql)
       const hists = await accessor.all(sql, param)
       console.log(hists.length)
 

@@ -141,14 +141,39 @@ module.exports = {
     const type = params.ticketType
     validator.required(params[type])
     validator.required(params[type].minScore)
-    const purchases = horses
+    let _horses = horses
       .map((h, i) => {
         const p = _.cloneDeep(h)
         p.score = scores[i].score
-        p.ticketNum = 1
+        p.ticketNum = module.exports._calcTanTicketNum(p.score, params[type].minScore)
+        // p.ticketNum = 1
         return p
       })
+    _horses = require('@h/logic-helper').sortReverse(_horses, 'score')
+    let purchases = _horses
       .filter(p => params[type].minScore <= p.score)
-    return purchases
+    const calc = require('@h/calc-helper')
+    const loss = calc.sum(purchases.map(p => p.ticketNum * 100))
+    const overLoss = purchases.every(p => p.score * p.ticketNum < loss)
+    const highRisk = purchases.length >= 4
+    purchases = overLoss || highRisk ? [] : purchases
+    purchases = highRisk ? [] : purchases
+    return {
+      horses: _horses,
+      purchases
+    }
+  },
+  /**
+   * @description 単勝の購入枚数を算出します。
+   * @param {Number} score スコア
+   * @param {Number} minScore 下限スコア
+   */
+  _calcTanTicketNum (score, minScore) {
+    // const num = 1
+    let num = 1
+    if (score >= 200) {
+      num = 20
+    }
+    return num
   }
 }

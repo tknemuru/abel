@@ -37,6 +37,7 @@ module.exports = {
     const dom = require('@h/html-helper').toDom(file)
 
     // 情報を抽出
+    console.log(file)
     const extractor = require('@ac/future-race-extractor')
     const data = extractor.extract(dom, path.basename(file, path.extname(file)))
     console.log(data)

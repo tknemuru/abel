@@ -16,8 +16,12 @@ module.exports = {
    */
   async download (params = {}) {
     // レースのトップページをダウンロード
+    const fs = require('fs')
+    if (require('@h/file-helper').existsFile(module.exports._genListFileName())) {
+      fs.unlinkSync(module.exports._genListFileName())
+    }
     const downloader = require('@ac/page-downloader')
-    const listPageFileName = await downloader.download({
+    const listPageFileName = await downloader.downloadWithPuppeteer({
       urls: [
         `${module.exports.BaseUrl}/top/index.html`
       ],
@@ -38,7 +42,7 @@ module.exports = {
     console.log(urls)
 
     // レースページをダウンロード
-    await downloader.download({
+    await downloader.downloadWithPuppeteer({
       urls,
       fileNameGen: module.exports._getRaceFileName
     })

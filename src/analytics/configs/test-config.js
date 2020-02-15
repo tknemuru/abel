@@ -23,7 +23,8 @@ module.exports = {
   /**
    * @description データセレクト文ファイル名
    */
-  select: 'select_range_result_race_history',
+  // select: 'select_range_result_race_history',
+  select: 'select_in_result_race_history',
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名
@@ -35,6 +36,10 @@ module.exports = {
    * @description ソルト
    */
   salt: 0,
+  /**
+   * @description 取得SQLがIN句でのレースID指定クエリかどうか
+   */
+  isInQuery: true,
   /**
    * @description 学習情報の検証を行います。
    * @param {Object} data - 学習情報

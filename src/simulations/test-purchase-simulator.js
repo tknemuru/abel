@@ -5,12 +5,12 @@
  */
 module.exports = {
   async simulate () {
-    let minScore = 100
-    for (let i = 0; i < 10; i++) {
+    let minScore = 713
+    for (let i = 0; i < 1; i++) {
       console.log(`minScore: ${minScore}`)
       const params = module.exports._genParams(minScore)
       module.exports._simulate(params)
-      minScore += 10
+      minScore += 1
     }
   },
   /**

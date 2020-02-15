@@ -5,6 +5,16 @@
  */
 module.exports = {
   /**
+   * @description 合計を求めます。
+   * @param {Array} vals - 値のリスト
+   * @returns {Number} 合計値
+   */
+  sum (vals) {
+    const _ = require('lodash')
+    const sum = _.reduce(vals, (sum, val) => sum + val)
+    return sum
+  },
+  /**
    * @description 平均値を求めます。
    * @param {Array} vals - 値のリスト
    * @returns {Number} 平均値

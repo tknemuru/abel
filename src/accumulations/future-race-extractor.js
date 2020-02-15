@@ -99,6 +99,7 @@ module.exports = {
     const texts = tag.textContent
       .replace(/\n/g, '')
       .split('/')
+    console.log(texts)
     const time = texts.length > 1 ? texts[0] : '未定'
     const surfaceUnit = texts.length > 1 ? texts[1] : texts[0]
     const weatherUnit = texts.length > 2 ? texts[2] : '未定'
@@ -129,6 +130,7 @@ module.exports = {
       .replace('稍', '稍重')
       .replace('不', '不良')
     surfaceState = `${surface}:${surfaceState}`
+    console.log(surfaceState)
     const joinedSurface = `${surface}${direction}`
     const surfaceStateDigit = converter.convRaceSurface(joinedSurface)
     const _data = {

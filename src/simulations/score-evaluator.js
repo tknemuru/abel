@@ -17,7 +17,7 @@ module.exports = {
     let evals = []
     evals = horses.map(h => {
       return {
-        score: h.eval
+        score: h.eval * 10
       }
     })
     return evals
