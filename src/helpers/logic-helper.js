@@ -11,6 +11,7 @@ module.exports = {
    * @returns {Array} ソートしたリスト
    */
   sort (list, key) {
+    require('@h/validation-helper').required(key)
     return list
       .sort((a, b) => {
         if (a[key] < b[key]) return -1
@@ -25,11 +26,21 @@ module.exports = {
    * @returns {Array} ソートしたリスト
    */
   sortReverse (list, key) {
+    require('@h/validation-helper').required(key)
     return list
       .sort((a, b) => {
         if (a[key] > b[key]) return -1
         if (a[key] < b[key]) return 1
         return 0
       })
+  },
+  /**
+   * @description 配列から組み合わせを生成します。
+   * @param {Array} list 配列
+   * @param {Number} length 組み合わせの要素数
+   */
+  genCombination (list, length) {
+    const comb = require('js-combinatorics')
+    return comb.combination(list, length)
   }
 }

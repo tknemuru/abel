@@ -99,12 +99,12 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswerByFukuPay (data) {
-    const horseNo = data.ret0_horse_number
+    const frameNo = data.ret0_horse_number
     let ret = 0
     for (let i = 0; i < 3; i++) {
       const no = data[`ret0_fuku_horse_number_${i + 1}`]
       const pay = data[`ret0_fuku_pay_${i + 1}`]
-      if (horseNo === no) {
+      if (frameNo === no) {
         ret = pay
         break
       }
@@ -135,17 +135,7 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswerByUrenPay (data) {
-    const horseNo = data.ret0_horse_number
-    let ret = 0
-    for (let i = 0; i < 2; i++) {
-      const no = data[`ret0_uren_horse_number_${i + 1}`]
-      const pay = data.ret0_uren_pay
-      if (horseNo === no) {
-        ret = pay
-        break
-      }
-    }
-    return ret
+    return module.exports._createAnswerByCombinationPay(data, 'uren', 2)
   },
   /**
    * @description ワイドの払い戻し金額によって正解データを作成します。
@@ -178,11 +168,35 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswerBySanfukuPay (data) {
+    return module.exports._createAnswerByCombinationPay(data, 'sanfuku', 3)
+  },
+  /**
+   * @description 馬単の払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByUtanPay (data) {
+    return module.exports._createAnswerByCombinationPay(data, 'utan', 2)
+  },
+  /**
+   * @description 三連単の払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerBySantanPay (data) {
+    return module.exports._createAnswerByCombinationPay(data, 'santan', 3)
+  },
+  /**
+   * @description ペア馬券の払い戻し金額によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  _createAnswerByCombinationPay (data, type, combNum) {
     const horseNo = data.ret0_horse_number
     let ret = 0
-    for (let i = 0; i < 3; i++) {
-      const no = data[`ret0_sanfuku_horse_number_${i + 1}`]
-      const pay = data.ret0_sanfuku_pay
+    for (let i = 0; i < combNum; i++) {
+      const no = data[`ret0_${type}_horse_number_${i + 1}`]
+      const pay = data[`ret0_${type}_pay`]
       if (horseNo === no) {
         ret = pay
         break

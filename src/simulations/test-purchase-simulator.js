@@ -5,12 +5,11 @@
  */
 module.exports = {
   async simulate () {
-    let minScore = 27
-    for (let i = 0; i < 100; i++) {
-      console.log(`minScore: ${minScore}`)
-      const params = module.exports._genParams(minScore)
+    for (let i = 0; i < 1; i++) {
+      const params = module.exports._genParams(i)
+      console.log('minScore:')
+      console.log(params)
       module.exports._simulate(params)
-      minScore += 1
     }
   },
   /**
@@ -63,6 +62,12 @@ module.exports = {
       case 'sanfuku':
         name = '三連複'
         break
+      case 'utan':
+        name = '馬単'
+        break
+      case 'santan':
+        name = '三連単'
+        break
       case 'sum':
         name = '合計'
         break
@@ -84,27 +89,36 @@ module.exports = {
   },
   /**
    * @description パラメータを生成します。
-   * @param {Number} val 値
+   * @param {Number} i インデックス
    */
-  _genParams (val) {
+  _genParams (i) {
+    const count = i
+    const tan = 85
+    const fuku = 85
     const params = {
       tan: {
-        minScore: val
+        minScore: tan + count
       },
       fuku: {
-        minScore: 9999
+        minScore: fuku + count
       },
       waku: {
-        minScore: 9999
+        minScore: fuku + count
       },
       uren: {
-        minScore: 9999
+        minScore: fuku + count
       },
       wide: {
-        minScore: 9999
+        minScore: fuku + count
       },
       sanfuku: {
-        minScore: 9999
+        minScore: fuku + count
+      },
+      utan: {
+        minScore: fuku + count
+      },
+      santan: {
+        minScore: fuku + count
       }
     }
     return params

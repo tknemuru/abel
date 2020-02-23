@@ -92,9 +92,17 @@ module.exports = {
       const purchasesKeys = Object.keys(ret[raceId].purchases)
       for (const type of purchasesKeys) {
         for (const ticket of ret[raceId].purchases[type]) {
-          delete ticket.raceId
-          delete ticket.raceName
-          delete ticket.pays
+          if (Array.isArray(ticket)) {
+            for (const t of ticket) {
+              delete t.raceId
+              delete t.raceName
+              delete t.pays
+            }
+          } else {
+            delete ticket.raceId
+            delete ticket.raceName
+            delete ticket.pays
+          }
         }
       }
     }

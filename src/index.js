@@ -146,8 +146,22 @@ switch (options.target) {
   case 'create-info-additional':
     additionalInfoCreator.create()
     break
+  case 'create-post-score':
+    require('@an/race-post-score-creator').create()
+    break
   case 'learn-pre':
     learningInputCreator.create(learningConfig)
+    break
+  case 'learn-pre-resource':
+    (async () => {
+      try {
+        await require('@an/learning-input-resource-creator').create(learningConfig)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
     break
   case 'pred-pre':
     learningInputCreator.create(predictionConfig)
@@ -157,6 +171,9 @@ switch (options.target) {
     break
   case 'pred-adjust':
     predAdjuster.adjust()
+    break
+  case 'pred-key-adjust':
+    require('@an/prediction-key-result-adjuster').adjust()
     break
   case 'sim-analyze':
     simAnalyzer.analyze()

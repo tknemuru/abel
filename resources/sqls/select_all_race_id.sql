@@ -10,8 +10,11 @@ where
 
 --  race_date_year < 2020
   race_date_year = 2019
-  and race_date_month = 11
+--  and race_date_month = 1
 --  and race_date_day in (2, 3, 9, 10, 16, 17, 23, 24, 30, 31)
---  and race_date_day in (9, 10)
+--   and race_date_month in (1, 2, 3)
+   and race_date_month in (4, 5, 6)
+--   and race_date_month in (7, 8, 9)
+--  and race_date_month in (11, 12)
 group by race_id
 order by race_id

@@ -16,7 +16,9 @@ module.exports = {
       // 'waku',
       // 'uren',
       // 'wide',
-      // 'sanfuku'
+      // 'sanfuku',
+      // 'utan'
+      // 'santan'
     ]
   }
 }

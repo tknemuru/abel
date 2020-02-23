@@ -9,6 +9,10 @@ module.exports = {
    */
   RaceUnit: 1000,
   /**
+   * @description 入力情報ファイルディレクトリ
+   */
+  InputFileDir: 'resources/params/learnings',
+  /**
    * @description 学習用情報を作成します。
    * @param {Object} config - 設定情報
    * @returns {void}
@@ -16,8 +20,10 @@ module.exports = {
   async create (config) {
     const validator = require('@h/validation-helper')
     validator.required(config)
-    const reader = require('@d/sql-reader')
-    const accessor = require('@d/db-accessor')
+    const towardPost = !!config.towardPost
+    if (towardPost) {
+      console.log('***** toward post *****')
+    }
 
     // 既存ファイルを削除する
     module.exports._clearFile()
@@ -29,8 +35,43 @@ module.exports = {
     let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-columns.json', { encoding: 'utf-8' }))
     validationCols = module.exports._extractValidationCols(validationCols)
 
+    // 正解情報を読み込む
+    const answers = {}
+    for (const type of require('@h/purchase-helper').getPurchasingTicketType()) {
+      answers[type] = JSON.parse(fs.readFileSync(`resources/params/pred-result-${type}-key.json`, { encoding: 'utf-8' }))
+    }
+
+    const params = {
+      targets,
+      validationCols,
+      answers,
+      towardPost,
+      keyRels: []
+    }
+
+    // 作成処理
+    if (config.fromDb) {
+      await module.exports._createFromDb(config, params)
+    } else {
+      module.exports._createFromFile(config, params)
+    }
+
+    // キー紐付き情報を書き込む
+    if (towardPost) {
+      module.exports._writeKeyRelation(params.keyRels)
+    }
+  },
+  /**
+   * @description DBから学習用情報を作成します。
+   * @param {Object} config 設定情報
+   * @param {Object} params パラメータ
+   * @returns {void}
+   */
+  async _createFromDb (config, params) {
     // 全レースIDを取得
-    let sql = reader.read(config.preSelect)
+    const reader = require('@d/sql-reader')
+    const accessor = require('@d/db-accessor')
+    const sql = reader.read(config.preSelect)
     const raceIds = await accessor.all(sql)
     let fromIdx = 0
     let toIdx = module.exports.RaceUnit - 1
@@ -48,14 +89,16 @@ module.exports = {
         i++
         fromIdx = toIdx + 1
         toIdx += module.exports.RaceUnit
-        continue
+        return []
       }
 
       let param = {}
-
+      let sql
+      const reader = require('@d/sql-reader')
+      const accessor = require('@d/db-accessor')
       if (config.isInQuery) {
         const ids = raceIds.map(r => r.raceId)
-        sql = reader.read(config.select)
+        sql = reader.read(config.select())
         sql = sql.replace('?#', ids.map(() => '?').join(','))
         param = [ids]
       } else {
@@ -63,7 +106,7 @@ module.exports = {
           $from: raceIds[fromIdx].raceId,
           $to: raceIds[toIdx].raceId
         }
-        sql = reader.read(config.select)
+        sql = reader.read(config.select())
       }
       // レース結果を取得
       console.log(param)
@@ -71,24 +114,63 @@ module.exports = {
       const hists = await accessor.all(sql, param)
       console.log(hists.length)
 
-      // 学習データを作成
-      if (config.input) {
-        module.exports._createInput(hists, targets, validationCols, config)
-      }
-
-      // 正解データを作成
-      if (config.answer) {
-        module.exports._createAnswer(hists, validationCols, config)
-      }
-
-      // 紐付きデータを作成
-      if (config.relation) {
-        module.exports._createRelation(hists, validationCols, config)
-      }
+      // ファイルに結果を書き込む
+      module.exports._writeFiles(hists, config, params)
 
       i++
       fromIdx = toIdx + 1
       toIdx += module.exports.RaceUnit
+      // break
+    }
+  },
+  /**
+   * @description ファイルから学習用情報を作成します。
+   * @param {Object} config 設定情報
+   * @param {Object} params パラメータ
+   * @returns {void}
+   */
+  _createFromFile (config, params) {
+    const fs = require('fs')
+    const path = require('path')
+    const files = fs.readdirSync(module.exports.InputFileDir)
+      .map(f => path.join(module.exports.InputFileDir, f))
+
+    for (const file of files) {
+      console.log(file)
+      const hists = JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }))
+      // ファイルに結果を書き込む
+      module.exports._writeFiles(hists, config, params)
+      // break
+    }
+  },
+  /**
+   * @description ファイルに書き込みます。
+   * @param {Array} hists レース履歴
+   * @param {Object} config 設定情報
+   * @param {Object} params パラメータ
+   */
+  _writeFiles (hists, config, params) {
+    // 学習データを作成
+    if (config.input) {
+      module.exports._createInput(hists, params.targets, params.validationCols, config)
+    }
+
+    // 正解データを作成
+    if (config.answer) {
+      if (params.towardPost) {
+        module.exports._createAnswer(hists, params.validationCols, config)
+      } else {
+        // module.exports._createPostAnswers(hists, validationCols, config, answers)
+        module.exports._createAnswer(hists, params.validationCols, config)
+      }
+    }
+
+    // 紐付きデータを作成
+    if (config.relation) {
+      module.exports._createRelation(hists, params.alidationCols, config)
+      if (params.towardPost) {
+        module.exports._createKeyRelation(hists, params.validationCols, config, params.keyRels)
+      }
     }
   },
   /**
@@ -116,6 +198,8 @@ module.exports = {
       }
       // 付加情報
       // module.exports._addInfo(data, hist, scoreParams)
+      // 特徴情報
+      // module.exports._addFeatures(data, hist)
       dataList.push(data)
       if (i % 1000 === 0) {
         console.log(i)
@@ -147,6 +231,47 @@ module.exports = {
       }
       // 正解情報
       const ansSet = config.createAnswer(hist)
+      for (const key in ansSet) {
+        if (!ansListSet[key]) {
+          ansListSet[key] = []
+        }
+        const ans = []
+        ans.push(ansSet[key])
+        ansListSet[key].push(ans)
+      }
+      if (i % 1000 === 0) {
+        console.log(i)
+        // データを書き込む
+        module.exports._writeAnswer(ansListSet)
+        ansListSet = {}
+      }
+      i++
+    }
+    // データを書き込む
+    module.exports._writeAnswer(ansListSet)
+  },
+  /**
+   * @description 学習用正解情報を作成します。
+   * @param {Array} hists - 履歴情報
+   * @param {Array} validationCols - 検証対象のカラム
+   * @param {Object} config - 設定情報
+   * @param {Object} answers - 正解情報
+   * @returns {void}
+   */
+  _createPostAnswers (hists, validationCols, config, answers) {
+    let ansListSet = {}
+    let i = 1
+    for (const hist of hists) {
+      if (!config.validation(hist, validationCols)) {
+        continue
+      }
+      // 正解情報
+      const ansKey = `${hist.ret0_race_id}-${hist.ret0_horse_number}`
+      const ansSet = {}
+      for (const type of require('@h/purchase-helper').getPurchasingTicketType()) {
+        const ans = answers[type][ansKey]
+        ansSet[type] = ans
+      }
       for (const key in ansSet) {
         if (!ansListSet[key]) {
           ansListSet[key] = []
@@ -219,6 +344,25 @@ module.exports = {
     }
     // データを書き込む
     module.exports._writeRelation(rels)
+  },
+  /**
+   * @description キー紐付き情報を作成します。
+   * @param {Array} hists - 履歴情報
+   * @param {Array} validationCols - 検証対象のカラム
+   * @param {Object} config - 設定情報
+   * @param {Array} keyRels - キー紐付き情報
+   * @returns {void}
+   */
+  _createKeyRelation (hists, validationCols, config, keyRels) {
+    for (const hist of hists) {
+      if (!config.validation(hist, validationCols)) {
+        continue
+      }
+      const rel = {
+        key: `${hist.ret0_race_id}-${hist.ret0_horse_number}`
+      }
+      keyRels.push(rel)
+    }
   },
   /**
    * @description 全出力カラムリストを抽出します。
@@ -310,6 +454,40 @@ module.exports = {
     }
   },
   /**
+   * @description 特徴情報を追加します。
+   * @param {Array} data - 学習用データ
+   * @param {Array} hist - 履歴データ
+   */
+  _addFeatures (data, hist) {
+    const feature = require('@an/feature-extractor')
+    feature.attachOrderOfFinishScore(hist)
+    data.push(feature.extractSimilarExperienceCount(hist, 'distance'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'race_start'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'direction_digit'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'weather_digit'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'race_date_month'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'race_date_day'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'race_number'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'horse_count'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'horse_number'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'frame_number'))
+    data.push(feature.extractSimilarExperienceCount(hist, 'basis_weight'))
+    data.push(feature.extractSimilarSurfaceExperienceCount(hist))
+
+    data.push(feature.extractSimilarExperienceScore(hist, 'distance'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'race_start'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'direction_digit'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'weather_digit'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'race_date_month'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'race_date_day'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'race_number'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'horse_count'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'horse_number'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'frame_number'))
+    data.push(feature.extractSimilarExperienceScore(hist, 'basis_weight'))
+    data.push(feature.extractSimilarSurfaceExperienceScore(hist))
+  },
+  /**
    * 値を数値に変換します。
    * @param {Any} val - 値
    */
@@ -359,6 +537,17 @@ module.exports = {
   _writeRelation (data) {
     const fs = require('fs')
     fs.appendFileSync('resources/learnings/relation.json'
+      , JSON.stringify(data, null, '  ')
+      , { encoding: 'utf-8' }
+    )
+  },
+  /**
+   * @description キー紐付きデータの書き込みを行います。
+   * @param {Array} data - キー紐付きデータ
+   */
+  _writeKeyRelation (data) {
+    const fs = require('fs')
+    fs.appendFileSync('resources/learnings/key-relation.json'
       , JSON.stringify(data, null, '  ')
       , { encoding: 'utf-8' }
     )

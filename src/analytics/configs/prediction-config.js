@@ -21,9 +21,13 @@ module.exports = {
    */
   preSelect: 'select_all_future_race_id',
   /**
+   * @description データベースの情報から作成するかどうか
+   */
+  fromDb: true,
+  /**
    * @description データセレクト文ファイル名
    */
-  select: 'select_range_future_race_history',
+  select: () => 'select_range_future_race_history',
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名

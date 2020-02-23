@@ -21,10 +21,13 @@
     "create-horse-hist": "node ./src/index.js -t create-horse-hist",
     "create-result-additional": "node ./src/index.js -t create-result-additional",
     "create-info-additional": "node ./src/index.js -t create-info-additional",
+    "create-post-score": "node ./src/index.js -t create-post-score",
+    "learn-pre-resource": "node ./src/index.js -t learn-pre-resource",
     "learn-pre": "node ./src/index.js -t learn-pre",
     "pred-pre": "node ./src/index.js -t pred-pre",
     "test-pre": "node ./src/index.js -t test-pre",
     "pred-adjust": "node ./src/index.js -t pred-adjust",
+    "pred-key-adjust": "node ./src/index.js -t pred-key-adjust",
     "sim-analyze": "node ./src/index.js -t sim-analyze"
   },
   "repository": {
@@ -44,6 +47,7 @@
     "cheerio": "^1.0.0-rc.3",
     "cheerio-httpcli": "^0.7.4",
     "command-line-args": "^5.1.1",
+    "js-combinatorics": "^0.5.5",
     "jsdom": "^15.2.1",
     "lodash": "^4.17.15",
     "lodash-math": "0.0.7",

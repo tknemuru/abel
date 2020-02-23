@@ -126,8 +126,7 @@ module.exports = {
         sql += `  ret${hisIdx}.${_.snakeCase(raceKeys[i])} as ret${hisIdx}_${_.snakeCase(raceKeys[i])},\n`
       }
       for (let i = 0; i < horseKeysLen; i++) {
-        const comma = hisIdx < 4 || i < horseKeysLen - 1 ? ',' : ''
-        sql += `  ret${hisIdx}.${_.snakeCase(horseKeys[i])} as ret${hisIdx}_${_.snakeCase(horseKeys[i])}${comma}\n`
+        sql += `  ret${hisIdx}.${_.snakeCase(horseKeys[i])} as ret${hisIdx}_${_.snakeCase(horseKeys[i])},\n`
       }
     }
     sql += 'from\n'

@@ -21,10 +21,23 @@ module.exports = {
    */
   preSelect: 'select_all_race_id',
   /**
+   * @description データベースの情報から作成するかどうか
+   */
+  fromDb: true,
+  /**
    * @description データセレクト文ファイル名
    */
-  // select: 'select_range_result_race_history',
-  select: 'select_in_result_race_history',
+  select: () => {
+    if (module.exports.towardPost) {
+      return 'select_in_result_post_history'
+    } else {
+      return 'select_in_result_race_history'
+    }
+  },
+  /**
+   * @description 未来に向かう入力情報を作成するかどうか
+   */
+  towardPost: false,
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名
@@ -46,7 +59,16 @@ module.exports = {
    * @param {Array} validationCols - 検証対象のカラムリスト
    */
   validation (data, validationCols) {
-    const err = data.ret0_race_name.includes('新馬') ||
+    let err = false
+    // err = validationCols.some(key => {
+    //   // 4レース揃っていないデータは一旦除外する
+    //   // if (!data[key]) {
+    //   //   return false
+    //   // }
+    //   return Number.isNaN(Number(data[key])) ||
+    //     Number(data[key]) <= 0
+    // }) ||
+    err = data.ret0_race_name.includes('新馬') ||
       data.ret0_race_name.includes('障害')
     return !err
   },
