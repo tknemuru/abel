@@ -191,8 +191,6 @@ select
   ret1.sex_digit as ret1_sex_digit,
   ret1.finishing_time_digit as ret1_finishing_time_digit,
   ret1.length_diff_digit as ret1_length_diff_digit,
-  ret1.pre_race_id as ret1_pre_race_id,
-  ret1.pre_horse_number as ret1_pre_horse_number,
   ret2.race_id as ret2_race_id,
   ret2.horse_count as ret2_horse_count,
   ret2.race_name as ret2_race_name,
@@ -287,8 +285,6 @@ select
   ret2.sex_digit as ret2_sex_digit,
   ret2.finishing_time_digit as ret2_finishing_time_digit,
   ret2.length_diff_digit as ret2_length_diff_digit,
-  ret2.pre_race_id as ret2_pre_race_id,
-  ret2.pre_horse_number as ret2_pre_horse_number,
   ret3.race_id as ret3_race_id,
   ret3.horse_count as ret3_horse_count,
   ret3.race_name as ret3_race_name,
@@ -383,8 +379,6 @@ select
   ret3.sex_digit as ret3_sex_digit,
   ret3.finishing_time_digit as ret3_finishing_time_digit,
   ret3.length_diff_digit as ret3_length_diff_digit,
-  ret3.pre_race_id as ret3_pre_race_id,
-  ret3.pre_horse_number as ret3_pre_horse_number,
   ret4.race_id as ret4_race_id,
   ret4.horse_count as ret4_horse_count,
   ret4.race_name as ret4_race_name,
@@ -479,8 +473,7 @@ select
   ret4.sex_digit as ret4_sex_digit,
   ret4.finishing_time_digit as ret4_finishing_time_digit,
   ret4.length_diff_digit as ret4_length_diff_digit,
-  ret4.pre_race_id as ret4_pre_race_id,
-  ret4.pre_horse_number as ret4_pre_horse_number
+  1 as end
 from
   race_future ret0
 -- ret1

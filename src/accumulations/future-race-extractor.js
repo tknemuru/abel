@@ -99,7 +99,6 @@ module.exports = {
     const texts = tag.textContent
       .replace(/\n/g, '')
       .split('/')
-    console.log(texts)
     const time = texts.length > 1 ? texts[0] : '未定'
     const surfaceUnit = texts.length > 1 ? texts[1] : texts[0]
     const weatherUnit = texts.length > 2 ? texts[2] : '未定'
@@ -162,7 +161,7 @@ module.exports = {
     }
     const qs = require('querystring')
     const dateTag = dom.window.document.querySelector('#RaceList_DateList .Active a')
-    const query = qs.parse(dateTag.href)
+    const query = qs.parse(dateTag.href.split('?')[1])
     const raceDateYear = Number(query.kaisai_date.substring(0, 3))
     const raceDateMonth = Number(query.kaisai_date.substring(4, 5))
     const raceDateDay = Number(query.kaisai_date.substring(6, 7))
@@ -285,11 +284,11 @@ module.exports = {
       return {
         horseWeight: tag.textContent.replace(/\n/g, '') || '計不'
       }
-    })
+    })[0]
     const weight = require('@h/convert-helper').convHorseWeight(_data.horseWeight)
     _data.horseWeight = weight.weight
     _data.horseWeightDiff = weight.diff
-    return module.exports._merge(data, _data)
+    return module.exports._merge(data, [_data])
   },
   /**
    * @description オッズを抽出します。

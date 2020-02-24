@@ -27,7 +27,7 @@ module.exports = {
     await accessor.run(sql)
 
     // パラメータのテンプレートを生成
-    const template = module.exports._generateTemplate()
+    const template = await module.exports._generateTemplate()
 
     // レース情報を取得
     const files = fs.readdirSync(module.exports.RaceDataDir)
@@ -41,6 +41,8 @@ module.exports = {
       const sqlAndParams = await module.exports._generateSqlAndParams(file, sql)
       const _sqls = sqlAndParams.sqls
       const _params = sqlAndParams.params.map(p => {
+        // TODO: あとでちゃんとやる
+        delete p.$raceClass
         return Object.assign(
           {},
           template,
@@ -80,12 +82,12 @@ module.exports = {
    * @description パラメータのテンプレートを生成します。
    * @returns {Object} テンプレートパラメータ
    */
-  _generateTemplate () {
+  async _generateTemplate () {
     const fs = require('fs')
     const path = require('path')
     const file = fs.readdirSync(module.exports.RaceDataTemplateDir)
       .map(f => path.join(module.exports.RaceDataTemplateDir, f))[0]
-    const sqlAndParams = module.exports._generateSqlAndParams(file)
+    const sqlAndParams = await module.exports._generateSqlAndParams(file)
     const param = sqlAndParams.params[0]
     const template = {}
     for (const key in param) {

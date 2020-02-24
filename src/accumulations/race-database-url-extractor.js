@@ -21,12 +21,13 @@ module.exports = {
    */
   async extract (params = {}) {
     const fs = require('fs')
-    const endDate = params.endDate || '201912'
+    const endDate = params.endDate || '202002'
     const append = !!params.append
     console.log(`endDate: ${endDate}`)
     console.log(`append: ${append}`)
     if (!append) {
       fs.unlinkSync(module.exports.UrlsPath)
+      fs.unlinkSync('resources/htmls/race-database/top.html')
     }
     let urls = module.exports._readUrls()
 

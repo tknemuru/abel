@@ -70,19 +70,19 @@ module.exports = {
         payMoneys = creator.createAnswerByWakuPay(ticket.pays)
         break
       case 'uren':
-        payMoneys = module.exports._calcUrenPay(ticket)
+        payMoneys = module.exports._calcUrenPay(ticket.horses)
         break
       case 'wide':
-        payMoneys = module.exports._calcWidePay(ticket)
+        payMoneys = module.exports._calcWidePay(ticket.horses)
         break
       case 'sanfuku':
-        payMoneys = module.exports._calcSanfukuPay(ticket)
+        payMoneys = module.exports._calcSanfukuPay(ticket.horses)
         break
       case 'utan':
-        payMoneys = module.exports._calcUtanPay(ticket)
+        payMoneys = module.exports._calcUtanPay(ticket.horses)
         break
       case 'santan':
-        payMoneys = module.exports._calcSantanPay(ticket)
+        payMoneys = module.exports._calcSantanPay(ticket.horses)
         break
     }
     return payMoneys

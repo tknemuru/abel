@@ -21,6 +21,7 @@ module.exports = {
     sqls.push(reader.read('create_idx_race_result_horse_id'))
     sqls.push(reader.read('create_idx_horse_race_history_pre'))
     sqls.push(reader.read('create_idx_horse_race_history_post'))
+    sqls.push(reader.read('create_simulation_result'))
     accessor.run(sqls)
   }
 }

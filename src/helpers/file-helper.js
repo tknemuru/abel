@@ -18,5 +18,19 @@ module.exports = {
     } catch (err) {
       if (err.code === 'ENOENT') return false
     }
+  },
+  /**
+   * @description ディレクトリかどうか。
+   * @param {String} fileName - ファイル名
+   * @returns {Boolean} ディレクトリかどうか
+   */
+  isDirectory (fileName) {
+    try {
+      const fs = require('fs')
+      const ret = fs.statSync(fileName)
+      return ret.isDirectory()
+    } catch (err) {
+      if (err.code === 'ENOENT') return false
+    }
   }
 }

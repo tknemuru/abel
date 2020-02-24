@@ -8,13 +8,24 @@ module.exports = {
    * @description 馬別レース履歴データを作成します。
    * @returns {void}
    */
-  async create () {
+  async create (param = {}) {
     const reader = require('@d/sql-reader')
     const accessor = require('@d/db-accessor')
 
     // 馬の一覧を取得
-    let sql = reader.read('select_all_horse')
-    const horses = await accessor.all(sql)
+    let sql
+    let sqlParam
+    if (param.isFuture) {
+      sql = reader.read('select_all_future_horse')
+    } else {
+      sql = reader.read('select_all_horse')
+      sqlParam = {
+        $minYear: param.minYear,
+        $minMonth: param.minMonth
+      }
+      console.log(sqlParam)
+    }
+    const horses = await accessor.all(sql, sqlParam)
     console.log(horses.length)
 
     for (const horse of horses) {
@@ -28,10 +39,10 @@ module.exports = {
       // 履歴を登録していく
       sql = reader.read('insert_horse_race_history')
       const sqls = []
-      const params = []
+      const sqlParams = []
       const len = histories.length
       for (let i = 0; i < len; i++) {
-        const param = {
+        const sqlParam = {
           $raceId: histories[i].raceId,
           $horseNumber: histories[i].horseNumber,
           $horseId: histories[i].horseId,
@@ -41,9 +52,9 @@ module.exports = {
           $preHorseNumber: (i > 0) ? histories[i - 1].horseNumber : null
         }
         sqls.push(sql)
-        params.push(param)
+        sqlParams.push(sqlParam)
       }
-      await accessor.run(sqls, params)
+      await accessor.run(sqls, sqlParams)
     }
   }
 }

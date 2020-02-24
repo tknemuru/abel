@@ -14,7 +14,7 @@ module.exports = {
    * @param {Number} params.minScore - 最小スコア
    * @returns {void}
    */
-  simulate (params = {}) {
+  async simulate (params = {}) {
     const fs = require('fs')
     const path = require('path')
     const ticketTypes = require('@h/purchase-helper').getPurchasingTicketType()
@@ -63,6 +63,9 @@ module.exports = {
     module.exports._writeResutls(results)
     module.exports._writeHorses(scoreHorses)
 
+    // DBに書き出し
+    // await module.exports._writeHorsesToDb(scoreHorses)
+
     return results
   },
   /**
@@ -92,16 +95,15 @@ module.exports = {
       const purchasesKeys = Object.keys(ret[raceId].purchases)
       for (const type of purchasesKeys) {
         for (const ticket of ret[raceId].purchases[type]) {
-          if (Array.isArray(ticket)) {
-            for (const t of ticket) {
-              delete t.raceId
-              delete t.raceName
-              delete t.pays
+          delete ticket.raceId
+          delete ticket.raceName
+          delete ticket.pays
+          if (ticket.horses) {
+            for (const h of ticket.horses) {
+              delete h.raceId
+              delete h.raceName
+              delete h.pays
             }
-          } else {
-            delete ticket.raceId
-            delete ticket.raceName
-            delete ticket.pays
           }
         }
       }
@@ -111,5 +113,82 @@ module.exports = {
       , JSON.stringify(ret, null, '  ')
       , { encoding: 'utf-8' }
     )
+  },
+  /**
+   * @description 馬情報をDBに書き込みます。
+   * @param {Object} horses 馬情報
+   */
+  async _writeHorsesToDb (horses) {
+    const reader = require('@d/sql-reader')
+    const accessor = require('@d/db-accessor')
+
+    // 全クリア
+    const sql = reader.read('delete_all_simulation_result')
+    await accessor.run(sql)
+
+    const sqls = []
+    const sqlParams = []
+    const races = Object.values(horses)
+    for (const race of races) {
+      const param = {
+        $raceId: race.raceId,
+        $raceName: race.raceName
+      }
+      const types = Object.keys(race.purchases)
+      for (const type of types) {
+        // 今は単勝だけ
+        // if (type !== 'tan') {
+        //   continue
+        // }
+        let scoreOrder = 1
+        let seqNo = 1
+        for (const ticket of race.purchases[type]) {
+          let seqSubNo = 1
+          if (type === 'tan' || type === 'fuku') {
+            ticket.ticketType = type
+            ticket.seqNo = seqNo
+            ticket.seqSubNo = seqSubNo
+            ticket.scoreOrder = scoreOrder
+            module.exports._addSqlParam(ticket, param, sqls, sqlParams)
+          } else {
+            for (const horse of ticket.horses) {
+              horse.score = ticket.score
+              horse.ticketNum = ticket.ticketNum
+              horse.odds = ticket.odds
+
+              horse.ticketType = type
+              horse.seqNo = seqNo
+              horse.seqSubNo = seqSubNo
+              horse.scoreOrder = scoreOrder
+              module.exports._addSqlParam(horse, param, sqls, sqlParams)
+              seqSubNo++
+            }
+          }
+          scoreOrder++
+          seqNo++
+        }
+      }
+    }
+    await accessor.run(sqls, sqlParams)
+  },
+  /**
+   * @description SQLパラメータを追加します。
+   * @param {Object} horse 馬情報
+   * @param {Object} param パラメータ
+   * @param {Array} sqls SQL
+   * @param {Array} sqlParams SQLパラメータ
+   */
+  _addSqlParam (horse, param, sqls, sqlParams) {
+    const reader = require('@d/sql-reader')
+    const sql = reader.read('insert_simulation_result')
+    const _ = require('lodash')
+    const horseParam = Object.assign(
+      _.cloneDeep(param),
+      require('@h/sql-helper').toParam(horse)
+    )
+    delete horseParam.$pays
+    delete horseParam.$eval
+    sqls.push(sql)
+    sqlParams.push(horseParam)
   }
 }

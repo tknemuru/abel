@@ -1,7 +1,7 @@
 select distinct
   race_id as raceId
 from
-  future_race_info
+  race_future
 order by
   race_id
 

@@ -10,15 +10,50 @@ module.exports = {
    */
   getPurchasingTicketType () {
     return [
-      'tan'
-      // 'tan',
-      // 'fuku',
+      // 'tan'
+      'tan',
+      'fuku'
       // 'waku',
       // 'uren',
       // 'wide',
       // 'sanfuku',
-      // 'utan'
+      // 'utan',
       // 'santan'
     ]
+  },
+  /**
+   * @description 購入用のパラメータを取得します。
+   * @param {Number} add 加算値
+   */
+  getPurchaseParams (add = 0) {
+    const tan = 90
+    const fuku = 85
+    const params = {
+      tan: {
+        minScore: tan + add
+      },
+      fuku: {
+        minScore: fuku + add
+      },
+      waku: {
+        minScore: fuku + add
+      },
+      uren: {
+        minScore: fuku + add
+      },
+      wide: {
+        minScore: fuku + add
+      },
+      sanfuku: {
+        minScore: fuku + add
+      },
+      utan: {
+        minScore: fuku + add
+      },
+      santan: {
+        minScore: fuku + add
+      }
+    }
+    return params
   }
 }

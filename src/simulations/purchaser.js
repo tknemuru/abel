@@ -142,6 +142,9 @@ module.exports = {
     validator.required(params[type].minScore)
     let ret = {}
     switch (type) {
+      case 'fuku':
+        ret = module.exports._calcFukuTicketNum(horses, scores, params)
+        break
       case 'uren':
         ret = module.exports._calcURenTicketNum(horses, scores, params)
         break
@@ -165,10 +168,47 @@ module.exports = {
   /**
    * @description 単勝の購入枚数を算出します。
    * @param {Number} score スコア
-   * @param {Number} minScore 下限スコア
+   * @param {Object} params パラメータ
+   * @param {Object} filterParams フィルタ用パラメータ
    * @returns {Object} 購入結果
    */
-  _calcTanTicketNum (horses, scores, params) {
+  _calcTanTicketNum (horses, scores, params, filterParams = {}) {
+    return module.exports._calcSingleTicketNum(
+      horses,
+      scores,
+      params,
+      {
+        minOdds: 5,
+        maxOdds: 30,
+        scoreOrder: [2, 3]
+      })
+  },
+  /**
+   * @description 複勝の購入枚数を算出します。
+   * @param {Number} score スコア
+   * @param {Object} params パラメータ
+   * @param {Object} filterParams フィルタ用パラメータ
+   * @returns {Object} 購入結果
+   */
+  _calcFukuTicketNum (horses, scores, params, filterParams = {}) {
+    return module.exports._calcSingleTicketNum(
+      horses,
+      scores,
+      params,
+      {
+        minOdds: 10,
+        maxOdds: 30,
+        scoreOrder: [1, 2, 3]
+      })
+  },
+  /**
+   * @description 単一馬方式のチケット購入枚数を算出します。
+   * @param {Number} score スコア
+   * @param {Object} params パラメータ
+   * @param {Object} filterParams フィルタ用パラメータ
+   * @returns {Object} 購入結果
+   */
+  _calcSingleTicketNum (horses, scores, params, filterParams = {}) {
     const _ = require('lodash')
     const type = params.ticketType
     let _horses = horses
@@ -187,18 +227,21 @@ module.exports = {
     _horses = _horses
       .map((h, i) => {
         h.ss = ss[i]
-        // おためし
-        // h.score = ss[i]
         return h
       })
-    _horses = require('@h/logic-helper').sortReverse(_horses, 'score')
+    _horses = require('@h/logic-helper')
+      .sortReverse(_horses, 'score')
+      .map((h, i) => {
+        h.scoreOrder = i + 1
+        return h
+      })
     const purchases = _horses
-      .filter(p => p.ticketNum > 0)
-    // const loss = calc.sum(purchases.map(p => p.ticketNum * 100))
-    // const overLoss = purchases.every(p => p.score * p.ticketNum < loss)
-    // const highRisk = purchases.length >= 4
-    // purchases = overLoss || highRisk ? [] : purchases
-    // purchases = highRisk ? [] : purchases
+      .filter(p => {
+        return p.ticketNum > 0 &&
+          (!filterParams.minOdds || filterParams.minOdds <= p.odds) &&
+          (!filterParams.maxOdds || p.odds <= filterParams.maxOdds) &&
+          (!filterParams.scoreOrder || filterParams.scoreOrder.includes(p.scoreOrder))
+      })
     return {
       horses: _horses,
       purchases
@@ -208,21 +251,34 @@ module.exports = {
    * @description ペア馬券の購入枚数を算出します。
    * @param {Number} score スコア
    * @param {Number} minScore 下限スコア
+   * @param {Object} filterParams フィルタ用パラメータ
    * @returns {Object} 購入結果
    */
-  _calcCombinationTicketNum (horses, scores, params, combNum, requiredOrder) {
+  _calcCombinationTicketNum (horses, scores, params, combNum, requiredOrder, filterParams = {}) {
     const _ = require('lodash')
     const type = params.ticketType
-    const _horses = horses
+    let _horses = horses
       .map((h, i) => {
         const p = _.cloneDeep(h)
         p.score = scores[i].score
         return p
       })
-      .filter(h => params[type].minScore <= h.score)
+    _horses = require('@h/logic-helper')
+      .sortReverse(_horses, 'score')
+      .map((h, i) => {
+        h.scoreOrder = i + 1
+        return h
+      })
+      // .filter(h => params[type].minScore <= h.score)
+      .filter(h => {
+        return params[type].minScore <= h.score &&
+          (!filterParams.minOdds || filterParams.minOdds <= h.odds) &&
+          (!filterParams.maxOdds || h.odds <= filterParams.maxOdds) &&
+          (!filterParams.scoreOrder || filterParams.scoreOrder.includes(h.scoreOrder))
+      })
     if (_horses.length < combNum) {
       return {
-        horses: [[]],
+        horses: [{ horses: [] }],
         purchases: [{
           ticketNum: 0
         }]
@@ -234,16 +290,25 @@ module.exports = {
         if (requiredOrder) {
           h = require('@h/logic-helper').sortReverse(h, 'score')
         }
-        h.score = require('@h/calc-helper').averageByKey(h, 'score')
-        return h
+        const _h = {}
+        _h.horses = h
+        _h.score = require('@h/calc-helper').averageByKey(h, 'score')
+        _h.odds = require('@h/calc-helper').averageByKey(h, 'odds')
+        _h.ticketNum = 1
+        return _h
       })
     const purchases = require('@h/logic-helper')
       .sortReverse(combHorses, 'score')
-      .filter((p, i) => i <= 8)
-      .map(p => {
-        p.ticketNum = 1
-        return p
+      .map((h, i) => {
+        h.scoreOrder = i
+        return h
       })
+      // .filter(p => {
+      //   return p.ticketNum > 0 &&
+      //     (!filterParams.minOdds || filterParams.minOdds <= p.odds) &&
+      //     (!filterParams.maxOdds || p.odds <= filterParams.maxOdds) &&
+      //     (!filterParams.scoreOrder || filterParams.scoreOrder.includes(p.scoreOrder))
+      // })
     return {
       horses: combHorses,
       purchases
@@ -256,7 +321,17 @@ module.exports = {
    * @returns {Object} 購入結果
    */
   _calcURenTicketNum (horses, scores, params) {
-    return module.exports._calcCombinationTicketNum(horses, scores, params, 2, false)
+    return module.exports._calcCombinationTicketNum(
+      horses,
+      scores,
+      params,
+      2,
+      false,
+      {
+        minOdds: 20,
+        maxOdds: 40
+        // scoreOrder: [1, 2, 3]
+      })
   },
   /**
    * @description ワイドの購入枚数を算出します。
@@ -265,7 +340,17 @@ module.exports = {
    * @returns {Object} 購入結果
    */
   _calcWideTicketNum (horses, scores, params) {
-    return module.exports._calcCombinationTicketNum(horses, scores, params, 2, false)
+    return module.exports._calcCombinationTicketNum(
+      horses,
+      scores,
+      params,
+      2,
+      false,
+      {
+        minOdds: 20,
+        maxOdds: 40
+        // scoreOrder: [1, 2, 3]
+      })
   },
   /**
    * @description 三連複の購入枚数を算出します。
@@ -274,7 +359,17 @@ module.exports = {
    * @returns {Object} 購入結果
    */
   _calcSanfukuTicketNum (horses, scores, params) {
-    return module.exports._calcCombinationTicketNum(horses, scores, params, 3, false)
+    return module.exports._calcCombinationTicketNum(
+      horses,
+      scores,
+      params,
+      3,
+      false,
+      {
+        minOdds: 20,
+        maxOdds: 40
+        // scoreOrder: [1, 2, 3]
+      })
   },
   /**
    * @description 馬単の購入枚数を算出します。
@@ -283,7 +378,17 @@ module.exports = {
    * @returns {Object} 購入結果
    */
   _calcUtanTicketNum (horses, scores, params) {
-    return module.exports._calcCombinationTicketNum(horses, scores, params, 2, true)
+    return module.exports._calcCombinationTicketNum(
+      horses,
+      scores,
+      params,
+      2,
+      true,
+      {
+        minOdds: 20,
+        maxOdds: 40
+        // scoreOrder: [1, 2, 3]
+      })
   },
   /**
    * @description 三連単の購入枚数を算出します。
@@ -292,6 +397,16 @@ module.exports = {
    * @returns {Object} 購入結果
    */
   _calcSantanTicketNum (horses, scores, params) {
-    return module.exports._calcCombinationTicketNum(horses, scores, params, 3, true)
+    return module.exports._calcCombinationTicketNum(
+      horses,
+      scores,
+      params,
+      3,
+      true,
+      {
+        minOdds: 20,
+        maxOdds: 40
+        // scoreOrder: [1, 2, 3]
+      })
   }
 }

@@ -126,9 +126,13 @@ module.exports = {
         sql += `  ret${hisIdx}.${_.snakeCase(raceKeys[i])} as ret${hisIdx}_${_.snakeCase(raceKeys[i])},\n`
       }
       for (let i = 0; i < horseKeysLen; i++) {
+        if ((horseKeys[i] === 'preRaceId' || horseKeys[i] === 'preHorseNumber') && hisIdx > 0) {
+          continue
+        }
         sql += `  ret${hisIdx}.${_.snakeCase(horseKeys[i])} as ret${hisIdx}_${_.snakeCase(horseKeys[i])},\n`
       }
     }
+    sql += '  1 as end\n'
     sql += 'from\n'
     sql += `  ${tableName} ret0\n`
     for (let i = 0; i < 4; i++) {

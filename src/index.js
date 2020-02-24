@@ -18,7 +18,7 @@ const testSimulator = require('@s/test-purchase-simulator')
 const futureDownloader = require('@ac/future-race-page-downloader')
 const futureScraper = require('@ac/future-race-scraper')
 const futureRegister = require('@ac/future-race-register')
-const futureSimulator = require('@s/future-purchase-simulator')
+const futureSimulator = require('@s/future-multi-ticket-type-purchase-simulator')
 const databaseUrlExtractor = require('@ac/race-database-url-extractor')
 const resultScraper = require('@ac/result-race-scraper')
 const horseHistCreator = require('@an/horse-race-history-creator')
@@ -65,32 +65,44 @@ switch (options.target) {
     futureRegister.register()
     break
   case 'future-simulate':
-    futureSimulator.simulate({
-      tan: {
-        minScore: 170
-      },
-      fuku: {
-        minScore: 9999
-      },
-      waku: {
-        minScore: 9999
-      },
-      uren: {
-        minScore: 9999
-      },
-      wide: {
-        minScore: 9999
-      },
-      sanfuku: {
-        minScore: 9999
+    // eslint-disable-next-line no-case-declarations
+    const params = require('@h/purchase-helper').getPurchaseParams()
+    futureSimulator.simulate(params)
+    break
+  case 'result-set-register':
+    // eslint-disable-next-line no-case-declarations
+    (async () => {
+      try {
+        const endDate = '202002'
+        await databaseUrlExtractor.extract({
+          endDate
+        })
+        await require('@ac/race-database-downloader').extract({
+          endDate
+        })
+        await require('@ac/result-race-page-downloader').download({
+          endDate
+        })
+        await resultScraper.scrape()
+        await require('@ac/result-race-register').register({
+          endDate
+        })
+        await horseHistCreator.create({
+          minYear: 2020,
+          minMonth: 2
+        })
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
       }
-    })
+    })()
     break
   case 'extract-database-url':
     (async () => {
       try {
         await databaseUrlExtractor.extract({
-          // endDate: '202001'
+          endDate: '202002'
         })
       } catch (e) {
         console.log(e)
@@ -135,10 +147,20 @@ switch (options.target) {
     require('@ac/race-sql-generator').generate()
     break
   case 'test-simulate':
-    testSimulator.simulate()
+    (async () => {
+      try {
+        await testSimulator.simulate()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
     break
   case 'create-horse-hist':
-    horseHistCreator.create()
+    horseHistCreator.create({
+      isFuture: true
+    })
     break
   case 'create-result-additional':
     additionalResultCreator.create()

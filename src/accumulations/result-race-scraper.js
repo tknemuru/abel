@@ -34,6 +34,10 @@ module.exports = {
         console.log(`already exists ${retFile}`)
         continue
       }
+      if (require('@h/file-helper').isDirectory(retFile)) {
+        console.log('this is directory')
+        continue
+      }
       console.log(`scraping start ${file}`)
       module.exports._extract(file)
     }

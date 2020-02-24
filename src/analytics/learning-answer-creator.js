@@ -99,12 +99,12 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswerByFukuPay (data) {
-    const frameNo = data.ret0_horse_number
+    const horseNo = data.ret0_horse_number
     let ret = 0
     for (let i = 0; i < 3; i++) {
       const no = data[`ret0_fuku_horse_number_${i + 1}`]
       const pay = data[`ret0_fuku_pay_${i + 1}`]
-      if (frameNo === no) {
+      if (horseNo === no) {
         ret = pay
         break
       }

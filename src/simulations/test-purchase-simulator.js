@@ -6,10 +6,10 @@
 module.exports = {
   async simulate () {
     for (let i = 0; i < 1; i++) {
-      const params = module.exports._genParams(i)
+      const params = require('@h/purchase-helper').getPurchaseParams(i)
       console.log('minScore:')
       console.log(params)
-      module.exports._simulate(params)
+      await module.exports._simulate(params)
     }
   },
   /**
@@ -23,7 +23,7 @@ module.exports = {
    */
   async _simulate (params) {
     // 購入対象を取得
-    const sims = require('@s/future-multi-ticket-type-purchase-simulator').simulate(params)
+    const sims = await require('@s/future-multi-ticket-type-purchase-simulator').simulate(params)
 
     // 購入した馬券から回収率を算出
     const calculator = require('@s/recovery-rate-calculator')
@@ -86,41 +86,5 @@ module.exports = {
     const profitRate = Math.round((ret.profit / (ret.loss * -1)) * 10000) / 100
     const winRate = Math.round((ret.winTicketNum / ret.allTicketNum) * 10000) / 100
     console.log(`[${typeName}] 収益: ${profitDiff} 収益率: ${profitRate}% 勝率: ${winRate}% 払い戻し金: ${ret.profit} 購入金: ${ret.loss} 購入枚数: ${ret.allTicketNum} 当たり枚数: ${ret.winTicketNum}`)
-  },
-  /**
-   * @description パラメータを生成します。
-   * @param {Number} i インデックス
-   */
-  _genParams (i) {
-    const count = i
-    const tan = 85
-    const fuku = 85
-    const params = {
-      tan: {
-        minScore: tan + count
-      },
-      fuku: {
-        minScore: fuku + count
-      },
-      waku: {
-        minScore: fuku + count
-      },
-      uren: {
-        minScore: fuku + count
-      },
-      wide: {
-        minScore: fuku + count
-      },
-      sanfuku: {
-        minScore: fuku + count
-      },
-      utan: {
-        minScore: fuku + count
-      },
-      santan: {
-        minScore: fuku + count
-      }
-    }
-    return params
   }
 }

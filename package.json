@@ -11,6 +11,7 @@
     "future-download": "node ./src/index.js -t future-download",
     "future-register": "node ./src/index.js -t future-register",
     "future-simulate": "node ./src/index.js -t future-simulate",
+    "result-set-register": "node ./src/index.js -t result-set-register",
     "extract-database-url": "node ./src/index.js -t extract-database-url",
     "extract-result-race-url": "node ./src/index.js -t extract-result-race-url",
     "download-result-race": "node ./src/index.js -t download-result-race",

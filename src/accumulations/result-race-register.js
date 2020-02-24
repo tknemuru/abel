@@ -25,7 +25,7 @@ module.exports = {
     const accessor = require('@d/db-accessor')
     const path = require('path')
     const clear = !!params.clear
-    const minDate = params.minDate || '201912'
+    const minDate = params.minDate || '202001'
 
     if (clear) {
       // DBの開催済レース情報を全クリア
@@ -108,6 +108,10 @@ module.exports = {
   _skip (file, minDate) {
     if (!minDate) {
       return false
+    }
+    if (require('@h/file-helper').isDirectory(file)) {
+      console.log('this is directory')
+      return true
     }
     const fs = require('fs')
     const raceAndHorses = JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }))

@@ -470,7 +470,8 @@ select
   ret4.earning_money as ret4_earning_money,
   ret4.sex_digit as ret4_sex_digit,
   ret4.finishing_time_digit as ret4_finishing_time_digit,
-  ret4.length_diff_digit as ret4_length_diff_digit
+  ret4.length_diff_digit as ret4_length_diff_digit,
+  1 as end
 from
   race_result ret0
 -- ret1

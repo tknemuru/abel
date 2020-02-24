@@ -41,15 +41,9 @@ module.exports = {
    * @param {Array} validationCols - 検証対象のカラムリスト
    */
   validation (data, validationCols) {
-    const err = validationCols.some(key => {
-      if (key.includes('pre0')) {
-        return false
-      }
-      return Number.isNaN(Number(data[key])) ||
-        Number(data[key]) <= 0 ||
-        data.inf_pre0_race_name.includes('新馬') ||
-        data.inf_pre0_race_name.includes('障害')
-    })
+    let err = false
+    err = data.ret0_race_name.includes('新馬') ||
+        data.ret0_race_name.includes('障害')
     return !err
   },
   /**

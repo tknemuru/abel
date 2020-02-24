@@ -4,9 +4,7 @@ select distinct
     race_result
   where
     cast(order_of_finish as int) <> 0
-/*
-    and ((race_date_year = 2019 and race_date_month = 12)
-         or race_date_year = 2020)
-*/
+    and race_date_year >= $minYear
+    and race_date_month >= $minMonth
   order by
     horse_id;

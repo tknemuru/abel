@@ -40,6 +40,7 @@ module.exports = {
       let count = 0
       let success = true
       let page = {}
+      let outerHTML
       while (count < module.exports.RetryLimit) {
         let browser
         try {
@@ -63,10 +64,16 @@ module.exports = {
           console.log(e)
           success = false
         } finally {
-          if (browser) {
-            browser.close()
-          }
           count++
+        }
+        // console.log('manual update button click start')
+        // await page.click('#act-manual_update')
+        // console.log('manual update button click end')
+        outerHTML = await page.evaluate(() => {
+          return document.documentElement.outerHTML
+        })
+        if (browser) {
+          browser.close()
         }
         if (success) break
       }
@@ -74,12 +81,6 @@ module.exports = {
         console.log('failed')
         continue
       }
-      // console.log('manual update button click start')
-      // await page.click('#act-manual_update')
-      // console.log('manual update button click end')
-      const outerHTML = await page.evaluate(() => {
-        return document.documentElement.outerHTML
-      })
       fs.writeFileSync(fileName
         , outerHTML
         , { encoding: 'utf-8' }
@@ -96,7 +97,7 @@ module.exports = {
    * @param {Boolean} params.override - 既に存在しているファイルを上書きするかどうか。デフォルト:false
    * @returns {Array} ファイル名リスト
    */
-  async downloadWithCheerioCli (params) {
+  async download (params) {
     const fs = require('fs')
     const uuid = require('uuid/v4')
     const client = require('cheerio-httpcli')
@@ -143,7 +144,7 @@ module.exports = {
    * @param {Boolean} params.override - 既に存在しているファイルを上書きするかどうか。デフォルト:false
    * @returns {Array} ファイル名リスト
    */
-  async download (params) {
+  async downloadWithCheerio (params) {
     const fs = require('fs')
     const uuid = require('uuid/v4')
     const sleep = require('thread-sleep')

@@ -41,7 +41,7 @@ module.exports = {
   /**
    * @description データベースの情報から作成するかどうか
    */
-  fromDb: false,
+  fromDb: true,
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名
@@ -63,7 +63,9 @@ module.exports = {
     // data.ret0_race_name.includes('新馬') ||
     //   data.ret0_race_name.includes('障害')
     err = data.ret0_race_name.includes('新馬') ||
-      data.ret0_race_name.includes('障害')
+      data.ret0_race_name.includes('障害') ||
+      data.ret0_distance !== 1800 ||
+      data.ret0_surface_digit !== 1
     return !err
   },
   /**

@@ -317,7 +317,7 @@ module.exports = {
     }
     // 複勝
     if (horseCount >= 5) {
-      fuku = module.exports._extractPay(trs.eq(index), 'fuku')
+      fuku = module.exports._extractPay(trs.eq(index), 'fuku', true)
       index++
     }
     // 枠連
@@ -336,7 +336,7 @@ module.exports = {
     index = 0
     // ワイド
     if (horseCount >= 4) {
-      wide = module.exports._extractPay(trs.eq(index), 'wide')
+      wide = module.exports._extractPay(trs.eq(index), 'wide', true)
       index++
     }
     // 馬単
@@ -368,14 +368,15 @@ module.exports = {
    * @description 払い戻しを抽出します。
    * @param {Object} tr - 払い戻し行
    * @param {String} prefix - キーに付与するプレフィックス
+   * @param {Boolean} isHtml - htmlから文字列を取得するかどうか
    * @returns {Object} 抽出データ
    */
-  _extractPay (tr, prefix) {
+  _extractPay (tr, prefix, isHtml) {
     // const tds = [].slice.call(tr.querySelectorAll('td'))
     const tds = tr.children('td')
-    const horseNumbers = module.exports._extractPayColumn(tds.eq(0))
-    const pays = module.exports._extractPayColumn(tds.eq(1))
-    const popularity = module.exports._extractPayColumn(tds.eq(2))
+    const horseNumbers = module.exports._extractPayColumn(tds.eq(0), isHtml)
+    const pays = module.exports._extractPayColumn(tds.eq(1), isHtml)
+    const popularity = module.exports._extractPayColumn(tds.eq(2), isHtml)
     const ret = {}
     const length = horseNumbers.length
     for (let i = 0; i < length; i++) {
@@ -397,10 +398,17 @@ module.exports = {
   /**
    * @description 払い戻しのカラムを抽出します。
    * @param {Object} td - 払い戻しカラム
+   * @param {Boolean} isHtml - htmlから文字列を取得するかどうか
    * @returns {Object} 抽出データ
    */
-  _extractPayColumn (td) {
-    return td.text()
+  _extractPayColumn (td, isHtml) {
+    let text
+    if (isHtml) {
+      text = td.html().replace(/<br>/g, '\n')
+    } else {
+      text = td.text()
+    }
+    return text
       .trim()
       .split(/\n/)
       .map(text => text.trim())
