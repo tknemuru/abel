@@ -46,7 +46,8 @@ module.exports = {
       validationCols,
       answers,
       towardPost,
-      keyRels: []
+      keyRels: [],
+      earningMoneys: {}
     }
 
     // 作成処理
@@ -157,11 +158,12 @@ module.exports = {
 
     // 正解データを作成
     if (config.answer) {
+      params.earningMoneys = module.exports._createEarningMoneys(hists)
       if (params.towardPost) {
-        module.exports._createAnswer(hists, params.validationCols, config)
+        module.exports._createAnswer(hists, params, config)
       } else {
         // module.exports._createPostAnswers(hists, validationCols, config, answers)
-        module.exports._createAnswer(hists, params.validationCols, config)
+        module.exports._createAnswer(hists, params, config)
       }
     }
 
@@ -218,19 +220,20 @@ module.exports = {
   /**
    * @description 学習用正解情報を作成します。
    * @param {Array} hists - 履歴情報
-   * @param {Array} validationCols - 検証対象のカラム
+   * @param {Object} params - パラメータ
    * @param {Object} config - 設定情報
    * @returns {void}
    */
-  _createAnswer (hists, validationCols, config) {
+  _createAnswer (hists, params, config) {
     let ansListSet = {}
     let i = 1
     for (const hist of hists) {
-      if (!config.validation(hist, validationCols)) {
+      if (!config.validation(hist, params.validationCols)) {
         continue
       }
       // 正解情報
-      const ansSet = config.createAnswer(hist)
+      const money = params.earningMoneys[hist.ret0_race_id]
+      const ansSet = config.createAnswer(hist, { money })
       for (const key in ansSet) {
         if (!ansListSet[key]) {
           ansListSet[key] = []
@@ -363,6 +366,18 @@ module.exports = {
       }
       keyRels.push(rel)
     }
+  },
+  /**
+   * @description レースごとの獲得賞金リストを作成します。
+   * @param {Array} hists レース履歴リスト
+   */
+  _createEarningMoneys (hists) {
+    const earningMoneys = {}
+    const tops = hists.filter(h => h.ret0_order_of_finish === 1)
+    for (const top of tops) {
+      earningMoneys[top.ret0_race_id] = top.ret0_earning_money
+    }
+    return earningMoneys
   },
   /**
    * @description 全出力カラムリストを抽出します。

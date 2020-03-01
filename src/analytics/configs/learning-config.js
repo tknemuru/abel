@@ -63,53 +63,53 @@ module.exports = {
     // data.ret0_race_name.includes('新馬') ||
     //   data.ret0_race_name.includes('障害')
     err = data.ret0_race_name.includes('新馬') ||
-      data.ret0_race_name.includes('障害') ||
-      data.ret0_distance !== 1800 ||
-      data.ret0_surface_digit !== 1
+      data.ret0_race_name.includes('障害')
     return !err
   },
   /**
    * @description 正解データを作成します。
    * @param {Object} data 学習用データ
+   * @param {Object} params パラメータ
    * @returns {Number} 正解データ
    */
-  createAnswer (data) {
+  createAnswer (data, params) {
     const creator = require('@an/learning-answer-creator')
     const ansSet = {}
     for (const type of require('@h/purchase-helper').getPurchasingTicketType()) {
-      let ans = {}
-      switch (type) {
-        case 'tan':
-          ans = creator.createAnswerByTanPay(data)
-          break
-        case 'fuku':
-          ans = creator.createAnswerByFukuPay(data)
-          break
-        case 'waku':
-          // ans = creator.createAnswerByWakuPay(data)
-          ans = creator.createAnswerByFukuPay(data)
-          break
-        case 'uren':
-          // ans = creator.createAnswerByUrenPay(data)
-          ans = creator.createAnswerByFukuPay(data)
-          break
-        case 'wide':
-          // ans = creator.createAnswerByWidePay(data)
-          ans = creator.createAnswerByFukuPay(data)
-          break
-        case 'sanfuku':
-          // ans = creator.createAnswerBySanfukuPay(data)
-          ans = creator.createAnswerByFukuPay(data)
-          break
-        case 'utan':
-          // ans = creator.createAnswerByUtanPay(data)
-          ans = creator.createAnswerByFukuPay(data)
-          break
-        case 'santan':
-          // ans = creator.createAnswerBySantanPay(data)
-          ans = creator.createAnswerByFukuPay(data)
-          break
-      }
+      let ans = 0
+      // switch (type) {
+      //   case 'tan':
+      //     ans = creator.createAnswerByTanPay(data)
+      //     break
+      //   case 'fuku':
+      //     ans = creator.createAnswerByFukuPay(data)
+      //     break
+      //   case 'waku':
+      //     // ans = creator.createAnswerByWakuPay(data)
+      //     ans = creator.createAnswerByFukuPay(data)
+      //     break
+      //   case 'uren':
+      //     // ans = creator.createAnswerByUrenPay(data)
+      //     ans = creator.createAnswerByFukuPay(data)
+      //     break
+      //   case 'wide':
+      //     // ans = creator.createAnswerByWidePay(data)
+      //     ans = creator.createAnswerByFukuPay(data)
+      //     break
+      //   case 'sanfuku':
+      //     // ans = creator.createAnswerBySanfukuPay(data)
+      //     ans = creator.createAnswerByFukuPay(data)
+      //     break
+      //   case 'utan':
+      //     // ans = creator.createAnswerByUtanPay(data)
+      //     ans = creator.createAnswerByFukuPay(data)
+      //     break
+      //   case 'santan':
+      //     // ans = creator.createAnswerBySantanPay(data)
+      //     ans = creator.createAnswerByFukuPay(data)
+      //     break
+      // }
+      ans = creator.createAnswerByOrderAndEarningMoney(data, params.money)
       ansSet[type] = ans
     }
     return ansSet

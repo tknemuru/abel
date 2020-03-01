@@ -7,6 +7,7 @@
     "test": "mocha --recursive",
     "init-db": "node ./src/index.js -t init-db",
     "create-param": "node ./src/index.js -t create-param",
+    "future-set-register": "node ./src/index.js -t future-set-register",
     "future-scrape": "node ./src/index.js -t future-scrape",
     "future-download": "node ./src/index.js -t future-download",
     "future-register": "node ./src/index.js -t future-register",

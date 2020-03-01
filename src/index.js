@@ -38,6 +38,24 @@ switch (options.target) {
   case 'create-param':
     creator.create()
     break
+  case 'future-set-register':
+    (async () => {
+      try {
+        await futureDownloader.download({
+          raceIds: [
+            '202006020210'
+          ]
+        })
+        await futureScraper.scrape()
+        await futureRegister.register()
+        await learningInputCreator.create(predictionConfig)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
   case 'future-download':
     (async () => {
       try {

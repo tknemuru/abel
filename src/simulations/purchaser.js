@@ -181,6 +181,7 @@ module.exports = {
         minOdds: 5,
         maxOdds: 30,
         scoreOrder: [2, 3]
+        // minSs: params.tan.minSs
       })
   },
   /**
@@ -196,9 +197,10 @@ module.exports = {
       scores,
       params,
       {
-        minOdds: 10,
+        minOdds: 5,
         maxOdds: 30,
         scoreOrder: [1, 2, 3]
+        // minSs: params.tan.minSs
       })
   },
   /**
@@ -240,7 +242,10 @@ module.exports = {
         return p.ticketNum > 0 &&
           (!filterParams.minOdds || filterParams.minOdds <= p.odds) &&
           (!filterParams.maxOdds || p.odds <= filterParams.maxOdds) &&
-          (!filterParams.scoreOrder || filterParams.scoreOrder.includes(p.scoreOrder))
+          (!filterParams.scoreOrder || filterParams.scoreOrder.includes(p.scoreOrder)) &&
+          (!filterParams.minSs || filterParams.minSs <= p.ss) &&
+          !p.raceName.includes('3歳') &&
+          !p.raceName.includes('2歳')
       })
     return {
       horses: _horses,
@@ -263,6 +268,14 @@ module.exports = {
         p.score = scores[i].score
         return p
       })
+    // 偏差値
+    const calc = require('@h/calc-helper')
+    const ss = calc.standardScore(_horses.map(h => h.score))
+    _horses = _horses
+      .map((h, i) => {
+        h.ss = ss[i]
+        return h
+      })
     _horses = require('@h/logic-helper')
       .sortReverse(_horses, 'score')
       .map((h, i) => {
@@ -274,7 +287,10 @@ module.exports = {
         return params[type].minScore <= h.score &&
           (!filterParams.minOdds || filterParams.minOdds <= h.odds) &&
           (!filterParams.maxOdds || h.odds <= filterParams.maxOdds) &&
-          (!filterParams.scoreOrder || filterParams.scoreOrder.includes(h.scoreOrder))
+          (!filterParams.scoreOrder || filterParams.scoreOrder.includes(h.scoreOrder)) &&
+          (!filterParams.minSs || filterParams.minSs <= h.ss) &&
+          !h.raceName.includes('3歳') &&
+          !h.raceName.includes('2歳')
       })
     if (_horses.length < combNum) {
       return {
@@ -328,9 +344,10 @@ module.exports = {
       2,
       false,
       {
-        minOdds: 20,
-        maxOdds: 40
-        // scoreOrder: [1, 2, 3]
+        minOdds: 10,
+        maxOdds: 40,
+        scoreOrder: [1, 2, 3]
+        // minSs: params.tan.minSs
       })
   },
   /**
@@ -347,9 +364,10 @@ module.exports = {
       2,
       false,
       {
-        minOdds: 20,
-        maxOdds: 40
-        // scoreOrder: [1, 2, 3]
+        minOdds: 10,
+        maxOdds: 40,
+        scoreOrder: [1, 2, 3]
+        // minSs: params.tan.minSs
       })
   },
   /**
@@ -366,9 +384,10 @@ module.exports = {
       3,
       false,
       {
-        minOdds: 20,
-        maxOdds: 40
-        // scoreOrder: [1, 2, 3]
+        minOdds: 10,
+        maxOdds: 40,
+        scoreOrder: [1, 2, 3]
+        // minSs: params.tan.minSs
       })
   },
   /**
@@ -385,9 +404,10 @@ module.exports = {
       2,
       true,
       {
-        minOdds: 20,
-        maxOdds: 40
-        // scoreOrder: [1, 2, 3]
+        minOdds: 10,
+        maxOdds: 40,
+        scoreOrder: [1, 2, 3]
+        // minSs: params.tan.minSs
       })
   },
   /**
@@ -404,9 +424,10 @@ module.exports = {
       3,
       true,
       {
-        minOdds: 20,
-        maxOdds: 40
-        // scoreOrder: [1, 2, 3]
+        minOdds: 10,
+        maxOdds: 40,
+        scoreOrder: [1, 2, 3]
+        // minSs: params.tan.minSs
       })
   }
 }

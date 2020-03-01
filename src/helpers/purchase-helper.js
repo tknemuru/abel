@@ -11,14 +11,14 @@ module.exports = {
   getPurchasingTicketType () {
     return [
       // 'tan'
-      'tan',
-      'fuku'
+      // 'tan',
+      // 'fuku',
       // 'waku',
-      // 'uren',
-      // 'wide',
-      // 'sanfuku',
-      // 'utan',
-      // 'santan'
+      'uren',
+      'wide',
+      'sanfuku',
+      'utan',
+      'santan'
     ]
   },
   /**
@@ -30,7 +30,8 @@ module.exports = {
     const fuku = 85
     const params = {
       tan: {
-        minScore: tan + add
+        minScore: tan + add,
+        minSs: 55 + add
       },
       fuku: {
         minScore: fuku + add

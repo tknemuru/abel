@@ -203,5 +203,17 @@ module.exports = {
       }
     }
     return ret
+  },
+  /**
+   * @description 順位と獲得賞金から正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @param {Number} money 獲得賞金
+   * @returns {Number} 正解データ
+   */
+  createAnswerByOrderAndEarningMoney (data, money) {
+    const order = data.ret0_order_of_finish
+    const count = data.ret0_horse_count
+    const ret = (count - order) * money
+    return ret
   }
 }
