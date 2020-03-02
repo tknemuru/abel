@@ -39,8 +39,6 @@ module.exports = {
       require('@ac/future-page-clearer').clear()
       urls = urls.filter(u => params.raceIds.some(id => u.includes(id)))
     }
-    urls = []
-    urls.push('https://race.netkeiba.com/race/shutuba.html?race_id=202006020210&rf=race_submenu')
     console.log(urls)
 
     // レースページをダウンロード
