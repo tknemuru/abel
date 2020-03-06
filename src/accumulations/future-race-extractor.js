@@ -115,6 +115,8 @@ module.exports = {
       .trim()
       .replace(surface, '')
       .replace('m', '')
+      .replace('外', '')
+      .replace('内2周', '')
     const direction = surfaceUnit
       .split('(')[1]
       .trim()

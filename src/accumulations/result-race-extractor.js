@@ -132,6 +132,8 @@ module.exports = {
     const distance = texts[0]
       .replace(surface, '')
       .replace('m', '')
+      .replace('外', '')
+      .replace('内2周', '')
     const weather = texts[1]
       .replace('天候 : ', '')
     const surfaceState = texts[2]

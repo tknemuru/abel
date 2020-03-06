@@ -25,7 +25,7 @@ module.exports = {
     const accessor = require('@d/db-accessor')
     const path = require('path')
     const clear = !!params.clear
-    const minDate = params.minDate || '202001'
+    const minDate = params.minDate
 
     if (clear) {
       // DBの開催済レース情報を全クリア
