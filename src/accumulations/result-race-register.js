@@ -93,7 +93,7 @@ module.exports = {
     const template = {}
     for (const key in param) {
       if (typeof param[key] === 'number') {
-        template[key] = -1
+        template[key] = 0
       } else {
         template[key] = ''
       }

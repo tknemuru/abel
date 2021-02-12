@@ -155,12 +155,12 @@ module.exports = {
    * @returns {Number} 変換後の値
    */
   convLength (val) {
-    let ret = -1
+    let ret = 0
     // 一位は値が存在しない
     if (!val) {
       return 0
     }
-    // 判断不能の値は-1を返して処理終了
+    // 判断不能の値は0を返して処理終了
     if (val.includes('+')) {
       return ret
     }
@@ -202,8 +202,8 @@ module.exports = {
   convHorseWeight (val) {
     if (val === '計不') {
       return {
-        weight: -1,
-        diff: -1
+        weight: 0,
+        diff: 0
       }
     }
     const vals = val.split('(')
@@ -286,7 +286,7 @@ module.exports = {
    * @returns {Number} 変換後の値
    */
   _convNumLength (val) {
-    let horseLen = -1
+    let horseLen = 0
     if (val.includes('/')) {
       const vals = val.split('/').map(v => Number(v))
       horseLen = vals[0] / vals[1]

@@ -43,7 +43,22 @@ switch (options.target) {
       try {
         await futureDownloader.download({
           raceIds: [
-            '202006020210'
+            '202009010307',
+            '202006020308',
+            '202009010308',
+            '202007010308',
+            '202006020309',
+            '202009010309',
+            '202007010309',
+            '202006020310',
+            '202009010310',
+            '202007010310',
+            '202006020311',
+            '202009010311',
+            '202007010311',
+            '202006020312',
+            '202009010312',
+            '202007010312'
           ]
         })
         await futureScraper.scrape()
@@ -103,7 +118,7 @@ switch (options.target) {
         })
         await resultScraper.scrape()
         await require('@ac/result-race-register').register({
-          endDate
+          minDate: endDate
         })
         await horseHistCreator.create({
           minYear: 2020,

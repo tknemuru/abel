@@ -63,7 +63,7 @@ module.exports = {
     const accessor = require('@d/db-accessor')
 
     // レース履歴を取得
-    const sql = reader.read('select_race_result_by_horse_id')
+    const sql = reader.read('select_race_result_by_horse_id_desc')
     const histories = await accessor.all(sql, {
       $horseId: horseId
     })
@@ -92,7 +92,7 @@ module.exports = {
     const template = {}
     for (const key in param) {
       if (typeof param[key] === 'number') {
-        template[key] = -1
+        template[key] = 0
       } else {
         template[key] = ''
       }

@@ -43,11 +43,11 @@ it('convert-helper#convLength 数字着手の変換ができる', () => {
 
 it('convert-helper#convLength 空文字と+を含む文字列は-1が返却される', () => {
   let actual = helper.convLength('')
-  let expected = -1
+  let expected = 0
   expect(actual).to.eql(expected)
 
   actual = helper.convLength('1.1/4+ハナ')
-  expected = -1
+  expected = 0
   expect(actual).to.eql(expected)
 })
 
