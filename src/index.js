@@ -30,6 +30,7 @@ const testConfig = require('@an/configs/test-config')
 const predictionConfig = require('@an/configs/prediction-config')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const simAnalyzer = require('@an/simulation-result-analyzer')
+const correlationAnalyzer = require('@an/correlation-coefficient-analyzer')
 
 switch (options.target) {
   case 'init-db':
@@ -118,7 +119,7 @@ switch (options.target) {
         })
         await resultScraper.scrape()
         await require('@ac/result-race-register').register({
-          minDate: endDate
+          endDate
         })
         await horseHistCreator.create({
           minYear: 2020,
@@ -232,6 +233,9 @@ switch (options.target) {
     break
   case 'sim-analyze':
     simAnalyzer.analyze()
+    break
+  case 'analyze-correlation':
+    correlationAnalyzer.analyze()
     break
   default:
     throw new Error('unexpected target.')

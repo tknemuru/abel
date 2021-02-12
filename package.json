@@ -30,7 +30,8 @@
     "test-pre": "node ./src/index.js -t test-pre",
     "pred-adjust": "node ./src/index.js -t pred-adjust",
     "pred-key-adjust": "node ./src/index.js -t pred-key-adjust",
-    "sim-analyze": "node ./src/index.js -t sim-analyze"
+    "sim-analyze": "node ./src/index.js -t sim-analyze",
+    "analyze-correlation": "node ./src/index.js -t analyze-correlation"
   },
   "repository": {
     "type": "git",
@@ -59,6 +60,7 @@
     "node-dev": "^4.0.0",
     "puppeteer": "^2.0.0",
     "request-promise": "^4.2.5",
+    "simple-statistics": "^7.4.0",
     "sqlite3": "^4.1.1",
     "thread-sleep": "^2.2.0",
     "utf-8-validate": "^5.0.2",

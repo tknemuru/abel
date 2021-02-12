@@ -85,28 +85,22 @@ module.exports = {
       //     ans = creator.createAnswerByFukuPay(data)
       //     break
       //   case 'waku':
-      //     // ans = creator.createAnswerByWakuPay(data)
-      //     ans = creator.createAnswerByFukuPay(data)
+      //     ans = creator.createAnswerByWakuPay(data)
       //     break
       //   case 'uren':
-      //     // ans = creator.createAnswerByUrenPay(data)
-      //     ans = creator.createAnswerByFukuPay(data)
+      //     ans = creator.createAnswerByUrenPay(data)
       //     break
       //   case 'wide':
-      //     // ans = creator.createAnswerByWidePay(data)
-      //     ans = creator.createAnswerByFukuPay(data)
+      //     ans = creator.createAnswerByWidePay(data)
       //     break
       //   case 'sanfuku':
-      //     // ans = creator.createAnswerBySanfukuPay(data)
-      //     ans = creator.createAnswerByFukuPay(data)
+      //     ans = creator.createAnswerBySanfukuPay(data)
       //     break
       //   case 'utan':
-      //     // ans = creator.createAnswerByUtanPay(data)
-      //     ans = creator.createAnswerByFukuPay(data)
+      //     ans = creator.createAnswerByUtanPay(data)
       //     break
       //   case 'santan':
-      //     // ans = creator.createAnswerBySantanPay(data)
-      //     ans = creator.createAnswerByFukuPay(data)
+      //     ans = creator.createAnswerBySantanPay(data)
       //     break
       // }
       ans = creator.createAnswerByOrderAndEarningMoney(data, params.money)

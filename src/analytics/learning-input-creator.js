@@ -1,5 +1,7 @@
 'use strict'
 
+const fileHelper = require('@h/file-helper')
+
 /**
  * @module 学習用情報の作成機能を提供します。
  */
@@ -12,6 +14,10 @@ module.exports = {
    * @description 入力情報ファイルディレクトリ
    */
   InputFileDir: 'resources/params/learnings',
+  /**
+   * @description 入力情報カラムリストファイルパス
+   */
+  InputColsFilePath: 'resources/learnings/input-cols.json',
   /**
    * @description 学習用情報を作成します。
    * @param {Object} config - 設定情報
@@ -193,10 +199,20 @@ module.exports = {
       }
       const data = []
       const cols = Object.keys(hist)
+      const targetCols = []
       for (const col of cols) {
         if (targets.includes(col)) {
+          targetCols.push(col)
           data.push(module.exports._toNum(hist[col]))
         }
+      }
+      // 学習データのキーを記録しておく
+      if (!fileHelper.existsFile(module.exports.InputColsFilePath)) {
+        const fs = require('fs')
+        fs.appendFileSync(module.exports.InputColsFilePath
+          , JSON.stringify(targetCols)
+          , { encoding: 'utf-8' }
+        )
       }
       // 付加情報
       // module.exports._addInfo(data, hist, scoreParams)

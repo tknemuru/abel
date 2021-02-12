@@ -113,6 +113,10 @@ module.exports = {
       console.log('this is directory')
       return true
     }
+    if (file.includes('template')) {
+      console.log('this is template')
+      return true
+    }
     const fs = require('fs')
     const raceAndHorses = JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }))
     const { race } = raceAndHorses

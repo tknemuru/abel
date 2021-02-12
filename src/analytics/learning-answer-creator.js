@@ -5,6 +5,10 @@
  */
 module.exports = {
   /**
+   * @description チケット単価
+   */
+  TicketUnitPay: 100,
+  /**
    * @description 上位の順位から正解データを作成します。
    * @param {Object} data 学習用データ
    * @returns {Number} 正解データ
@@ -90,8 +94,8 @@ module.exports = {
   createAnswerByTanPay (data) {
     const horseNo = data.ret0_horse_number
     const tanHorseNo = data.ret0_tan_horse_number
-    const pay = data.ret0_tan_pay
-    return horseNo === tanHorseNo ? pay : 0
+    const pay = data.ret0_tan_pay - module.exports.TicketUnitPay
+    return horseNo === tanHorseNo ? pay : module.exports.TicketUnitPay * -1
   },
   /**
    * @description 複勝の払い戻し金額によって正解データを作成します。
@@ -100,10 +104,10 @@ module.exports = {
    */
   createAnswerByFukuPay (data) {
     const horseNo = data.ret0_horse_number
-    let ret = 0
+    let ret = module.exports.TicketUnitPay * -1
     for (let i = 0; i < 3; i++) {
       const no = data[`ret0_fuku_horse_number_${i + 1}`]
-      const pay = data[`ret0_fuku_pay_${i + 1}`]
+      const pay = data[`ret0_fuku_pay_${i + 1}`] - module.exports.TicketUnitPay
       if (horseNo === no) {
         ret = pay
         break
@@ -118,10 +122,10 @@ module.exports = {
    */
   createAnswerByWakuPay (data) {
     const frameNo = data.ret0_frame_number
-    let ret = 0
+    let ret = module.exports.TicketUnitPay * -1
     for (let i = 0; i < 2; i++) {
       const no = data[`ret0_waku_horse_number_${i + 1}`]
-      const pay = data.ret0_waku_pay
+      const pay = data.ret0_waku_pay - module.exports.TicketUnitPay
       if (frameNo === no) {
         ret = pay
         break
@@ -148,7 +152,7 @@ module.exports = {
     for (let i = 0; i < 3; i++) {
       for (let h = 0; h < 2; h++) {
         const no = data[`ret0_wide_horse_number_${i + 1}${h + 1}`]
-        const pay = data[`ret0_wide_pay_${i + 1}`]
+        const pay = data[`ret0_wide_pay_${i + 1}`] - module.exports.TicketUnitPay
         if (horseNo === no) {
           ret.push(pay)
           break
@@ -160,7 +164,7 @@ module.exports = {
     for (let i = 0; i < len; i++) {
       sum += ret[i]
     }
-    return len > 0 ? sum / len : 0
+    return len > 0 ? sum / len : module.exports.TicketUnitPay * -1
   },
   /**
    * @description 三連複の払い戻し金額によって正解データを作成します。
@@ -176,7 +180,7 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswerByUtanPay (data) {
-    return module.exports._createAnswerByCombinationPay(data, 'utan', 2)
+    return module.exports._createAnswerByCombinationPay(data, 'utan', 2, true)
   },
   /**
    * @description 三連単の払い戻し金額によって正解データを作成します。
@@ -184,21 +188,29 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswerBySantanPay (data) {
-    return module.exports._createAnswerByCombinationPay(data, 'santan', 3)
+    return module.exports._createAnswerByCombinationPay(data, 'santan', 3, true)
   },
   /**
    * @description ペア馬券の払い戻し金額によって正解データを作成します。
    * @param {Object} data 学習用データ
+   * @param {String} type 馬券種別
+   * @param {Number} combNum ペア数
+   * @param {Boolean} isTan 着順通りかどうか
    * @returns {Number} 正解データ
    */
-  _createAnswerByCombinationPay (data, type, combNum) {
+  _createAnswerByCombinationPay (data, type, combNum, isTan) {
     const horseNo = data.ret0_horse_number
-    let ret = 0
+    let ret = module.exports.TicketUnitPay * -1
     for (let i = 0; i < combNum; i++) {
       const no = data[`ret0_${type}_horse_number_${i + 1}`]
-      const pay = data[`ret0_${type}_pay`]
+      const pay = data[`ret0_${type}_pay`] - module.exports.TicketUnitPay
+      const order = data.ret0_order_of_finish
       if (horseNo === no) {
         ret = pay
+        if (isTan) {
+          const ratio = (combNum - Number(order) + 1) / combNum
+          ret = ret * ratio
+        }
         break
       }
     }

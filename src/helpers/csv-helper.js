@@ -21,5 +21,14 @@ module.exports = {
       }
     }
     return csv
+  },
+  /**
+   * @description CSV文字列を二次元配列に変換します。
+   * @param {String} csv CSV文字列
+   */
+  toArray (csv) {
+    const rows = csv.split('\n')
+    const matrix = rows.map(r => r.split(','))
+    return matrix
   }
 }

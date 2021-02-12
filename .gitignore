@@ -9,6 +9,7 @@ resources/simulations/
 resources/urls/
 resources/params/learnings/
 resources/params/pred-result*
+README_LOCAL.txt
 
 # Logs
 logs
