@@ -17,6 +17,36 @@ module.exports = {
     return score
   },
   /**
+   * @description 順位と獲得賞金からスコアを抽出します。
+   * @param {Object} data 学習用データ
+   * @param {Number} index インデックス
+   * @returns {Number} 順位と獲得賞金から算出したスコア
+   */
+  extractOrderAndEarningMoneyScore (data, index) {
+    const order = data[`ret${index}_order_of_finish`] || 0
+    const count = data[`ret${index}_horse_count`] || 0
+    const money = data[`ret${index}_top_earning_money`] || 0
+    const score = (count - order) * money
+    return score
+  },
+  /**
+   * @description 順位と獲得賞金からスコア合計を抽出します。
+   * @param {Object} data 学習用データ
+   * @param {Number} index インデックス
+   * @param {Array} targetCols 対象カラムリスト
+   * @returns {Number} 順位と獲得賞金から算出したスコア合計
+   */
+  extractOrderAndEarningMoneyScoreSum (data, targetCols) {
+    let score = 0
+    for (let i = 1; i <= 4; i++) {
+      score += module.exports.extractOrderAndEarningMoneyScore(data, i)
+    }
+    if (Array.isArray(targetCols)) {
+      targetCols.push('order_and_earning_score')
+    }
+    return score
+  },
+  /**
    * @description 順位スコアを付与します。
    * @param {Object} data 学習用データ
    * @returns {void}
@@ -25,6 +55,12 @@ module.exports = {
     const score = module.exports.extractOrderOfFinishScore(data)
     data.orderOfFinishScore = score
   },
+  /**
+   * @description 類似経験数を抽出します。
+   * @param {Object} data 学習用データ
+   * @param {String} key キー
+   * @returns {Number} 類似経験数
+   */
   extractSimilarExperienceCount (data, key) {
     let count = 0
     for (let i = 1; i <= 4; i++) {
@@ -32,6 +68,12 @@ module.exports = {
     }
     return count
   },
+  /**
+   * @description 類似馬場経験数を抽出します。
+   * @param {Object} data 学習用データ
+   * @param {String} key キー
+   * @returns {Number} 類似経験数
+   */
   extractSimilarSurfaceExperienceCount (data) {
     let count = 0
     for (let i = 1; i <= 4; i++) {
@@ -39,17 +81,37 @@ module.exports = {
     }
     return count
   },
-  extractSimilarExperienceScore (data, key) {
+  /**
+   * @description 類似経験スコアを抽出します。
+   * @param {Object} data 学習用データ
+   * @param {String} key キー
+   * @param {Array} targetCols 対象カラムリスト
+   * @returns {Number} 類似経験スコア
+   */
+  extractSimilarExperienceScore (data, key, targetCols) {
     let score = 0
     for (let i = 1; i <= 4; i++) {
-      score += (data[`ret0_${key}`] === data[`ret${i}_${key}`]) ? data.orderOfFinishScore : 0
+      score += (data[`ret0_${key}`] === data[`ret${i}_${key}`]) ? module.exports.extractOrderAndEarningMoneyScore(data, i) : 0
+    }
+    if (Array.isArray(targetCols)) {
+      targetCols.push(`feature_${key}`)
     }
     return score
   },
-  extractSimilarSurfaceExperienceScore (data) {
+  /**
+   * @description 類似馬場経験スコアを抽出します。
+   * @param {Object} data 学習用データ
+   * @param {String} key キー
+   * @param {Array} targetCols 対象カラムリスト
+   * @returns {Number} 類似馬場経験スコア
+   */
+  extractSimilarSurfaceExperienceScore (data, targetCols) {
     let score = 0
     for (let i = 1; i <= 4; i++) {
-      score += (data.ret0_surface_digit === data[`ret${i}_surface_digit`]) && (data.ret0_surface_state_digit === data[`ret${i}_surface_state_digit`]) ? data.orderOfFinishScore : 0
+      score += (data.ret0_surface_digit === data[`ret${i}_surface_digit`]) && (data.ret0_surface_state_digit === data[`ret${i}_surface_state_digit`]) ? module.exports.extractOrderAndEarningMoneyScore(data, i) : 0
+    }
+    if (Array.isArray(targetCols)) {
+      targetCols.push('feature_surface')
     }
     return score
   }

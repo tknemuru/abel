@@ -1,0 +1,7 @@
+[
+  "ret$num_order_of_finish",
+  "ret$num_surface_digit",
+  "ret$num_direction_digit",
+  "ret$num_weather_digit",
+  "ret$num_surface_state_digit"
+]

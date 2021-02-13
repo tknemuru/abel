@@ -1,0 +1,34 @@
+{
+  "pre": [
+    "distance",
+    "race_start",
+    "surface_digit",
+    "direction_digit",
+    "weather_digit",
+    "surface_state_digit",
+    "race_date_month",
+    "race_date_day",
+    "race_number",
+    "horse_count",
+    "horse_number",
+    "frame_number",
+    "age",
+    "basis_weight" ,
+    "horse_weight",
+    "horse_weight_diff",
+    "sex_digit"
+  ],
+  "others": [
+    "order_of_finish",
+    "pass_1",
+    "pass_2",
+    "pass_3",
+    "pass_4",
+    "last_phase",
+    "odds",
+    "popularity",
+    "earning_money",
+    "finishing_time_digit",
+    "length_diff_digit"
+  ]
+}

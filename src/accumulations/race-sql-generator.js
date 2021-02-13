@@ -23,7 +23,7 @@ module.exports = {
   /**
    * @description 小数項目
    */
-  RealKeys: ['basis_weight', 'horse_weight', 'horse_weight_diff', 'earning_money'],
+  RealKeys: ['basis_weight', 'horse_weight', 'horse_weight_diff', 'earning_money', 'top_earning_money'],
   /**
    * @description 開催済レーステーブルでnot nullとする項目
    */

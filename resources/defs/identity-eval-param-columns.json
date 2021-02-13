@@ -1,0 +1,22 @@
+[
+  {
+    "name": "sex",
+    "alias": "sex"
+  },
+  {
+    "name": "age",
+    "alias": "age"
+  },
+  {
+    "name": "jockey_id",
+    "alias": "jockeyId"
+  },
+  {
+    "name": "popularity",
+    "alias": "popularity"
+  },
+  {
+    "name": "trainer_id",
+    "alias": "trainerId"
+  }
+]

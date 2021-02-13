@@ -206,6 +206,10 @@ module.exports = {
           data.push(module.exports._toNum(hist[col]))
         }
       }
+      // 付加情報
+      // module.exports._addInfo(data, hist, scoreParams)
+      // 特徴情報
+      // module.exports._addFeatures(data, hist, targetCols)
       // 学習データのキーを記録しておく
       if (!fileHelper.existsFile(module.exports.InputColsFilePath)) {
         const fs = require('fs')
@@ -214,10 +218,6 @@ module.exports = {
           , { encoding: 'utf-8' }
         )
       }
-      // 付加情報
-      // module.exports._addInfo(data, hist, scoreParams)
-      // 特徴情報
-      // module.exports._addFeatures(data, hist)
       dataList.push(data)
       if (i % 1000 === 0) {
         console.log(i)
@@ -488,35 +488,37 @@ module.exports = {
    * @description 特徴情報を追加します。
    * @param {Array} data - 学習用データ
    * @param {Array} hist - 履歴データ
+   * @param {Array} targetCols - 対象カラムリスト
    */
-  _addFeatures (data, hist) {
+  _addFeatures (data, hist, targetCols) {
     const feature = require('@an/feature-extractor')
-    feature.attachOrderOfFinishScore(hist)
-    data.push(feature.extractSimilarExperienceCount(hist, 'distance'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'race_start'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'direction_digit'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'weather_digit'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'race_date_month'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'race_date_day'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'race_number'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'horse_count'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'horse_number'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'frame_number'))
-    data.push(feature.extractSimilarExperienceCount(hist, 'basis_weight'))
-    data.push(feature.extractSimilarSurfaceExperienceCount(hist))
+    // feature.attachOrderOfFinishScore(hist)
+    // data.push(feature.extractSimilarExperienceCount(hist, 'distance'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'race_start'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'direction_digit'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'weather_digit'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'race_date_month'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'race_date_day'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'race_number'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'horse_count'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'horse_number'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'frame_number'))
+    // data.push(feature.extractSimilarExperienceCount(hist, 'basis_weight'))
+    // data.push(feature.extractSimilarSurfaceExperienceCount(hist))
 
-    data.push(feature.extractSimilarExperienceScore(hist, 'distance'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'race_start'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'direction_digit'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'weather_digit'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'race_date_month'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'race_date_day'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'race_number'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'horse_count'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'horse_number'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'frame_number'))
-    data.push(feature.extractSimilarExperienceScore(hist, 'basis_weight'))
-    data.push(feature.extractSimilarSurfaceExperienceScore(hist))
+    data.push(feature.extractOrderAndEarningMoneyScoreSum(hist, targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'distance', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'race_start', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'direction_digit', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'weather_digit', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'race_date_month', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'race_date_day', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'race_number', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'horse_count', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'horse_number', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'frame_number', targetCols))
+    data.push(feature.extractSimilarExperienceScore(hist, 'basis_weight', targetCols))
+    data.push(feature.extractSimilarSurfaceExperienceScore(hist, targetCols))
   },
   /**
    * 値を数値に変換します。

@@ -1,7 +1,7 @@
 # custom
 db/
 resources/analyzes/
-resources/defs/
+#resources/defs/
 resources/htmls/
 resources/races/
 resources/learnings/
