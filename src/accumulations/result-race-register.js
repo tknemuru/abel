@@ -60,7 +60,11 @@ module.exports = {
           // テンプレートに存在しないパラメータを除外する
           // 例えば同着の場合三連複が２パターンになる
           // 【例】https://db.netkeiba.com/race/201001020101/
-          module.exports._filterParam(p, template)
+          module.exports._filterParam(p, template),
+          // 加工項目
+          {
+            topEarningMoney: 0.0
+          }
         )
       })
       sqls = sqls.concat(_sqls)

@@ -64,6 +64,7 @@ create table if not exists race_future (
   santan_horse_number_3 integer ,
   santan_pay integer ,
   santan_popularity integer ,
+  top_earning_money real ,
   order_of_finish integer ,
   frame_number integer ,
   horse_number integer not null,

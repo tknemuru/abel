@@ -14,7 +14,8 @@ module.exports = {
     const html = fs.readFileSync(fileName, { encoding: 'utf-8' })
     const jsdom = require('jsdom')
     const { JSDOM } = jsdom
-    const dom = new JSDOM(html)
+    const virtualConsole = new jsdom.VirtualConsole()
+    const dom = new JSDOM(html, { virtualConsole })
     return dom
   },
   /**

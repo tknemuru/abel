@@ -106,6 +106,7 @@ module.exports = {
     const raceStart = time
       .trim()
       .replace('発走', '')
+      .replace(':', '')
     const surface = surfaceUnit
       .split('(')[0]
       .trim()
@@ -131,7 +132,6 @@ module.exports = {
       .replace('稍', '稍重')
       .replace('不', '不良')
     surfaceState = `${surface}:${surfaceState}`
-    console.log(surfaceState)
     const joinedSurface = `${surface}${direction}`
     const surfaceStateDigit = converter.convRaceSurface(joinedSurface)
     const _data = {
@@ -164,9 +164,9 @@ module.exports = {
     const qs = require('querystring')
     const dateTag = dom.window.document.querySelector('#RaceList_DateList .Active a')
     const query = qs.parse(dateTag.href.split('?')[1])
-    const raceDateYear = Number(query.kaisai_date.substring(0, 3))
-    const raceDateMonth = Number(query.kaisai_date.substring(4, 5))
-    const raceDateDay = Number(query.kaisai_date.substring(6, 7))
+    const raceDateYear = Number(query.kaisai_date.substring(0, 4))
+    const raceDateMonth = Number(query.kaisai_date.substring(4, 6))
+    const raceDateDay = Number(query.kaisai_date.substring(6, 8))
     const info = {
       raceDateYear,
       raceDateMonth,

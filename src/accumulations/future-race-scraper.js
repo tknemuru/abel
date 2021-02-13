@@ -40,7 +40,6 @@ module.exports = {
     console.log(file)
     const extractor = require('@ac/future-race-extractor')
     const data = extractor.extract(dom, path.basename(file, path.extname(file)))
-    console.log(data)
 
     // 結果を出力
     fs.writeFileSync(module.exports._genResultFileName(file)

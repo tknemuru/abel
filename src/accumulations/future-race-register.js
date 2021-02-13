@@ -113,6 +113,8 @@ module.exports = {
     // レース
     const raceAndHorses = JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }))
     const { race } = raceAndHorses
+    // 加工項目
+    race.topEarningMoney = 0.0
     const raceParam = sqlHelper.toParam(race)
 
     // 馬

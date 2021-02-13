@@ -15,6 +15,7 @@ console.log(options)
 const dbInit = require('@d/db-initializer')
 const creator = require('@an/eval-param-creator')
 const testSimulator = require('@s/test-purchase-simulator')
+const futurePageClearer = require('@ac/future-page-clearer')
 const futureDownloader = require('@ac/future-race-page-downloader')
 const futureScraper = require('@ac/future-race-scraper')
 const futureRegister = require('@ac/future-race-register')
@@ -42,24 +43,10 @@ switch (options.target) {
   case 'future-set-register':
     (async () => {
       try {
+        futurePageClearer.clear()
         await futureDownloader.download({
           raceIds: [
-            '202009010307',
-            '202006020308',
-            '202009010308',
-            '202007010308',
-            '202006020309',
-            '202009010309',
-            '202007010309',
-            '202006020310',
-            '202009010310',
-            '202007010310',
-            '202006020311',
-            '202009010311',
-            '202007010311',
-            '202006020312',
-            '202009010312',
-            '202007010312'
+            '202105010511'
           ]
         })
         await futureScraper.scrape()
