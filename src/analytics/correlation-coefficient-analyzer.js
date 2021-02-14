@@ -4,6 +4,7 @@
 const _ = require('lodash')
 const csvHelper = require('@h/csv-helper')
 const fileHelper = require('@h/file-helper')
+const logicHelper = require('@h/logic-helper')
 const ss = require('simple-statistics')
 
 /**
@@ -56,17 +57,32 @@ module.exports = {
           return Number(input[i])
         }
       })
+      const value = ss.sampleCorrelation(targetVals, answers).toFixed(5)
       const corre = {
         key: col,
-        value: ss.sampleCorrelation(targetVals, answers).toFixed(5)
+        value,
+        absValue: Math.abs(value)
       }
       corres.push(corre)
       i++
     }
-    corres = _.orderBy(corres, 'value', 'desc')
+    corres = logicHelper.sortReverse(corres, 'absValue', true)
     for (const corre of corres) {
       console.log(`${corre.key}:${corre.value}`)
     }
+    // 相関係数によりフィルタしたカラムリストを作成
+    createFilterdLearningInputColumns(corres)
     console.log('done!')
   }
+}
+
+/**
+ * @description 相関係数によってフィルタされたカラムリストを作成します。
+ * @returns {void}
+ */
+function createFilterdLearningInputColumns (corres) {
+  const filterdCols = corres
+    .filter(c => c.absValue >= 0.1)
+    .map(c => c.key)
+  fileHelper.writeJson(filterdCols, 'resources/defs/filterd-learning-input-columns.json')
 }

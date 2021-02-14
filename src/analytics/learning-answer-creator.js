@@ -9,18 +9,15 @@ module.exports = {
    */
   TicketUnitPay: 100,
   /**
-   * @description 上位の順位から正解データを作成します。
+   * @description 順位から正解データを作成します。
    * @param {Object} data 学習用データ
    * @returns {Number} 正解データ
    */
-  createAnswerByTopOrder (data) {
+  createAnswerByOrder (data) {
     const validator = require('@h/validation-helper')
     const order = data.ret0_order_of_finish
-    const odds = data.ret0_odds
     validator.required(order)
-    validator.required(odds)
-    const _order = Number(order)
-    return _order - 1
+    return Number(order)
   },
   /**
    * @description オッズのランクによって正解データを作成します。
@@ -75,16 +72,35 @@ module.exports = {
   /**
    * @description 回収率によって正解データを作成します。
    * @param {Object} data 学習用データ
+   * @param {Number} index インデックス
    * @returns {Number} 正解データ
    */
-  createAnswerByRecoveryRate (data) {
+  createAnswerByRecoveryRate (data, index = 0) {
     const validator = require('@h/validation-helper')
-    const odds = data.ret0_odds
-    const order = data.ret0_order_of_finish
+    const odds = data[`ret${index}_odds`]
+    const order = data[`ret${index}_order_of_finish`]
     validator.required(odds)
     validator.required(order)
     const _order = Number(order)
     return (_order === 1) ? odds : 0
+  },
+  /**
+   * @description 順位に応じた回収率によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @param {Number} index インデックス
+   * @returns {Number} 正解データ
+   */
+  createAnswerByRecoveryRateReduce (data, index = 0) {
+    const odds = data[`ret${index}_odds`] || 0
+    const order = data[`ret${index}_order_of_finish`] || 0
+    const _order = Number(order)
+    let ret = -1
+    if (_order === 1) {
+      ret = odds
+    } else if (_order === 2 || _order === 3) {
+      ret = (odds / _order).toFixed(2)
+    }
+    return ret
   },
   /**
    * @description 単勝の払い戻し金額によって正解データを作成します。

@@ -19,7 +19,6 @@ const futurePageClearer = require('@ac/future-page-clearer')
 const futureDownloader = require('@ac/future-race-page-downloader')
 const futureScraper = require('@ac/future-race-scraper')
 const futureRegister = require('@ac/future-race-register')
-const futureSimulator = require('@s/future-multi-ticket-type-purchase-simulator')
 const databaseUrlExtractor = require('@ac/race-database-url-extractor')
 const resultScraper = require('@ac/result-race-scraper')
 const horseHistCreator = require('@an/horse-race-history-creator')
@@ -30,6 +29,7 @@ const learningConfig = require('@an/configs/learning-config')
 const testConfig = require('@an/configs/test-config')
 const predictionConfig = require('@an/configs/prediction-config')
 const predAdjuster = require('@an/prediction-result-adjuster')
+const predictor = require('@s/predictor')
 const simAnalyzer = require('@an/simulation-result-analyzer')
 const correlationAnalyzer = require('@an/correlation-coefficient-analyzer')
 const ipatPurchaseManager = require('@p/ipat-purchase-manager')
@@ -59,37 +59,6 @@ switch (options.target) {
         process.exit()
       }
     })()
-    break
-  case 'future-download':
-    (async () => {
-      try {
-        await futureDownloader.download({
-        })
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'future-scrape':
-    (async () => {
-      try {
-        await futureScraper.scrape()
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'future-register':
-    futureRegister.register()
-    break
-  case 'future-simulate':
-    // eslint-disable-next-line no-case-declarations
-    const params = require('@h/purchase-helper').getPurchaseParams()
-    futureSimulator.simulate(params)
     break
   case 'result-set-register':
     // eslint-disable-next-line no-case-declarations
@@ -168,17 +137,6 @@ switch (options.target) {
   case 'gen-race-sql':
     require('@ac/race-sql-generator').generate()
     break
-  case 'test-simulate':
-    (async () => {
-      try {
-        await testSimulator.simulate()
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
   case 'create-horse-hist':
     horseHistCreator.create({
       isFuture: true
@@ -194,7 +152,18 @@ switch (options.target) {
     require('@an/race-post-score-creator').create()
     break
   case 'learn-pre':
-    learningInputCreator.create(learningConfig)
+    (async () => {
+      try {
+        // 学習情報作成
+        await learningInputCreator.create(learningConfig)
+        // 相関係数分析
+        correlationAnalyzer.analyze()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
     break
   case 'learn-pre-resource':
     (async () => {
@@ -207,14 +176,35 @@ switch (options.target) {
       }
     })()
     break
-  case 'pred-pre':
-    learningInputCreator.create(predictionConfig)
+  case 'test-pred':
+    (async () => {
+      try {
+        // 予測情報作成
+        await learningInputCreator.create(testConfig)
+        // 予測実施
+        await predictor.predict()
+        // 予測結果整形
+        predAdjuster.adjust()
+        // シミュレーション実施
+        await testSimulator.simulate()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
     break
-  case 'test-pre':
-    learningInputCreator.create(testConfig)
-    break
-  case 'pred-adjust':
-    predAdjuster.adjust()
+  case 'test-sim':
+    (async () => {
+      try {
+        // シミュレーション実施
+        await testSimulator.simulate()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
     break
   case 'pred-key-adjust':
     require('@an/prediction-key-result-adjuster').adjust()

@@ -54,5 +54,17 @@ module.exports = {
     return JSON.parse(fs.readFileSync(
       path,
       { encoding: 'utf-8' }))
+  },
+  /**
+   * @description json形式としてファイルに書き込みます。
+   * @param {Object} data データ
+   * @param {String} path パス
+   * @returns {void}
+   */
+  writeJson (data, path) {
+    fs.writeFileSync(path
+      , JSON.stringify(data, null, '  ')
+      , { encoding: 'utf-8' }
+    )
   }
 }

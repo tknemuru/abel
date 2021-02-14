@@ -139,7 +139,7 @@ module.exports = {
     validator.required(params.ticketType)
     const type = params.ticketType
     validator.required(params[type])
-    validator.required(params[type].minScore)
+    // validator.required(params[type].minScore)
     let ret = {}
     switch (type) {
       case 'fuku':

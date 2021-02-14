@@ -104,6 +104,9 @@ module.exports = {
       //     break
       // }
       ans = creator.createAnswerByOrderAndEarningMoney(data, params.money)
+      // ans = creator.createAnswerByOrder(data)
+      // ans = creator.createAnswerByRecoveryRate(data)
+      // ans = creator.createAnswerByRecoveryRateReduce(data)
       ansSet[type] = ans
     }
     return ansSet

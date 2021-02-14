@@ -1,5 +1,7 @@
 'use strict'
 
+const answerCreator = require('@an/learning-answer-creator')
+
 /**
  * @module 特徴データの作成機能を提供します。
  */
@@ -39,11 +41,21 @@ module.exports = {
   extractOrderAndEarningMoneyScoreSum (data, targetCols) {
     let score = 0
     for (let i = 1; i <= 4; i++) {
-      score += module.exports.extractOrderAndEarningMoneyScore(data, i)
+      score += module.exports.extractSingleSimilarExperienceScore(data, i)
     }
     if (Array.isArray(targetCols)) {
       targetCols.push('order_and_earning_score')
     }
+    return score
+  },
+  /**
+   * @description 順位と獲得賞金からスコアを抽出します。
+   * @param {Object} data 学習用データ
+   * @param {Number} index インデックス
+   * @returns {Number} 順位と獲得賞金から算出したスコア
+   */
+  extractSingleSimilarExperienceScore (data, index) {
+    const score = answerCreator.createAnswerByRecoveryRateReduce(data, index)
     return score
   },
   /**
@@ -59,12 +71,16 @@ module.exports = {
    * @description 類似経験数を抽出します。
    * @param {Object} data 学習用データ
    * @param {String} key キー
+   * @param {Array} targetCols 対象カラムリスト
    * @returns {Number} 類似経験数
    */
-  extractSimilarExperienceCount (data, key) {
+  extractSimilarExperienceCount (data, key, targetCols) {
     let count = 0
     for (let i = 1; i <= 4; i++) {
       count += (data[`ret0_${key}`] === data[`ret${i}_${key}`]) ? 1 : 0
+    }
+    if (Array.isArray(targetCols)) {
+      targetCols.push(`feature_count_${key}`)
     }
     return count
   },
@@ -72,12 +88,16 @@ module.exports = {
    * @description 類似馬場経験数を抽出します。
    * @param {Object} data 学習用データ
    * @param {String} key キー
+   * @param {Array} targetCols 対象カラムリスト
    * @returns {Number} 類似経験数
    */
-  extractSimilarSurfaceExperienceCount (data) {
+  extractSimilarSurfaceExperienceCount (data, targetCols) {
     let count = 0
     for (let i = 1; i <= 4; i++) {
       count += (data.ret0_surface_digit === data[`ret${i}_surface_digit`]) && (data.ret0_surface_state_digit === data[`ret${i}_surface_state_digit`]) ? 1 : 0
+    }
+    if (Array.isArray(targetCols)) {
+      targetCols.push('feature_count_surface')
     }
     return count
   },
@@ -91,7 +111,7 @@ module.exports = {
   extractSimilarExperienceScore (data, key, targetCols) {
     let score = 0
     for (let i = 1; i <= 4; i++) {
-      score += (data[`ret0_${key}`] === data[`ret${i}_${key}`]) ? module.exports.extractOrderAndEarningMoneyScore(data, i) : 0
+      score += (data[`ret0_${key}`] === data[`ret${i}_${key}`]) ? module.exports.extractSingleSimilarExperienceScore(data, i) : 0
     }
     if (Array.isArray(targetCols)) {
       targetCols.push(`feature_${key}`)
@@ -108,7 +128,7 @@ module.exports = {
   extractSimilarSurfaceExperienceScore (data, targetCols) {
     let score = 0
     for (let i = 1; i <= 4; i++) {
-      score += (data.ret0_surface_digit === data[`ret${i}_surface_digit`]) && (data.ret0_surface_state_digit === data[`ret${i}_surface_state_digit`]) ? module.exports.extractOrderAndEarningMoneyScore(data, i) : 0
+      score += (data.ret0_surface_digit === data[`ret${i}_surface_digit`]) && (data.ret0_surface_state_digit === data[`ret${i}_surface_state_digit`]) ? module.exports.extractSingleSimilarExperienceScore(data, i) : 0
     }
     if (Array.isArray(targetCols)) {
       targetCols.push('feature_surface')

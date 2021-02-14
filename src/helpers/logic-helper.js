@@ -8,31 +8,51 @@ module.exports = {
    * @description 指定したキーでソートします。
    * @param {Array} list リスト
    * @param {String} key ソートキー
+   * @param {Boolean} isNum ソート項目が数値かどうか
    * @returns {Array} ソートしたリスト
    */
-  sort (list, key) {
+  sort (list, key, isNum) {
     require('@h/validation-helper').required(key)
-    return list
-      .sort((a, b) => {
-        if (a[key] < b[key]) return -1
-        if (a[key] > b[key]) return 1
-        return 0
-      })
+    if (isNum) {
+      return list
+        .sort((a, b) => {
+          if (Number(a[key]) < Number(b[key])) return -1
+          if (Number(a[key]) > Number(b[key])) return 1
+          return 0
+        })
+    } else {
+      return list
+        .sort((a, b) => {
+          if (a[key] < b[key]) return -1
+          if (a[key] > b[key]) return 1
+          return 0
+        })
+    }
   },
   /**
    * @description 指定したキーで降順ソートします。
    * @param {Array} list リスト
    * @param {String} key ソートキー
+   * @param {Boolean} isNum ソート項目が数値かどうか
    * @returns {Array} ソートしたリスト
    */
-  sortReverse (list, key) {
+  sortReverse (list, key, isNum) {
     require('@h/validation-helper').required(key)
-    return list
-      .sort((a, b) => {
-        if (a[key] > b[key]) return -1
-        if (a[key] < b[key]) return 1
-        return 0
-      })
+    if (isNum) {
+      return list
+        .sort((a, b) => {
+          if (Number(a[key]) > Number(b[key])) return -1
+          if (Number(a[key]) < Number(b[key])) return 1
+          return 0
+        })
+    } else {
+      return list
+        .sort((a, b) => {
+          if (a[key] > b[key]) return -1
+          if (a[key] < b[key]) return 1
+          return 0
+        })
+    }
   },
   /**
    * @description 配列から組み合わせを生成します。
