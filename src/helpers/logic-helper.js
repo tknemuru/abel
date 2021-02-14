@@ -50,6 +50,6 @@ module.exports = {
    * @returns {String} ゼロ埋めした文字列
    */
   padZero (val, length) {
-    return (val + '').padStart(length)
+    return (val + '').padStart(length, '0')
   }
 }

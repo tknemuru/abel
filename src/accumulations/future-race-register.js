@@ -14,17 +14,24 @@ module.exports = {
   RaceDataTemplateDir: 'resources/races/result-races/template',
   /**
    * @description 開催予定レース情報を登録します。
+   * @param {Boolean} params.clear データをクリアするかどうか
    * @returns {void}
    */
-  async register () {
+  async register (params = {}) {
+    const clear = !!params.clear
     const fs = require('fs')
     const reader = require('@d/sql-reader')
     const accessor = require('@d/db-accessor')
     const path = require('path')
+    let sql
 
-    // DBの開催予定レース情報を全クリア
-    let sql = reader.read('delete_all_race_future')
-    await accessor.run(sql)
+    if (clear) {
+      // DBの開催予定レース情報・馬券購入情報を全クリア
+      sql = reader.read('delete_all_race_future')
+      await accessor.run(sql)
+      sql = reader.read('delete_all_purchase')
+      await accessor.run(sql)
+    }
 
     // パラメータのテンプレートを生成
     const template = await module.exports._generateTemplate()
@@ -33,7 +40,7 @@ module.exports = {
     const files = fs.readdirSync(module.exports.RaceDataDir)
       .map(f => path.join(module.exports.RaceDataDir, f))
 
-    // 情報を登録
+    // レース情報を登録
     sql = reader.read('insert_race_future')
     let sqls = []
     let sqlParams = []
@@ -53,6 +60,11 @@ module.exports = {
       sqlParams = sqlParams.concat(_params)
     }
     await accessor.run(sqls, sqlParams)
+    // 購入情報を登録
+    if (clear) {
+      sql = reader.read('insert_select_purchase')
+      await accessor.run(sql)
+    }
   },
   /**
    * @description 前回のレース情報を取得します。

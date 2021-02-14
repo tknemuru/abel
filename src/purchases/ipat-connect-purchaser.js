@@ -1,10 +1,13 @@
 'use strict'
 
 const _ = require('lodash')
+const accessor = require('@d/db-accessor')
 const config = require('@/config-manager')
 const fileHelper = require('@h/file-helper')
 const htmlHelper = require('@h/html-helper')
+const reader = require('@d/sql-reader')
 const log = require('@h/log-helper')
+const sleep = require('thread-sleep')
 
 /**
  * @description 予測結果ファイル
@@ -41,13 +44,24 @@ module.exports = {
    * @returns {void}
    */
   async purchase (params = {}) {
+    const { raceIds } = params
+    // 対象レースを馬券購入済に更新
+    let sql = reader.read('update_in_purchase')
+    sql = sql.replace('?#', raceIds.map(() => '?').join(','))
+    accessor.run(sql, [raceIds])
+
     // 予測結果を取得
     const simResult = fileHelper.readJson(SimResultFilePath)
-    const { raceIds } = params
-    writePurchaseLog(simResult, raceIds)
+    const hasTicket = writePurchaseLog(simResult, raceIds)
+
+    // レースページを操作して馬券を購入
     for (const raceId of raceIds) {
+      if (!hasTicket[raceId]) {
+        console.log(`purchase ticket is empty ${raceId}`)
+        sleep(3000)
+        continue
+      }
       const sim = simResult[raceId]
-      // レースページを操作する
       const url = `${BaseUrl}${raceId}`
       await htmlHelper.openPuppeteerPage(url, onOpenRacePage, sim)
     }
@@ -63,6 +77,7 @@ module.exports = {
  */
 async function onOpenRacePage (browser, page, params) {
   const config = getConfig()
+
   // IPAT連携馬券購入画面に遷移
   console.log('IPAT連携馬券購入画面に遷移')
   const linkToIpat = await page.$$('.RaceHeadBtnArea a')
@@ -70,6 +85,13 @@ async function onOpenRacePage (browser, page, params) {
   await page.waitForTimeout(5000)
   page = await htmlHelper.selectNewPuppeteerPage(browser, page)
   await page.screenshot({ path: 'resources/screenshots/010_netkeiba-ipat-purchase.png' })
+
+  // 馬券購入済レースなら処理終了
+  const has = await hasPurchased(page)
+  if (has) {
+    console.warn(`this race has purchased ${params.raceName}(${params.raceId})`)
+    return
+  }
 
   // 馬券購入情報入力
   console.log('馬券購入情報入力')
@@ -85,8 +107,24 @@ async function onOpenRacePage (browser, page, params) {
     await ticketTypeAnchors[index].click()
     await page.waitForTimeout(300)
     for (const ticket of tickets) {
+      let i = 0
       for (const horse of ticket.horses) {
-        await page.click(`#tr_${horse.horseNumber} .Horse_Select div`)
+        switch (ticketType) {
+          case 'uren':
+          case 'wide':
+            await page.click(`#tr_${horse.horseNumber} .Horse_Select div`)
+            break
+          case 'utan':
+          case 'santan':
+          case 'sanfuku':
+          // eslint-disable-next-line no-case-declarations
+            const selects = await page.$$(`#tr_${horse.horseNumber} .Horse_Select div`)
+            await selects[i].click()
+            break
+          default:
+            throw new Error(`invalid ticket type -> ${ticketType}`)
+        }
+        i++
       }
       await page.waitForTimeout(300)
       const ticketNum = config.dev ? 1 : ticket.ticketNum
@@ -130,7 +168,8 @@ async function onOpenRacePage (browser, page, params) {
       // 投票確認ダイアログ合意
       console.log('投票確認ダイアログ合意')
       console.log('dialog message : ' + dialog.message())
-      await dialog.accept()
+      // await dialog.accept()
+      await dialog.dismiss()
       page = await htmlHelper.selectNewPuppeteerPage(browser, page)
       await page.screenshot({ path: 'resources/screenshots/070_ipat-complete-purchase.png' })
       // 投票完了
@@ -140,6 +179,15 @@ async function onOpenRacePage (browser, page, params) {
     page.click('.btnGreen a')
   })
   return promise
+}
+
+/**
+ * @description 馬券購入済レースかどうか
+ * @returns {Boolean} 馬券購入済レースかどうか
+ */
+async function hasPurchased (page) {
+  const purchasedTables = await page.$$('.Kaime_Table')
+  return purchasedTables && purchasedTables.length > 0
 }
 
 /**
@@ -159,7 +207,9 @@ function getTicketTypeIndex (ticketType) {
  */
 function writePurchaseLog (simResult, raceIds) {
   let allSumTicketNum = 0
+  const hasTicket = {}
   for (const raceId of raceIds) {
+    let has = false
     const sim = simResult[raceId]
     log.info(`${sim.raceName}(${sim.raceId})`)
     const { purchases } = sim
@@ -168,6 +218,7 @@ function writePurchaseLog (simResult, raceIds) {
       if (tickets[0].ticketNum <= 0) {
         continue
       }
+      has = true
       const sumTicketNum = _.sum(tickets.map(t => t.ticketNum))
       allSumTicketNum += sumTicketNum
       log.info(`${getTypeJpName(ticketType)}:${sumTicketNum}枚(${sumTicketNum * 100}円)`)
@@ -178,8 +229,13 @@ function writePurchaseLog (simResult, raceIds) {
         log.info(`${horses}:${ticket.ticketNum}枚(${ticket.ticketNum * 100}円)`)
       }
     }
+    hasTicket[raceId] = has
+    if (!has) {
+      log.info('チケット購入なし')
+    }
   }
   log.info(`合計:${allSumTicketNum}枚(${allSumTicketNum * 100}円)`)
+  return hasTicket
 }
 
 /**

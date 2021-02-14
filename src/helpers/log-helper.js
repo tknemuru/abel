@@ -19,7 +19,7 @@ module.exports = {
   info (msg) {
     console.info(msg)
     fs.appendFileSync(AppLogFilePath
-      , msg
+      , `${msg}\n`
       , { encoding: 'utf-8' }
     )
   }
