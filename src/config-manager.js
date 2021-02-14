@@ -7,7 +7,7 @@ module.exports = {
   /**
    * @description 設定ファイルパス
    */
-  ConfigFilePath: 'resources/configs/config.yml',
+  ConfigFilePath: 'resources/configs/index.yml',
   /**
    * @description 設定情報
    */
@@ -43,6 +43,5 @@ module.exports = {
         'utf8'
       )
     )
-    console.log(module.exports.config)
   }
 }

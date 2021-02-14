@@ -1,0 +1,231 @@
+'use strict'
+
+const _ = require('lodash')
+const config = require('@/config-manager')
+const fileHelper = require('@h/file-helper')
+const htmlHelper = require('@h/html-helper')
+const log = require('@h/log-helper')
+
+/**
+ * @description 予測結果ファイル
+ */
+const SimResultFilePath = 'resources/simulations/sim-result.json'
+
+/**
+ * @description チケット種別リスト
+ */
+const TicketTypes = [
+  'tan',
+  'fuku',
+  'waku',
+  'uren',
+  'wide',
+  'utan',
+  'sanfuku',
+  'santan'
+]
+
+/**
+ * @description ベースURL
+ */
+const BaseUrl = 'https://race.netkeiba.com/race/shutuba.html?race_id='
+
+/**
+ * @description IPAT連携による購入機能を提供します。
+ */
+module.exports = {
+  /**
+   * @description IPAT連携による購入を行います。
+   * @param {Object} param パラメータ
+   * @param {Array} param.raceIds 購入対象のレースIDリスト
+   * @returns {void}
+   */
+  async purchase (params = {}) {
+    // 予測結果を取得
+    const simResult = fileHelper.readJson(SimResultFilePath)
+    const { raceIds } = params
+    writePurchaseLog(simResult, raceIds)
+    for (const raceId of raceIds) {
+      const sim = simResult[raceId]
+      // レースページを操作する
+      const url = `${BaseUrl}${raceId}`
+      await htmlHelper.openPuppeteerPage(url, onOpenRacePage, sim)
+    }
+  }
+}
+
+/**
+ * @description レースページを開いたときに実行します。
+ * @param {Object} browser ブラウザ
+ * @param {Object} page ページ
+ * @param {Object} params パラメータ
+ * @returns {void}
+ */
+async function onOpenRacePage (browser, page, params) {
+  const config = getConfig()
+  // IPAT連携馬券購入画面に遷移
+  console.log('IPAT連携馬券購入画面に遷移')
+  const linkToIpat = await page.$$('.RaceHeadBtnArea a')
+  await linkToIpat[1].click()
+  await page.waitForTimeout(5000)
+  page = await htmlHelper.selectNewPuppeteerPage(browser, page)
+  await page.screenshot({ path: 'resources/screenshots/010_netkeiba-ipat-purchase.png' })
+
+  // 馬券購入情報入力
+  console.log('馬券購入情報入力')
+  let sumTicketNum = 0
+  const { purchases } = params
+  for (const ticketType in purchases) {
+    const tickets = purchases[ticketType]
+    if (tickets[0].ticketNum <= 0) {
+      continue
+    }
+    const ticketTypeAnchors = await page.$$('.shikibetu a')
+    const index = getTicketTypeIndex(ticketType)
+    await ticketTypeAnchors[index].click()
+    await page.waitForTimeout(300)
+    for (const ticket of tickets) {
+      for (const horse of ticket.horses) {
+        await page.click(`#tr_${horse.horseNumber} .Horse_Select div`)
+      }
+      await page.waitForTimeout(300)
+      const ticketNum = config.dev ? 1 : ticket.ticketNum
+      await page.type('.Money input', ticketNum + '')
+      sumTicketNum += ticketNum
+      await page.click('.AddBtn button')
+      await page.waitForTimeout(300)
+      if (config.dev) break
+    }
+    if (config.dev) break
+  }
+  // IPAT画面を起動
+  console.log('IPAT画面を起動')
+  await page.screenshot({ path: 'resources/screenshots/020_netkeiba-input-complete.png' })
+  await page.click('#ipat_dialog')
+  page = await htmlHelper.selectNewPuppeteerPage(browser, page)
+  // IPAT同意
+  console.log('IPAT同意')
+  await page.screenshot({ path: 'resources/screenshots/030_ipat-agree-confirm.png' })
+  await page.click('.Agree input')
+  page = await htmlHelper.selectNewPuppeteerPage(browser, page)
+  // IPATログイン
+  console.log('IPATログイン')
+  await page.screenshot({ path: 'resources/screenshots/040_ipat-login.png' })
+  const ipatLoginInputs = await page.$$('#ipat_login_form input')
+  await ipatLoginInputs[0].type(config.ipatNum + '')
+  await ipatLoginInputs[1].type(config.password + '')
+  await ipatLoginInputs[2].type(config.parsNum + '')
+  // await htmlHelper.captureRequest(page)
+  await page.click('.SubmitBtn')
+  page = await htmlHelper.selectNewPuppeteerPage(browser, page)
+  // IPAT購入金額入力
+  console.log('IPAT購入金額入力')
+  await page.screenshot({ path: 'resources/screenshots/050_ipat-input-purchase-sum-money.png' })
+  await page.type('#sum', (sumTicketNum * 100) + '')
+  // 投票実行
+  console.log('投票実行')
+  await page.screenshot({ path: 'resources/screenshots/060_ipat-before-purchase.png' })
+  const promise = new Promise(resolve => {
+    page.on('dialog', async (dialog) => {
+      // 投票確認ダイアログ合意
+      console.log('投票確認ダイアログ合意')
+      console.log('dialog message : ' + dialog.message())
+      await dialog.accept()
+      page = await htmlHelper.selectNewPuppeteerPage(browser, page)
+      await page.screenshot({ path: 'resources/screenshots/070_ipat-complete-purchase.png' })
+      // 投票完了
+      console.log('投票完了')
+      resolve()
+    })
+    page.click('.btnGreen a')
+  })
+  return promise
+}
+
+/**
+ * @description チケット種別に応じたインデックスを取得します。
+ * @param {String} ticketType チケット種別
+ * @returns {Number} チケット種別に応じたインデックス
+ */
+function getTicketTypeIndex (ticketType) {
+  return TicketTypes.indexOf(ticketType)
+}
+
+/**
+ * @description 購入情報をログに出力します。
+ * @param {Object} simResult 予測結果
+ * @param {Array} raceIds 購入対象のレースIDリスト
+ * @returns {void}
+ */
+function writePurchaseLog (simResult, raceIds) {
+  let allSumTicketNum = 0
+  for (const raceId of raceIds) {
+    const sim = simResult[raceId]
+    log.info(`${sim.raceName}(${sim.raceId})`)
+    const { purchases } = sim
+    for (const ticketType in purchases) {
+      const tickets = purchases[ticketType]
+      if (tickets[0].ticketNum <= 0) {
+        continue
+      }
+      const sumTicketNum = _.sum(tickets.map(t => t.ticketNum))
+      allSumTicketNum += sumTicketNum
+      log.info(`${getTypeJpName(ticketType)}:${sumTicketNum}枚(${sumTicketNum * 100}円)`)
+      for (const ticket of tickets) {
+        const horses = ticket.horses.reduce((prev, curr) => {
+          return `${prev} ${curr.horseNumber}(${curr.horseName})`
+        }, '')
+        log.info(`${horses}:${ticket.ticketNum}枚(${ticket.ticketNum * 100}円)`)
+      }
+    }
+  }
+  log.info(`合計:${allSumTicketNum}枚(${allSumTicketNum * 100}円)`)
+}
+
+/**
+ * @description 馬券の種類の日本語名を取得します。
+ * @param {String} type 馬券の種類
+ */
+function getTypeJpName (type) {
+  let name = ''
+  switch (type) {
+    case 'tan':
+      name = '単勝'
+      break
+    case 'fuku':
+      name = '複勝'
+      break
+    case 'waku':
+      name = '枠連'
+      break
+    case 'uren':
+      name = '馬連'
+      break
+    case 'wide':
+      name = 'ワイド'
+      break
+    case 'sanfuku':
+      name = '三連複'
+      break
+    case 'utan':
+      name = '馬単'
+      break
+    case 'santan':
+      name = '三連単'
+      break
+    case 'sum':
+      name = '合計'
+      break
+    default:
+      throw new Error(`unexpected ticket type: ${type}`)
+  }
+  return name
+}
+
+/**
+ * @description 設定情報を取得します。
+ * @returns {Object} パラメータ
+ */
+function getConfig () {
+  return config.get().ipat
+}

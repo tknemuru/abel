@@ -1,6 +1,9 @@
 # custom
 db/
+logs/
 resources/analyzes/
+resources/configs/
+resources/screenshots/
 #resources/defs/
 resources/htmls/
 resources/races/

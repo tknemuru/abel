@@ -32,6 +32,7 @@ const predictionConfig = require('@an/configs/prediction-config')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const simAnalyzer = require('@an/simulation-result-analyzer')
 const correlationAnalyzer = require('@an/correlation-coefficient-analyzer')
+const ipatPurchaseManager = require('@p/ipat-purchase-manager')
 
 switch (options.target) {
   case 'init-db':
@@ -223,6 +224,17 @@ switch (options.target) {
     break
   case 'analyze-correlation':
     correlationAnalyzer.analyze()
+    break
+  case 'purchase-ipat':
+    (async () => {
+      try {
+        await ipatPurchaseManager.execute()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
     break
   default:
     throw new Error('unexpected target.')

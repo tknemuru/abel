@@ -42,5 +42,14 @@ module.exports = {
   genCombination (list, length) {
     const comb = require('js-combinatorics')
     return comb.combination(list, length)
+  },
+  /**
+   * ゼロ埋めした文字列を取得します。
+   * @param {Any} val 値
+   * @param {Number} length 長さ
+   * @returns {String} ゼロ埋めした文字列
+   */
+  padZero (val, length) {
+    return (val + '').padStart(length)
   }
 }
