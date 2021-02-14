@@ -40,31 +40,22 @@ module.exports = {
       // .filter((a, i) => i < 1000)
       .map(a => {
         if (!Number(a)) {
-          // console.log(`invalid value! ${a}`)
           return 0
         } else {
           return Number(a)
         }
       })
     // 相関係数を求める
-    // for (let i = 0; i < 10; i++) {
-    //   console.log(answers[i])
-    // }
-    // for (let i = 0; i < 10; i++) {
-    //   console.log(targetVals[i])
-    // }
     let i = 0
     let corres = []
     for (const col of cols) {
       const targetVals = inputs.map(input => {
         if (!Number(input[i])) {
-          // console.log(`invalid value! ${input[0]}`)
           return 0
         } else {
           return Number(input[i])
         }
       })
-      // console.log(`answers:${answers.length}, targetVals:${targetVals.length}`)
       const corre = {
         key: col,
         value: ss.sampleCorrelation(targetVals, answers).toFixed(5)

@@ -90,7 +90,7 @@ async function watch () {
       console.log('start purchase')
     } else {
       console.log('still watch...')
-      sleep(config.watchSpanTime * 10000)
+      sleep(config.watchSpanTime * 60000)
     }
   }
   return targetRaceIds

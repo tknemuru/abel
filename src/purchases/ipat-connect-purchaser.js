@@ -168,8 +168,8 @@ async function onOpenRacePage (browser, page, params) {
       // 投票確認ダイアログ合意
       console.log('投票確認ダイアログ合意')
       console.log('dialog message : ' + dialog.message())
-      // await dialog.accept()
-      await dialog.dismiss()
+      await dialog.accept()
+      // await dialog.dismiss()
       page = await htmlHelper.selectNewPuppeteerPage(browser, page)
       await page.screenshot({ path: 'resources/screenshots/070_ipat-complete-purchase.png' })
       // 投票完了
