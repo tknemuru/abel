@@ -25,6 +25,7 @@
     "create-post-score": "node ./src/index.js -t create-post-score",
     "learn-pre-resource": "node ./src/index.js -t learn-pre-resource",
     "learn-pre": "node ./src/index.js -t learn-pre",
+    "learn-rage-pre": "node ./src/index.js -t learn-rage-pre",
     "pred-pre": "node ./src/index.js -t pred-pre",
     "test-pred": "node ./src/index.js -t test-pred",
     "test-sim": "node ./src/index.js -t test-sim",

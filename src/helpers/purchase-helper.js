@@ -26,12 +26,11 @@ module.exports = {
    * @param {Number} add 加算値
    */
   getPurchaseParams (add = 0) {
-    const tan = 90
-    const fuku = 85
+    // const tan = 90
+    const fuku = 80 + add
     const params = {
       tan: {
-        minScore: tan + add,
-        minSs: 55 + add
+        minScore: fuku + add
       },
       fuku: {
         minScore: fuku + add
@@ -53,7 +52,9 @@ module.exports = {
       },
       santan: {
         minScore: fuku + add
-      }
+      },
+      minRageVal: 10,
+      upperRageVal: 99 + add
     }
     return params
   }

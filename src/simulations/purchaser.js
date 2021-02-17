@@ -5,10 +5,6 @@
  */
 module.exports = {
   /**
-   * バージョン
-   */
-  version: 4,
-  /**
    * @description 購入します。
    * @param {Array} horses - 出馬リスト
    * @param {Array} scores - 評価値リスト
@@ -18,128 +14,11 @@ module.exports = {
    * @returns {Array} 購入リスト
    */
   purchase (horses, scores, params) {
-    let purchases = []
-    switch (module.exports.version) {
-      case 2:
-        purchases = module.exports.purchaseV2(horses, scores, params)
-        break
-      case 3:
-        purchases = module.exports.purchaseV3(horses, scores, params)
-        break
-      case 4:
-        purchases = module.exports.purchaseV4(horses, scores, params)
-        break
-      default:
-        purchases = module.exports.purchaseV1(horses, scores)
-    }
-    return purchases
-  },
-  /**
-   * @description 購入します。
-   * @param {Array} horses - 出馬リスト
-   * @param {Array} scores - 評価値リスト
-   * @returns {Array} 購入リスト
-   */
-  purchaseV1 (horses, scores) {
-    const purchases = horses
-      .map((h, i) => {
-        h.oddsSs = scores[i].oddsSs
-        h.evalSs = scores[i].evalSs
-        h.score = scores[i].score
-        return h
-      })
-      .filter(h => {
-        return h.score > 10
-      })
-    return purchases
-  },
-  /**
-   * @description 購入します。
-   * @param {Array} horses - 出馬リスト
-   * @param {Array} scores - 評価値リスト
-   * @param {Object} params - パラメータ
-   * @param {Number} params.minScore - 最小スコア
-   * @param {Number} params.maxPopularity - 最大人気順
-   * @returns {Array} 購入リスト
-   */
-  purchaseV2 (horses, scores, params) {
-    const validator = require('@h/validation-helper')
-    validator.required(params)
-    validator.required(params.minScore)
-    const purchases = horses
-      .map((h, i) => {
-        h.score = scores[i].score
-        return h
-      })
-      .filter(h => {
-        return h.score > params.minScore &&
-          (!params.maxPopularity || h.popularity < params.maxPopularity) &&
-          (!params.maxOdds || h.odds < params.maxOdds) &&
-          (!params.maxScore || h.score < params.maxScore)
-      })
-    return purchases
-  },
-  /**
-   * @description 購入します。
-   * @param {Array} horses - 出馬リスト
-   * @param {Array} scores - 評価値リスト
-   * @param {Object} params - パラメータ
-   * @param {Number} params.minScore - 最小スコア
-   * @param {Number} params.maxPopularity - 最大人気順
-   * @returns {Array} 購入リスト
-   */
-  purchaseV3 (horses, scores, params) {
-    const validator = require('@h/validation-helper')
-    validator.required(params)
-    validator.required(params.minScore)
-    const purchases = horses
-      .map((h, i) => {
-        h.score = scores[i].score
-        let ticketNum = 1
-        switch (h.popularity) {
-          case 1:
-            ticketNum = 10
-            break
-          case 2:
-            ticketNum = 7
-            break
-          case 3:
-          case 4:
-          case 5:
-          case 6:
-          case 7:
-          case 8:
-          case 9:
-            ticketNum = 2
-            break
-          default:
-            ticketNum = 1
-        }
-        h.ticketNum = ticketNum
-        return h
-      })
-      .filter(h => {
-        return h.score > params.minScore &&
-          (!params.maxPopularity || h.popularity < params.maxPopularity) &&
-          (!params.maxOdds || h.odds < params.maxOdds) &&
-          (!params.maxScore || h.score < params.maxScore)
-      })
-    return purchases
-  },
-  /**
-   * @description 購入します。
-   * @param {Array} horses - 出馬リスト
-   * @param {Array} scores - 評価値リスト
-   * @param {Object} params - パラメータ
-   * @returns {Array} 購入リスト
-   */
-  purchaseV4 (horses, scores, params) {
     const validator = require('@h/validation-helper')
     validator.required(params)
     validator.required(params.ticketType)
     const type = params.ticketType
     validator.required(params[type])
-    // validator.required(params[type].minScore)
     let ret = {}
     switch (type) {
       case 'fuku':
@@ -177,12 +56,8 @@ module.exports = {
       horses,
       scores,
       params,
-      {
-        minOdds: 5,
-        maxOdds: 30,
-        scoreOrder: [2, 3]
-        // minSs: params.tan.minSs
-      })
+      createPurchaseParam(params)
+    )
   },
   /**
    * @description 複勝の購入枚数を算出します。
@@ -196,12 +71,8 @@ module.exports = {
       horses,
       scores,
       params,
-      {
-        minOdds: 5,
-        maxOdds: 30,
-        scoreOrder: [1, 2, 3]
-        // minSs: params.tan.minSs
-      })
+      createPurchaseParam(params)
+    )
   },
   /**
    * @description 単一馬方式のチケット購入枚数を算出します。
@@ -282,15 +153,14 @@ module.exports = {
         h.scoreOrder = i + 1
         return h
       })
-      // .filter(h => params[type].minScore <= h.score)
       .filter(h => {
         return params[type].minScore <= h.score &&
           (!filterParams.minOdds || filterParams.minOdds <= h.odds) &&
           (!filterParams.maxOdds || h.odds <= filterParams.maxOdds) &&
           (!filterParams.scoreOrder || filterParams.scoreOrder.includes(h.scoreOrder)) &&
-          (!filterParams.minSs || filterParams.minSs <= h.ss) &&
-          !h.raceName.includes('3歳') &&
-          !h.raceName.includes('2歳')
+          (!filterParams.minSs || filterParams.minSs <= h.ss)
+          // !h.raceName.includes('3歳') &&
+          // !h.raceName.includes('2歳')
       })
     if (_horses.length < combNum) {
       return {
@@ -319,12 +189,6 @@ module.exports = {
         h.scoreOrder = i
         return h
       })
-      // .filter(p => {
-      //   return p.ticketNum > 0 &&
-      //     (!filterParams.minOdds || filterParams.minOdds <= p.odds) &&
-      //     (!filterParams.maxOdds || p.odds <= filterParams.maxOdds) &&
-      //     (!filterParams.scoreOrder || filterParams.scoreOrder.includes(p.scoreOrder))
-      // })
     return {
       horses: combHorses,
       purchases
@@ -343,12 +207,8 @@ module.exports = {
       params,
       2,
       false,
-      {
-        minOdds: 10,
-        maxOdds: 40,
-        scoreOrder: [1, 2, 3]
-        // minSs: params.tan.minSs
-      })
+      createPurchaseParam(params)
+    )
   },
   /**
    * @description ワイドの購入枚数を算出します。
@@ -363,12 +223,8 @@ module.exports = {
       params,
       2,
       false,
-      {
-        minOdds: 10,
-        maxOdds: 40,
-        scoreOrder: [1, 2, 3]
-        // minSs: params.tan.minSs
-      })
+      createPurchaseParam(params)
+    )
   },
   /**
    * @description 三連複の購入枚数を算出します。
@@ -383,12 +239,8 @@ module.exports = {
       params,
       3,
       false,
-      {
-        minOdds: 10,
-        maxOdds: 40,
-        scoreOrder: [1, 2, 3]
-        // minSs: params.tan.minSs
-      })
+      createPurchaseParam(params)
+    )
   },
   /**
    * @description 馬単の購入枚数を算出します。
@@ -403,12 +255,8 @@ module.exports = {
       params,
       2,
       true,
-      {
-        minOdds: 10,
-        maxOdds: 40,
-        scoreOrder: [1, 2, 3]
-        // minSs: params.tan.minSs
-      })
+      createPurchaseParam(params)
+    )
   },
   /**
    * @description 三連単の購入枚数を算出します。
@@ -423,11 +271,35 @@ module.exports = {
       params,
       3,
       true,
-      {
-        minOdds: 10,
-        maxOdds: 40,
-        scoreOrder: [1, 2, 3]
-        // minSs: params.tan.minSs
-      })
+      createPurchaseParam(params)
+    )
+  }
+}
+
+/**
+ * @description 購入パラメータを生成します。
+ * @param {Number} rageEval レースの荒れ指数
+ */
+function createPurchaseParam (params) {
+  // console.log(params)
+  const minOdds = 10
+  const maxOdds = 40
+  const minSs = null
+  const minRageVal = params.minRageVal || 10
+  const upperRageVal = params.upperRageVal || 30
+  let scoreOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  if (params.rageEval < minRageVal) {
+    scoreOrder = []
+  } else if (params.rageEval > upperRageVal) {
+    scoreOrder = [1, 2, 3, 4, 5, 6]
+  }
+  if (params.ticketType === 'tan') {
+    scoreOrder = [1, 2, 3]
+  }
+  return {
+    minOdds,
+    maxOdds,
+    minSs,
+    scoreOrder
   }
 }

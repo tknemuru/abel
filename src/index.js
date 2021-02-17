@@ -26,8 +26,11 @@ const additionalResultCreator = require('@an/race-result-additional-creator')
 const additionalInfoCreator = require('@an/race-info-additional-creator')
 const learningInputCreator = require('@an/learning-input-creator')
 const learningConfig = require('@an/configs/learning-config')
+const learningRageInputCreator = require('@an/learning-rage-input-creator')
+const learningRageConfig = require('@an/configs/learning-rage-config')
 const testConfig = require('@an/configs/test-config')
 const predictionConfig = require('@an/configs/prediction-config')
+const predAnalyzer = require('@an/prediction-correlation-coefficient-analyzer')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const predictor = require('@s/predictor')
 const simAnalyzer = require('@an/simulation-result-analyzer')
@@ -165,6 +168,24 @@ switch (options.target) {
       }
     })()
     break
+  case 'learn-rage-pre':
+    (async () => {
+      try {
+        // 学習情報作成
+        await learningRageInputCreator.create(learningRageConfig)
+        // 相関係数分析
+        correlationAnalyzer.analyze({
+          colsPath: 'resources/learnings-rage/input-cols.json',
+          inputsPath: 'resources/learnings-rage/input.csv',
+          answersPath: 'resources/learnings-rage/answer.csv'
+        })
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
   case 'learn-pre-resource':
     (async () => {
       try {
@@ -179,14 +200,27 @@ switch (options.target) {
   case 'test-pred':
     (async () => {
       try {
-        // 予測情報作成
-        await learningInputCreator.create(testConfig)
-        // 予測実施
-        await predictor.predict()
-        // 予測結果整形
-        predAdjuster.adjust()
-        // シミュレーション実施
-        await testSimulator.simulate()
+        // // 予測情報作成
+        // await learningInputCreator.create(testConfig)
+        // await learningRageInputCreator.create(learningRageConfig)
+        // // 予測実施
+        // await predictor.predict({
+        //   target: 'ability'
+        // })
+        // await predictor.predict({
+        //   target: 'rage'
+        // })
+        // // 予測結果整形
+        // predAdjuster.adjust({
+        //   target: 'ability'
+        // })
+        // predAdjuster.adjust({
+        //   target: 'rage'
+        // })
+        // // シミュレーション実施
+        // await testSimulator.simulate()
+        // 予測結果の分析
+        predAnalyzer.analyze()
       } catch (e) {
         console.log(e)
       } finally {

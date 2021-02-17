@@ -1,10 +1,19 @@
 'use strict'
 
 const fileHelper = require('@h/file-helper')
-// let filterdColumns = null
 
 /**
- * @module 学習用情報の作成機能を提供します。
+ * @description 最大出馬数
+ */
+const MaxHorseCount = 18
+
+/**
+ * @description 対象カラム数
+ */
+let targetColsLength
+
+/**
+ * @module 場の荒れ具合学習用情報の作成機能を提供します。
  */
 module.exports = {
   /**
@@ -12,26 +21,15 @@ module.exports = {
    */
   RaceUnit: 1000,
   /**
-   * @description 入力情報ファイルディレクトリ
-   */
-  InputFileDir: 'resources/params/learnings',
-  /**
    * @description 入力情報カラムリストファイルパス
    */
-  InputColsFilePath: 'resources/learnings/input-cols.json',
+  InputColsFilePath: 'resources/learnings-rage/input-cols.json',
   /**
    * @description 学習用情報を作成します。
    * @param {Object} config - 設定情報
    * @returns {void}
    */
   async create (config) {
-    const validator = require('@h/validation-helper')
-    validator.required(config)
-    const towardPost = !!config.towardPost
-    if (towardPost) {
-      console.log('***** toward post *****')
-    }
-
     // 既存ファイルを削除する
     module.exports._clearFile()
 
@@ -42,17 +40,9 @@ module.exports = {
     let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-columns.json', { encoding: 'utf-8' }))
     validationCols = module.exports._extractValidationCols(validationCols)
 
-    // 正解情報を読み込む
-    const answers = {}
-    for (const type of require('@h/purchase-helper').getPurchasingTicketType()) {
-      answers[type] = JSON.parse(fs.readFileSync(`resources/params/pred-result-${type}-key.json`, { encoding: 'utf-8' }))
-    }
-
     const params = {
       targets,
       validationCols,
-      answers,
-      towardPost,
       keyRels: [],
       earningMoneys: {}
     }
@@ -60,13 +50,6 @@ module.exports = {
     // 作成処理
     if (config.fromDb) {
       await module.exports._createFromDb(config, params)
-    } else {
-      module.exports._createFromFile(config, params)
-    }
-
-    // キー紐付き情報を書き込む
-    if (towardPost) {
-      module.exports._writeKeyRelation(params.keyRels)
     }
   },
   /**
@@ -84,20 +67,10 @@ module.exports = {
     let fromIdx = 0
     let toIdx = module.exports.RaceUnit - 1
     let end = false
-    let i = 0
     while (!end) {
       if (toIdx >= raceIds.length) {
         toIdx = raceIds.length - 1
         end = true
-      }
-
-      // スキップ判定
-      if (config.salt && i % config.salt !== 0) {
-        console.log('skip')
-        i++
-        fromIdx = toIdx + 1
-        toIdx += module.exports.RaceUnit
-        return []
       }
 
       let param = {}
@@ -125,30 +98,8 @@ module.exports = {
       // ファイルに結果を書き込む
       module.exports._writeFiles(hists, config, params)
 
-      i++
       fromIdx = toIdx + 1
       toIdx += module.exports.RaceUnit
-      // break
-    }
-  },
-  /**
-   * @description ファイルから学習用情報を作成します。
-   * @param {Object} config 設定情報
-   * @param {Object} params パラメータ
-   * @returns {void}
-   */
-  _createFromFile (config, params) {
-    const fs = require('fs')
-    const path = require('path')
-    const files = fs.readdirSync(module.exports.InputFileDir)
-      .map(f => path.join(module.exports.InputFileDir, f))
-
-    for (const file of files) {
-      console.log(file)
-      const hists = JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }))
-      // ファイルに結果を書き込む
-      module.exports._writeFiles(hists, config, params)
-      // break
     }
   },
   /**
@@ -165,13 +116,8 @@ module.exports = {
 
     // 正解データを作成
     if (config.answer) {
-      params.earningMoneys = module.exports._createEarningMoneys(hists)
-      if (params.towardPost) {
-        module.exports._createAnswer(hists, params, config)
-      } else {
-        // module.exports._createPostAnswers(hists, validationCols, config, answers)
-        module.exports._createAnswer(hists, params, config)
-      }
+      params.answers = config.createAnswer(hists)
+      module.exports._createAnswer(hists, params, config)
     }
 
     // 紐付きデータを作成
@@ -194,42 +140,59 @@ module.exports = {
     // const scoreParams = module.exports._createScoreParams()
     let dataList = []
     let i = 1
+    let lastRaceId = null
+    let data = []
+    const targetCols = []
     for (const hist of hists) {
       if (!config.validation(hist, validationCols)) {
         continue
       }
-      const data = []
+      // レースIDが変わったらデータを初期化
+      if (lastRaceId && lastRaceId !== hist.ret0_race_id) {
+        // 最大出馬数と同一のカラム数になるまで埋める
+        while (data.length < targetColsLength) {
+          data.push(0.0)
+        }
+        dataList.push(data)
+        data = []
+        i++
+        if (i % 500 === 0) {
+          console.log(i)
+          // データを書き込む
+          module.exports._writeInput(dataList)
+          dataList = []
+        }
+      }
+      lastRaceId = hist.ret0_race_id
       const cols = Object.keys(hist)
-      const targetCols = []
       for (const col of cols) {
         if (targets.includes(col)) {
-          targetCols.push(col)
           data.push(module.exports._toNum(hist[col]))
         }
       }
-      // 付加情報
-      // module.exports._addInfo(data, hist, scoreParams)
-      // 特徴情報
-      // module.exports._addFeatures(data, hist, targetCols)
       // 学習データのキーを記録しておく
       if (!fileHelper.existsFile(module.exports.InputColsFilePath)) {
         const fs = require('fs')
+        for (let order = 1; order <= MaxHorseCount; order++) {
+          for (const col of cols) {
+            if (targets.includes(col)) {
+              targetCols.push(`${order}_${col}`)
+            }
+          }
+        }
+        targetColsLength = targetCols.length
         fs.appendFileSync(module.exports.InputColsFilePath
           , JSON.stringify(targetCols)
           , { encoding: 'utf-8' }
         )
       }
-      // 学習用データをフィルタする
-      // data = filterData(data, targetCols)
-      dataList.push(data)
-      if (i % 1000 === 0) {
-        console.log(i)
-        // データを書き込む
-        module.exports._writeInput(dataList)
-        dataList = []
-      }
-      i++
     }
+    // 最後のデータ
+    // 最大出馬数と同一のカラム数になるまで埋める
+    while (data.length < targetColsLength) {
+      data.push(0.0)
+    }
+    dataList.push(data)
     // データを書き込む
     if (dataList.length > 0) {
       console.log(`param length: ${dataList[0].length}`)
@@ -244,74 +207,30 @@ module.exports = {
    * @returns {void}
    */
   _createAnswer (hists, params, config) {
-    let ansListSet = {}
+    let ansList = []
     let i = 1
+    let lastRaceId
     for (const hist of hists) {
       if (!config.validation(hist, params.validationCols)) {
         continue
       }
-      // 正解情報
-      const money = params.earningMoneys[hist.ret0_race_id]
-      const ansSet = config.createAnswer(hist, { money })
-      for (const key in ansSet) {
-        if (!ansListSet[key]) {
-          ansListSet[key] = []
-        }
-        const ans = []
-        ans.push(ansSet[key])
-        ansListSet[key].push(ans)
-      }
-      if (i % 1000 === 0) {
-        console.log(i)
-        // データを書き込む
-        module.exports._writeAnswer(ansListSet)
-        ansListSet = {}
-      }
-      i++
-    }
-    // データを書き込む
-    module.exports._writeAnswer(ansListSet)
-  },
-  /**
-   * @description 学習用正解情報を作成します。
-   * @param {Array} hists - 履歴情報
-   * @param {Array} validationCols - 検証対象のカラム
-   * @param {Object} config - 設定情報
-   * @param {Object} answers - 正解情報
-   * @returns {void}
-   */
-  _createPostAnswers (hists, validationCols, config, answers) {
-    let ansListSet = {}
-    let i = 1
-    for (const hist of hists) {
-      if (!config.validation(hist, validationCols)) {
+      if (lastRaceId === hist.ret0_race_id) {
         continue
       }
+      lastRaceId = hist.ret0_race_id
       // 正解情報
-      const ansKey = `${hist.ret0_race_id}-${hist.ret0_horse_number}`
-      const ansSet = {}
-      for (const type of require('@h/purchase-helper').getPurchasingTicketType()) {
-        const ans = answers[type][ansKey]
-        ansSet[type] = ans
-      }
-      for (const key in ansSet) {
-        if (!ansListSet[key]) {
-          ansListSet[key] = []
-        }
-        const ans = []
-        ans.push(ansSet[key])
-        ansListSet[key].push(ans)
-      }
-      if (i % 1000 === 0) {
+      const ans = params.answers[hist.ret0_race_id]
+      ansList.push([ans])
+      if (i % 500 === 0) {
         console.log(i)
         // データを書き込む
-        module.exports._writeAnswer(ansListSet)
-        ansListSet = {}
+        module.exports._writeAnswer(ansList)
+        ansList = []
       }
       i++
     }
     // データを書き込む
-    module.exports._writeAnswer(ansListSet)
+    module.exports._writeAnswer(ansList)
   },
   /**
    * @description 紐付き情報を作成します。
@@ -324,10 +243,15 @@ module.exports = {
     const conv = require('@h/convert-helper')
     let i = 1
     let rels = []
+    let lastRaceId
     for (const hist of hists) {
       if (!config.validation(hist, validationCols)) {
         continue
       }
+      if (lastRaceId === hist.ret0_race_id) {
+        continue
+      }
+      lastRaceId = hist.ret0_race_id
       const rel = {
         raceId: hist.ret0_race_id,
         raceName: hist.ret0_race_name,
@@ -356,7 +280,7 @@ module.exports = {
       }
       rel.pays = pays
       rels.push(rel)
-      if (i % 1000 === 0) {
+      if (i % 500 === 0) {
         console.log(i)
         // データを書き込む
         module.exports._writeRelation(rels)
@@ -385,18 +309,6 @@ module.exports = {
       }
       keyRels.push(rel)
     }
-  },
-  /**
-   * @description レースごとの獲得賞金リストを作成します。
-   * @param {Array} hists レース履歴リスト
-   */
-  _createEarningMoneys (hists) {
-    const earningMoneys = {}
-    const tops = hists.filter(h => h.ret0_order_of_finish === 1)
-    for (const top of tops) {
-      earningMoneys[top.ret0_race_id] = top.ret0_earning_money
-    }
-    return earningMoneys
   },
   /**
    * @description 全出力カラムリストを抽出します。
@@ -452,78 +364,6 @@ module.exports = {
     return retCols.reduce((pre, cur) => pre.concat(cur))
   },
   /**
-   * @description 評価パラメータを作成します。
-   */
-  _createScoreParams () {
-    const fs = require('fs')
-    const jockey = JSON.parse(fs.readFileSync('resources/params/jockey_id.json', { encoding: 'utf-8' }))
-    const trainer = JSON.parse(fs.readFileSync('resources/params/trainer_id.json', { encoding: 'utf-8' }))
-    return {
-      jockey,
-      trainer
-    }
-  },
-  /**
-   * @description 付加情報を追加します。
-   * @param {Array} data - 学習用データ
-   * @param {Array} hist - 履歴データ
-   * @param {Object} params - 付加情報のパラメータ
-   */
-  _addInfo (data, hist, params) {
-    for (let i = 0; i <= 4; i++) {
-      const score = 50
-      const keys = [
-        'jockey',
-        'trainer'
-      ]
-      for (const key of keys) {
-        const columnKey = `ret${i}_${key}_id`
-        if (hist[columnKey] && params[`${key}`][hist[columnKey]]) {
-          const val = Math.round(params[`${key}`][hist[columnKey]].recoveryRate)
-          data.push(val)
-        } else {
-          data.push(score)
-        }
-      }
-    }
-  },
-  /**
-   * @description 特徴情報を追加します。
-   * @param {Array} data - 学習用データ
-   * @param {Array} hist - 履歴データ
-   * @param {Array} targetCols - 対象カラムリスト
-   */
-  _addFeatures (data, hist, targetCols) {
-    const feature = require('@an/feature-extractor')
-    // feature.attachOrderOfFinishScore(hist)
-    data.push(feature.extractSimilarExperienceCount(hist, 'distance', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'race_start', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'direction_digit', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'weather_digit', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'race_date_month', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'race_date_day', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'race_number', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'horse_count', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'horse_number', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'frame_number', targetCols))
-    data.push(feature.extractSimilarExperienceCount(hist, 'basis_weight', targetCols))
-    data.push(feature.extractSimilarSurfaceExperienceCount(hist, targetCols))
-
-    // data.push(feature.extractOrderAndEarningMoneyScoreSum(hist, targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'distance', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'race_start', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'direction_digit', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'weather_digit', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'race_date_month', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'race_date_day', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'race_number', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'horse_count', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'horse_number', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'frame_number', targetCols))
-    // data.push(feature.extractSimilarExperienceScore(hist, 'basis_weight', targetCols))
-    // data.push(feature.extractSimilarSurfaceExperienceScore(hist, targetCols))
-  },
-  /**
    * 値を数値に変換します。
    * @param {Any} val - 値
    */
@@ -539,8 +379,8 @@ module.exports = {
   _clearFile () {
     const fs = require('fs')
     const path = require('path')
-    const files = fs.readdirSync('resources/learnings/')
-      .map(f => path.join('resources/learnings/', f))
+    const files = fs.readdirSync('resources/learnings-rage/')
+      .map(f => path.join('resources/learnings-rage/', f))
 
     // 削除
     for (const file of files) {
@@ -562,9 +402,7 @@ module.exports = {
    * @param {Array} data - 正解データ
    */
   _writeAnswer (data) {
-    for (const key in data) {
-      module.exports._write(data[key], `answer-${key}`)
-    }
+    module.exports._write(data, 'answer')
   },
   /**
    * @description 紐付きデータの書き込みを行います。
@@ -572,7 +410,7 @@ module.exports = {
    */
   _writeRelation (data) {
     const fs = require('fs')
-    fs.appendFileSync('resources/learnings/relation.json'
+    fs.appendFileSync('resources/learnings-rage/relation.json'
       , JSON.stringify(data, null, '  ')
       , { encoding: 'utf-8' }
     )
@@ -583,7 +421,7 @@ module.exports = {
    */
   _writeKeyRelation (data) {
     const fs = require('fs')
-    fs.appendFileSync('resources/learnings/key-relation.json'
+    fs.appendFileSync('resources/learnings-rage/key-relation.json'
       , JSON.stringify(data, null, '  ')
       , { encoding: 'utf-8' }
     )
@@ -597,26 +435,9 @@ module.exports = {
     const csvHelper = require('@h/csv-helper')
     const fs = require('fs')
     const dataCsv = csvHelper.toCsv(data)
-    fs.appendFileSync(`resources/learnings/${prefix}.csv`
+    fs.appendFileSync(`resources/learnings-rage/${prefix}.csv`
       , dataCsv
       , { encoding: 'utf-8' }
     )
   }
 }
-
-/**
- * @description 学習用データをフィルタします。
- * @param {Array} 学習用データ
- * @param {Array} フィルタ前の全対象データ
- * @returns {Array} フィルタされた学習用データ
- */
-// function filterData (data, targetCols) {
-//   if (!filterdColumns) {
-//     filterdColumns = fileHelper.readJson('resources/defs/filterd-learning-input-columns.json')
-//   }
-//   const filterdData = data.filter((d, i) => {
-//     const colName = targetCols[i]
-//     return filterdColumns.includes(colName)
-//   })
-//   return filterdData
-// }

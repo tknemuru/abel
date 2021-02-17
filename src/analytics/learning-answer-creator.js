@@ -1,5 +1,7 @@
 'use strict'
 
+const _ = require('lodash')
+
 /**
  * @module 学習用正解データの作成機能を提供します。
  */
@@ -98,7 +100,7 @@ module.exports = {
     if (_order === 1) {
       ret = odds
     } else if (_order === 2 || _order === 3) {
-      ret = (odds / _order).toFixed(2)
+      ret = Number((odds / _order).toFixed(2))
     }
     return ret
   },
@@ -243,5 +245,40 @@ module.exports = {
     const count = data.ret0_horse_count
     const ret = (count - order) * money
     return ret
+  },
+  /**
+   * @description 1位のオッズから正解データを作成します。
+   * @param {Array} hists 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByTopOdds (hists) {
+    const topOdds = {}
+    const tops = hists.filter(h => h.ret0_order_of_finish === 1)
+    for (const top of tops) {
+      topOdds[top.ret0_race_id] = top.ret0_odds
+    }
+    return topOdds
+  },
+  /**
+   * @description 上位3位のオッズから正解データを作成します。
+   * @param {Array} hists 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByTopThreeOdds (hists) {
+    const topOdds = {}
+    const tops = hists
+      .filter(h => h.ret0_order_of_finish >= 1 && h.ret0_order_of_finish <= 3)
+    for (const top of tops) {
+      if (topOdds[top.ret0_race_id]) {
+        continue
+      }
+      const sum = _.sum(
+        tops
+          .filter(t => t.ret0_race_id === top.ret0_race_id)
+          .map(t => t.ret0_odds)
+      )
+      topOdds[top.ret0_race_id] = Number((sum / 3).toFixed(2))
+    }
+    return topOdds
   }
 }

@@ -26,17 +26,19 @@ const InputColsFilePath = 'resources/learnings/input-cols.json'
 module.exports = {
   /**
    * @description 相関係数の分析を行います。
-   * @param {Object} config - 設定情報
+   * @param {Object} params - 設定情報
    * @returns {void}
    */
-  analyze (config) {
+  analyze (params) {
+    const colsPath = params.colsPath || InputColsFilePath
+    const inputsPath = params.inputsPath || InputFilePath
+    const answersPath = params.answersPath || AnswerFilePath
     // 学習データのカラム情報を読み込む
-    const cols = fileHelper.readJson(InputColsFilePath)
+    const cols = fileHelper.readJson(colsPath)
     // 学習データを読み込む
-    const inputs = csvHelper.toArray(fileHelper.read(InputFilePath))
-    // .filter((input, i) => i < 1000)
+    const inputs = csvHelper.toArray(fileHelper.read(inputsPath))
     // 正解データを読み込む
-    const answers = fileHelper.read(AnswerFilePath)
+    const answers = fileHelper.read(answersPath)
       .split('\n')
       // .filter((a, i) => i < 1000)
       .map(a => {
@@ -57,7 +59,7 @@ module.exports = {
           return Number(input[i])
         }
       })
-      const value = ss.sampleCorrelation(targetVals, answers).toFixed(5)
+      const value = Number(ss.sampleCorrelation(targetVals, answers).toFixed(5))
       const corre = {
         key: col,
         value,
