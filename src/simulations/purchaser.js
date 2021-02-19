@@ -56,7 +56,7 @@ module.exports = {
       horses,
       scores,
       params,
-      createPurchaseParam(params)
+      createPurchaseParam(params, scores)
     )
   },
   /**
@@ -71,7 +71,7 @@ module.exports = {
       horses,
       scores,
       params,
-      createPurchaseParam(params)
+      createPurchaseParam(params, scores)
     )
   },
   /**
@@ -207,7 +207,7 @@ module.exports = {
       params,
       2,
       false,
-      createPurchaseParam(params)
+      createPurchaseParam(params, scores)
     )
   },
   /**
@@ -223,7 +223,7 @@ module.exports = {
       params,
       2,
       false,
-      createPurchaseParam(params)
+      createPurchaseParam(params, scores)
     )
   },
   /**
@@ -239,7 +239,7 @@ module.exports = {
       params,
       3,
       false,
-      createPurchaseParam(params)
+      createPurchaseParam(params, scores)
     )
   },
   /**
@@ -255,7 +255,7 @@ module.exports = {
       params,
       2,
       true,
-      createPurchaseParam(params)
+      createPurchaseParam(params, scores)
     )
   },
   /**
@@ -271,7 +271,7 @@ module.exports = {
       params,
       3,
       true,
-      createPurchaseParam(params)
+      createPurchaseParam(params, scores)
     )
   }
 }
@@ -280,21 +280,15 @@ module.exports = {
  * @description 購入パラメータを生成します。
  * @param {Number} rageEval レースの荒れ指数
  */
-function createPurchaseParam (params) {
-  // console.log(params)
-  const minOdds = 10
-  const maxOdds = 40
+function createPurchaseParam (params, scores) {
+  const minOdds = 0
+  const maxOdds = 999
   const minSs = null
-  const minRageVal = params.minRageVal || 10
-  const upperRageVal = params.upperRageVal || 30
-  let scoreOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  if (params.rageEval < minRageVal) {
+  const minRageVal = 90
+  let scoreOrder = [1, 2, 3]
+  const rageVal = scores[0].rageOddsEval + scores[0].rageOrderEval
+  if (rageVal < minRageVal) {
     scoreOrder = []
-  } else if (params.rageEval > upperRageVal) {
-    scoreOrder = [1, 2, 3, 4, 5, 6]
-  }
-  if (params.ticketType === 'tan') {
-    scoreOrder = [1, 2, 3]
   }
   return {
     minOdds,

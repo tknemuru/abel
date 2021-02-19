@@ -14,6 +14,7 @@ console.log(options)
 
 const dbInit = require('@d/db-initializer')
 const creator = require('@an/eval-param-creator')
+const configManger = require('@/config-manager')
 const testSimulator = require('@s/test-purchase-simulator')
 const futurePageClearer = require('@ac/future-page-clearer')
 const futureDownloader = require('@ac/future-race-page-downloader')
@@ -28,6 +29,7 @@ const learningInputCreator = require('@an/learning-input-creator')
 const learningConfig = require('@an/configs/learning-config')
 const learningRageInputCreator = require('@an/learning-rage-input-creator')
 const learningRageConfig = require('@an/configs/learning-rage-config')
+const learningCollegialInputCreator = require('@an/learning-collegial-input-creator')
 const testConfig = require('@an/configs/test-config')
 const predictionConfig = require('@an/configs/prediction-config')
 const predAnalyzer = require('@an/prediction-correlation-coefficient-analyzer')
@@ -36,6 +38,8 @@ const predictor = require('@s/predictor')
 const simAnalyzer = require('@an/simulation-result-analyzer')
 const correlationAnalyzer = require('@an/correlation-coefficient-analyzer')
 const ipatPurchaseManager = require('@p/ipat-purchase-manager')
+
+const config = configManger.get()
 
 switch (options.target) {
   case 'init-db':
@@ -67,7 +71,7 @@ switch (options.target) {
     // eslint-disable-next-line no-case-declarations
     (async () => {
       try {
-        const endDate = '202002'
+        const endDate = '202003'
         await databaseUrlExtractor.extract({
           endDate
         })
@@ -83,7 +87,7 @@ switch (options.target) {
         })
         await horseHistCreator.create({
           minYear: 2020,
-          minMonth: 2
+          minMonth: 3
         })
       } catch (e) {
         console.log(e)
@@ -160,7 +164,16 @@ switch (options.target) {
         // 学習情報作成
         await learningInputCreator.create(learningConfig)
         // 相関係数分析
-        correlationAnalyzer.analyze()
+        correlationAnalyzer.analyze({
+          colsPath: config.inputAbilityColsFilePath,
+          inputsPath: config.inputAbilityFilePath,
+          answersPath: config.answerAbilityMoneyFilePath
+        })
+        correlationAnalyzer.analyze({
+          colsPath: config.inputAbilityColsFilePath,
+          inputsPath: config.inputAbilityFilePath,
+          answersPath: config.answerAbilityRecoveryFilePath
+        })
       } catch (e) {
         console.log(e)
       } finally {
@@ -175,10 +188,27 @@ switch (options.target) {
         await learningRageInputCreator.create(learningRageConfig)
         // 相関係数分析
         correlationAnalyzer.analyze({
-          colsPath: 'resources/learnings-rage/input-cols.json',
-          inputsPath: 'resources/learnings-rage/input.csv',
-          answersPath: 'resources/learnings-rage/answer.csv'
+          colsPath: config.inputRageColsFilePath,
+          inputsPath: config.inputRageFilePath,
+          answersPath: config.answerRageOddsFilePath
         })
+        correlationAnalyzer.analyze({
+          colsPath: config.inputRageColsFilePath,
+          inputsPath: config.inputRageFilePath,
+          answersPath: config.answerRageOrderFilePath
+        })
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
+  case 'learn-collegial-pre':
+    (async () => {
+      try {
+        // 学習情報作成
+        await learningCollegialInputCreator.create()
       } catch (e) {
         console.log(e)
       } finally {
@@ -200,26 +230,19 @@ switch (options.target) {
   case 'test-pred':
     (async () => {
       try {
-        // // 予測情報作成
-        // await learningInputCreator.create(testConfig)
-        // await learningRageInputCreator.create(learningRageConfig)
-        // // 予測実施
-        // await predictor.predict({
-        //   target: 'ability'
-        // })
-        // await predictor.predict({
-        //   target: 'rage'
-        // })
-        // // 予測結果整形
-        // predAdjuster.adjust({
-        //   target: 'ability'
-        // })
-        // predAdjuster.adjust({
-        //   target: 'rage'
-        // })
-        // // シミュレーション実施
-        // await testSimulator.simulate()
-        // 予測結果の分析
+        // 予測情報作成
+        await learningCollegialInputCreator.create(testConfig)
+        // 予測実施
+        await predictor.predict({
+          target: 'collegial'
+        })
+        // 予測結果整形
+        predAdjuster.adjust({
+          target: 'collegial'
+        })
+        // シミュレーション実施
+        await testSimulator.simulate()
+        // // 予測結果の分析
         predAnalyzer.analyze()
       } catch (e) {
         console.log(e)

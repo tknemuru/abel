@@ -1,5 +1,9 @@
 'use strict'
 
+const adjuster = require('@s/race-adjuster')
+const configManager = require('@/config-manager')
+const fileHelper = require('@h/file-helper')
+
 /**
  * @module 馬券購入の補助機能を提供します。
  */
@@ -27,7 +31,7 @@ module.exports = {
    */
   getPurchaseParams (add = 0) {
     // const tan = 90
-    const fuku = 80 + add
+    const fuku = 7
     const params = {
       tan: {
         minScore: fuku + add
@@ -57,5 +61,27 @@ module.exports = {
       upperRageVal: 99 + add
     }
     return params
+  },
+  /**
+   * @description 全ての予測評価値結果を読み込みます。
+   * @returns {Array} 全ての予測評価値結果
+   */
+  readAllPredResults () {
+    // 分析対象の情報を読み込む
+    const config = configManager.get()
+    const abilityMoneys = fileHelper.readJson(config.predAbilityMoneyFilePath)
+    const abilityRecoverys = fileHelper.readJson(config.predAbilityRecoveryFilePath)
+    const rageOdds = adjuster.adjust(fileHelper.readJson(config.predRageOddsFilePath))
+    const rageOrders = adjuster.adjust(fileHelper.readJson(config.predRageOrderFilePath))
+    // マージする
+    const results = abilityMoneys.map((a, i) => {
+      a.abilityMoneyEval = a.eval
+      a.abilityRecoveryEval = abilityRecoverys[i].eval
+      a.rageOddsEval = rageOdds[a.raceId][0].eval
+      a.rageOrderEval = rageOrders[a.raceId][0].eval
+      a.recoveryRate = a.orderOfFinish <= 3 ? a.odds : 0
+      return a
+    })
+    return results
   }
 }

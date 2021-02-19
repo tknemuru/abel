@@ -7,9 +7,8 @@ const futureRegister = require('@ac/future-race-register')
 const futureScraper = require('@ac/future-race-scraper')
 const futureSimulator = require('@s/future-multi-ticket-type-purchase-simulator')
 const ipatPurchaser = require('@p/ipat-connect-purchaser')
-const learningInputCreator = require('@an/learning-input-creator')
+const learningCollegialInputCreator = require('@an/learning-collegial-input-creator')
 const predAdjuster = require('@an/prediction-result-adjuster')
-const predictionConfig = require('@an/configs/prediction-config')
 const predictor = require('@s/predictor')
 const purchaseHelper = require('@h/purchase-helper')
 const sleep = require('thread-sleep')
@@ -59,12 +58,18 @@ async function executeWithWatching () {
   await futureScraper.scrape()
   // レースデータ登録
   await futureRegister.register()
-  // 予測向けデータ作成
-  await learningInputCreator.create(predictionConfig)
+  // 予測情報作成
+  await learningCollegialInputCreator.create({
+    mode: 'future'
+  })
   // 予測実施
-  await predictor.predict()
+  await predictor.predict({
+    target: 'collegial'
+  })
   // 予測結果整形
-  predAdjuster.adjust()
+  predAdjuster.adjust({
+    target: 'collegial'
+  })
   // 購入計画作成
   const purchaseParams = purchaseHelper.getPurchaseParams()
   futureSimulator.simulate(purchaseParams)

@@ -63,7 +63,9 @@ module.exports = {
    */
   createAnswer (hists) {
     const creator = require('@an/learning-answer-creator')
-    const ans = creator.createAnswerByTopThreeOdds(hists)
-    return ans
+    const ansSet = {}
+    ansSet['rage-odds'] = creator.createAnswerByTopThreeOdds(hists)
+    ansSet['rage-order'] = creator.createAnswerByOrderPopularityDiff(hists)
+    return ansSet
   }
 }

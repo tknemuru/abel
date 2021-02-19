@@ -1,16 +1,7 @@
 'use strict'
 
+const configManager = require('@/config-manager')
 const fileHelper = require('@h/file-helper')
-
-/**
- * @description 馬の強さ評価値ファイルディレクトリ
- */
-const AbilityFileDir = 'resources/learnings'
-
-/**
- * @description レースの荒れ指数ファイルディレクトリ
- */
-const RageFileDir = 'resources/learnings-rage'
 
 /**
  * @module 予測結果の整形機能を提供します。
@@ -23,26 +14,32 @@ module.exports = {
    * @returns {void}
    */
   async adjust (param = { target: 'ability' }) {
+    const config = configManager.get()
     let fileDir
     switch (param.target) {
       case 'rage':
-        fileDir = RageFileDir
+        fileDir = config.learningRageDir.slice(0, -1)
+        break
+      case 'collegial':
+        fileDir = config.learningCollegialDir.slice(0, -1)
         break
       default:
-        fileDir = AbilityFileDir
+        fileDir = config.learningAbilityDir.slice(0, -1)
     }
     const validator = require('@h/validation-helper')
     const fs = require('fs')
     const path = require('path')
+    let relations
     const orgRelations = fileHelper.read(path.join(fileDir, 'relation.json'))
     // 分割して書き込んでいるため不正な箇所が出てしまうので修正しておく
-    let relations = orgRelations.replace(/\]\[/g, ',')
+    relations = orgRelations.replace(/\]\[/g, ',')
     relations = JSON.parse(relations)
 
     // 予測結果の読み込み
     const predFiles = fs.readdirSync(fileDir)
       .filter(f => /.*\.txt$/.test(f))
       .map(f => path.join(fileDir, f))
+    console.log(predFiles)
     for (const file of predFiles) {
       let predResults = fileHelper.read(file)
       predResults = predResults

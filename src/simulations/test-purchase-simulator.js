@@ -5,7 +5,7 @@
  */
 module.exports = {
   async simulate () {
-    for (let i = 0; i < 10; i++) {
+    for (let i = -2; i < 5; i++) {
       const params = require('@h/purchase-helper').getPurchaseParams(i)
       console.log('minScore:')
       console.log(params)

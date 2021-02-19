@@ -96,11 +96,27 @@ module.exports = {
     const odds = data[`ret${index}_odds`] || 0
     const order = data[`ret${index}_order_of_finish`] || 0
     const _order = Number(order)
-    let ret = -1
+    let ret = 0
     if (_order === 1) {
       ret = odds
     } else if (_order === 2 || _order === 3) {
       ret = Number((odds / _order).toFixed(2))
+    }
+    return ret
+  },
+  /**
+   * @description 上位3位の回収率によって正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @param {Number} index インデックス
+   * @returns {Number} 正解データ
+   */
+  createAnswerByTopThreeRecoveryRate (data, index = 0) {
+    const odds = data[`ret${index}_odds`] || 0
+    const order = data[`ret${index}_order_of_finish`] || 0
+    const _order = Number(order)
+    let ret = 0
+    if (_order <= 3) {
+      ret = odds
     }
     return ret
   },
@@ -280,5 +296,24 @@ module.exports = {
       topOdds[top.ret0_race_id] = Number((sum / 3).toFixed(2))
     }
     return topOdds
+  },
+  /**
+   * @description 順位と人気順の差異から正解データを作成します。
+   * @param {Array} hists 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByOrderPopularityDiff (hists) {
+    const sumDiffs = {}
+    const raceIds = _.uniq(hists.map(h => h.ret0_race_id))
+    for (const raceId of raceIds) {
+      const sumDiff = hists
+        .filter(h => h.ret0_race_id === raceId)
+        .reduce((prev, curr) => {
+          const diff = Math.abs(curr.ret0_order_of_finish - curr.ret0_popularity)
+          return prev + diff
+        }, 0)
+      sumDiffs[raceId] = sumDiff
+    }
+    return sumDiffs
   }
 }

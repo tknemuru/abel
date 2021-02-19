@@ -127,14 +127,12 @@ async function onOpenRacePage (browser, page, params) {
         i++
       }
       await page.waitForTimeout(300)
-      const ticketNum = config.dev ? 1 : ticket.ticketNum
+      const ticketNum = ticket.ticketNum
       await page.type('.Money input', ticketNum + '')
       sumTicketNum += ticketNum
       await page.click('.AddBtn button')
       await page.waitForTimeout(300)
-      if (config.dev) break
     }
-    if (config.dev) break
   }
   // IPAT画面を起動
   console.log('IPAT画面を起動')
@@ -168,8 +166,12 @@ async function onOpenRacePage (browser, page, params) {
       // 投票確認ダイアログ合意
       console.log('投票確認ダイアログ合意')
       console.log('dialog message : ' + dialog.message())
-      await dialog.accept()
-      // await dialog.dismiss()
+      if (config.dev) {
+        console.log('開発モードのため購入を中止します')
+        await dialog.dismiss()
+      } else {
+        await dialog.accept()
+      }
       page = await htmlHelper.selectNewPuppeteerPage(browser, page)
       await page.screenshot({ path: 'resources/screenshots/070_ipat-complete-purchase.png' })
       // 投票完了

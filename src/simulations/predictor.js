@@ -1,18 +1,8 @@
 
 'use strict'
 
-const config = require('@/config-manager')
+const configManager = require('@/config-manager')
 const htmlHelper = require('@h/html-helper')
-
-/**
- * @description 馬の強さ予測実行URL
- */
-const AbilityPredUrl = 'http://localhost:8888/notebooks/dev/tknemuru/abel-learning/pred_v4.ipynb?token='
-
-/**
- * @description レースの荒れ予測実行URL
- */
-const RagePredUrl = 'http://localhost:8888/notebooks/dev/tknemuru/abel-learning/pred-rage_v1.ipynb?token='
 
 /**
  * @description 予測機能を提供します。
@@ -25,17 +15,21 @@ module.exports = {
    * @returns {void}
    */
   async predict (param = { target: 'ability' }) {
+    const config = configManager.get()
     let baseUrl
     switch (param.target) {
       case 'rage':
-        baseUrl = RagePredUrl
+        baseUrl = config.predRageUrl
+        break
+      case 'collegial':
+        baseUrl = config.predCollegialUrl
         break
       default:
-        baseUrl = AbilityPredUrl
+        baseUrl = config.predAbilityUrl
     }
-    const config = getConfig()
-    const url = `${baseUrl}${config.token}`
-    await htmlHelper.openPuppeteerPage(url, onOpenPage)
+    const url = `${baseUrl}${config.jupyter.token}`
+    console.log(url)
+    await htmlHelper.openPuppeteerPage(url, onOpenPage, param)
   }
 }
 
@@ -47,14 +41,7 @@ module.exports = {
  * @returns {void}
  */
 async function onOpenPage (browser, page, params) {
+  const waitTime = params.waitTime || 8000
   await page.click('#run_int button')
-  await page.waitForTimeout(8000)
-}
-
-/**
- * @description 設定情報を取得します。
- * @returns {Object} 設定情報
- */
-function getConfig () {
-  return config.get().jupyter
+  await page.waitForTimeout(waitTime)
 }

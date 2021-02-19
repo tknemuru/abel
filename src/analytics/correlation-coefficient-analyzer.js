@@ -8,19 +8,6 @@ const logicHelper = require('@h/logic-helper')
 const ss = require('simple-statistics')
 
 /**
- * @description 入力情報ファイルパス
- */
-const InputFilePath = 'resources/learnings/input.csv'
-/**
- * @description 正解情報ファイルパス
- */
-const AnswerFilePath = 'resources/learnings/answer-uren.csv'
-/**
- * @description 入力情報カラムリストファイルパス
- */
-const InputColsFilePath = 'resources/learnings/input-cols.json'
-
-/**
  * @description 相関係数の分析機能を提供します。
  */
 module.exports = {
@@ -29,10 +16,10 @@ module.exports = {
    * @param {Object} params - 設定情報
    * @returns {void}
    */
-  analyze (params) {
-    const colsPath = params.colsPath || InputColsFilePath
-    const inputsPath = params.inputsPath || InputFilePath
-    const answersPath = params.answersPath || AnswerFilePath
+  analyze (params = {}) {
+    const colsPath = params.colsPath
+    const inputsPath = params.inputsPath
+    const answersPath = params.answersPath
     // 学習データのカラム情報を読み込む
     const cols = fileHelper.readJson(colsPath)
     // 学習データを読み込む

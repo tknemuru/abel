@@ -207,7 +207,7 @@ module.exports = {
    * @returns {void}
    */
   _createAnswer (hists, params, config) {
-    let ansList = []
+    let ansListSet = {}
     let i = 1
     let lastRaceId
     for (const hist of hists) {
@@ -219,18 +219,24 @@ module.exports = {
       }
       lastRaceId = hist.ret0_race_id
       // 正解情報
-      const ans = params.answers[hist.ret0_race_id]
-      ansList.push([ans])
+      for (const key in params.answers) {
+        if (!ansListSet[key]) {
+          ansListSet[key] = []
+        }
+        const ans = []
+        ans.push(params.answers[key][hist.ret0_race_id])
+        ansListSet[key].push(ans)
+      }
       if (i % 500 === 0) {
         console.log(i)
         // データを書き込む
-        module.exports._writeAnswer(ansList)
-        ansList = []
+        module.exports._writeAnswer(ansListSet)
+        ansListSet = {}
       }
       i++
     }
     // データを書き込む
-    module.exports._writeAnswer(ansList)
+    module.exports._writeAnswer(ansListSet)
   },
   /**
    * @description 紐付き情報を作成します。
@@ -402,7 +408,9 @@ module.exports = {
    * @param {Array} data - 正解データ
    */
   _writeAnswer (data) {
-    module.exports._write(data, 'answer')
+    for (const key in data) {
+      module.exports._write(data[key], `answer-${key}`)
+    }
   },
   /**
    * @description 紐付きデータの書き込みを行います。

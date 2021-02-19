@@ -3,19 +3,13 @@
 
 const _ = require('lodash')
 const adjuster = require('@s/race-adjuster')
+const calcHelper = require('@h/calc-helper')
+const configManager = require('@/config-manager')
 const fileHelper = require('@h/file-helper')
 const log = require('@h/log-helper')
 const logicHelper = require('@h/logic-helper')
+const purchaseHelper = require('@h/purchase-helper')
 const ss = require('simple-statistics')
-
-/**
- * @description 馬の強さ評価結果ファイルパス
- */
-const AbilityFilePath = 'resources/learnings/pred-result-uren.json'
-/**
- * @description レースの荒れ指数情報ファイルパス
- */
-const RageFilePath = 'resources/learnings-rage/pred-result.json'
 
 /**
  * @description 相関係数の分析機能を提供します。
@@ -27,16 +21,18 @@ module.exports = {
    * @returns {void}
    */
   analyze (params = {}) {
+    const config = configManager.get()
     // 分析対象の情報を読み込む
-    const abilitys = fileHelper.readJson(AbilityFilePath)
-    const rages = adjuster.adjust(fileHelper.readJson(RageFilePath))
-    // マージする
-    let inputs = abilitys.map(a => {
-      a.abilityEval = a.eval
-      a.rageEval = rages[a.raceId][0].eval
-      a.recoveryRate = a.orderOfFinish <= 3 ? a.odds : 0
-      return a
-    })
+    const collegials = fileHelper.readJson(config.predCollegialFilePath)
+    let inputs = purchaseHelper.readAllPredResults()
+      .map((p, i) => {
+        p.collegialEval = collegials[i].eval
+        // p.ss = calcHelper.standardScore(collegials
+        //   .filter(c => c.raceId === p.raceId)
+        //   .map(c => c.eval)
+        // )
+        return p
+      })
     // 強さ評価値の順位付けをする
     const orders = {}
     inputs = logicHelper
@@ -54,16 +50,19 @@ module.exports = {
     inputs = logicHelper.sortReverse(inputs, 'recoveryRate')
     // 情報を出力する
     for (const inp of inputs) {
-      log.info(`recvRate:${inp.recoveryRate} order:${inp.orderOfFinish} odds:${inp.odds} ability:${inp.abilityEval} abilityOrder:${inp.abilityEvalOrder} rage:${inp.rageEval}`)
+      log.info(`recvRate:${inp.recoveryRate} order:${inp.orderOfFinish} odds:${inp.odds} coll:${inp.collegialEval} abilityM:${inp.abilityMoneyEval} abilityR:${inp.abilityRecoveryEval} rageOdds:${inp.rageOddsEval} rageOrder:${inp.rageOrderEval}`)
     }
     log.info('===============')
     // 相関係数を求める
     log.info('●馬の強さ')
-    calc(inputs, 'orderOfFinish', ['abilityEval', 'abilityEvalOrder', 'odds'])
-    log.info('===============')
+    calc(inputs, 'orderOfFinish', ['abilityMoneyEval', 'abilityRecoveryEval', 'odds'])
+    log.info('●回収率')
+    calc(inputs, 'recoveryRate', ['collegialEval', 'abilityMoneyEval', 'abilityRecoveryEval', 'odds'])
     log.info('●レースの荒れ指数')
     inputs = inputs.filter(inp => inp.orderOfFinish <= 3)
-    calc(inputs, 'recoveryRate', ['rageEval'])
+    calc(inputs, 'recoveryRate', ['rageOddsEval', 'rageOrderEval'])
+    log.info('●評価値間')
+    calc(inputs, 'abilityMoneyEval', ['rageOddsEval', 'rageOrderEval'])
     console.log('done!')
   }
 }

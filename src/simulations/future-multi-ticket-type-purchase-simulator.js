@@ -1,17 +1,9 @@
 'use strict'
 
 const adjuster = require('@s/race-adjuster')
+const configManager = require('@/config-manager')
 const fileHelper = require('@h/file-helper')
-
-/**
- * @description 馬の強さ評価値ファイルディレクトリ
- */
-const HorseAbilityEvalFilePath = 'resources/learnings/pred-result-uren.json'
-
-/**
- * @description レースの荒れ評価値ファイルディレクトリ
- */
-const RaceRageEvalFilePath = 'resources/learnings-rage/pred-result.json'
+const purchaseHelper = require('@h/purchase-helper')
 
 /**
  * @module 開催予定レース複数チケット種別購入のシミュレーション機能を提供します。
@@ -24,18 +16,21 @@ module.exports = {
    * @returns {void}
    */
   async simulate (params = {}) {
+    const config = configManager.get()
     const ticketTypes = require('@h/purchase-helper').getPurchasingTicketType()
     const results = {}
     const scoreHorses = {}
+    // 合議制評価値
+    const collegials = fileHelper.readJson(config.predCollegialFilePath)
+    const inputs = purchaseHelper.readAllPredResults()
+      .map((p, i) => {
+        p.eval = collegials[i].eval
+        return p
+      })
+    const races = Object.values(adjuster.adjust(inputs))
+
     for (const type of ticketTypes) {
       params.ticketType = type
-      // 馬の強さ評価値
-      const abilityEvals = fileHelper.readJson(HorseAbilityEvalFilePath)
-      const races = Object.values(adjuster.adjust(abilityEvals))
-      // レースの荒れ評価値
-      const rageEvals = fileHelper.readJson(RaceRageEvalFilePath)
-      const rages = adjuster.adjust(rageEvals)
-
       // 購入対象を決める
       const purchaser = require('@s/purchaser')
       for (const horses of races) {
@@ -58,10 +53,13 @@ module.exports = {
         }
         const scores = horses.map(h => {
           return {
-            score: h.eval
+            score: h.eval,
+            abilityMoneyEval: h.abilityMoneyEval,
+            abilityRecoveryEval: h.abilityRecoveryEval,
+            rageOddsEval: h.rageOddsEval,
+            rageOrderEval: h.rageOrderEval
           }
         })
-        params.rageEval = rages[raceId][0].eval
         const purchasesSet = purchaser.purchase(horses, scores, params)
         results[raceId].purchases[type] = purchasesSet.purchases
         scoreHorses[raceId].purchases[type] = purchasesSet.horses
