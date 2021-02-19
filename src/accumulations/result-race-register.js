@@ -63,7 +63,7 @@ module.exports = {
           module.exports._filterParam(p, template),
           // 加工項目
           {
-            topEarningMoney: 0.0
+            $topEarningMoney: 0.0
           }
         )
       })
@@ -110,9 +110,6 @@ module.exports = {
    * @param {Number} minDate 遡る最過去日付
    */
   _skip (file, minDate) {
-    if (!minDate) {
-      return false
-    }
     if (require('@h/file-helper').isDirectory(file)) {
       console.log('this is directory')
       return true
@@ -120,6 +117,13 @@ module.exports = {
     if (file.includes('template')) {
       console.log('this is template')
       return true
+    }
+    if (file.includes('.DS_Store')) {
+      console.log('this is .DS_Store')
+      return true
+    }
+    if (!minDate) {
+      return false
     }
     const fs = require('fs')
     const raceAndHorses = JSON.parse(fs.readFileSync(file, { encoding: 'utf-8' }))

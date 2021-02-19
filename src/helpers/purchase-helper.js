@@ -31,7 +31,7 @@ module.exports = {
    */
   getPurchaseParams (add = 0) {
     // const tan = 90
-    const fuku = 7
+    const fuku = 6
     const params = {
       tan: {
         minScore: fuku + add

@@ -37,6 +37,16 @@ module.exports = {
     }
   },
   /**
+   * ファイルの削除を行います。
+   * @param {String} path パス
+   * @returns {void}
+   */
+  delete (path) {
+    if (module.exports.existsFile(path)) {
+      fs.unlinkSync(path)
+    }
+  },
+  /**
    * @description jsonファイルを読み込みます。
    * @param {String} path パス
    * @returns {Object} オブジェクト

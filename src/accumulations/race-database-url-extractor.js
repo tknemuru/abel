@@ -1,5 +1,7 @@
 'use strict'
 
+const fileHelper = require('@h/file-helper')
+
 /**
  * @module レースデータペースページのスクレイピング機能を提供します。
  */
@@ -26,8 +28,8 @@ module.exports = {
     console.log(`endDate: ${endDate}`)
     console.log(`append: ${append}`)
     if (!append) {
-      fs.unlinkSync(module.exports.UrlsPath)
-      fs.unlinkSync('resources/htmls/race-database/top.html')
+      fileHelper.delete(module.exports.UrlsPath)
+      fileHelper.delete('resources/htmls/race-database/top.html')
     }
     let urls = module.exports._readUrls()
 

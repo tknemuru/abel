@@ -40,11 +40,11 @@ module.exports = {
     // 予測実施
     await predictor.predict({
       target: 'ability'
-      // waitTime: 60000
+      // waitTime: 10000
     })
     await predictor.predict({
       target: 'rage'
-      // waitTime: 80000
+      // waitTime: 15000
     })
     // 予測結果整形
     predAdjuster.adjust({

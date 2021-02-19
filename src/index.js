@@ -71,7 +71,7 @@ switch (options.target) {
     // eslint-disable-next-line no-case-declarations
     (async () => {
       try {
-        const endDate = '202003'
+        const endDate = '202102'
         await databaseUrlExtractor.extract({
           endDate
         })
@@ -86,8 +86,8 @@ switch (options.target) {
           endDate
         })
         await horseHistCreator.create({
-          minYear: 2020,
-          minMonth: 3
+          minYear: 2021,
+          minMonth: 2
         })
       } catch (e) {
         console.log(e)

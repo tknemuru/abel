@@ -170,7 +170,7 @@ async function onOpenRacePage (browser, page, params) {
         console.log('開発モードのため購入を中止します')
         await dialog.dismiss()
       } else {
-        await dialog.accept()
+        // await dialog.accept()
       }
       page = await htmlHelper.selectNewPuppeteerPage(browser, page)
       await page.screenshot({ path: 'resources/screenshots/070_ipat-complete-purchase.png' })

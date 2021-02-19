@@ -17,6 +17,10 @@ module.exports = {
    */
   answer: false,
   /**
+   * @description 紐付き情報を作成するかどうか
+   */
+  relation: true,
+  /**
    * @description 前準備のセレクト文ファイル名
    */
   preSelect: 'select_all_future_race_id',
@@ -32,10 +36,6 @@ module.exports = {
    * @description 未来に向かう入力情報を作成するかどうか
    */
   towardPost: false,
-  /**
-   * @description データベースの情報から作成するかどうか
-   */
-  fromDb: true,
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名

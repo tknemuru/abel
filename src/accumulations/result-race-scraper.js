@@ -38,6 +38,10 @@ module.exports = {
         console.log('this is directory')
         continue
       }
+      if (file.includes('.DS_Store')) {
+        console.log('this is .DS_Store')
+        continue
+      }
       console.log(`scraping start ${file}`)
       module.exports._extract(file)
     }
