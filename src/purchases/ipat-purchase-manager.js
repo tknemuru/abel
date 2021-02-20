@@ -49,37 +49,47 @@ module.exports = {
  * @returns {void}
  */
 async function executeWithWatching () {
-  const targetRaceIds = await watch()
-  // レースページをダウンロード
-  await futureDownloader.download({
-    raceIds: targetRaceIds
-  })
-  // スクレイピング実行
-  await futureScraper.scrape()
-  // レースデータ登録
-  await futureRegister.register()
-  // 予測情報作成
-  await learningCollegialInputCreator.create({
-    mode: 'future'
-  })
-  // 予測実施
-  await predictor.predict({
-    target: 'collegial'
-  })
-  // 予測結果整形
-  predAdjuster.adjust({
-    target: 'collegial'
-  })
-  // 購入計画作成
-  const purchaseParams = purchaseHelper.getPurchaseParams()
-  futureSimulator.simulate(purchaseParams)
-  // IPAT連携購入実行
-  await ipatPurchaser.purchase({
-    raceIds: targetRaceIds
-    // raceIds: [
-    //   '202105010610'
-    // ]
-  })
+  let retryCount = 0
+  while (retryCount < getConfig().maxRetryCount) {
+    try {
+      const targetRaceIds = await watch()
+      // レースページをダウンロード
+      await futureDownloader.download({
+        raceIds: targetRaceIds
+      })
+      // スクレイピング実行
+      await futureScraper.scrape()
+      // レースデータ登録
+      await futureRegister.register()
+      // 予測情報作成
+      await learningCollegialInputCreator.create({
+        mode: 'future'
+      })
+      // 予測実施
+      await predictor.predict({
+        target: 'collegial'
+      })
+      // 予測結果整形
+      predAdjuster.adjust({
+        target: 'collegial'
+      })
+      // 購入計画作成
+      const purchaseParams = purchaseHelper.getPurchaseParams()
+      futureSimulator.simulate(purchaseParams)
+      // IPAT連携購入実行
+      await ipatPurchaser.purchase({
+        raceIds: targetRaceIds
+        // raceIds: [
+        //   '202105010701'
+        // ]
+      })
+      break
+    } catch (ex) {
+      console.error(ex)
+      console.error('purchase retry')
+      retryCount++
+    }
+  }
 }
 
 /**

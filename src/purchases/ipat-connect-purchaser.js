@@ -5,6 +5,7 @@ const accessor = require('@d/db-accessor')
 const config = require('@/config-manager')
 const fileHelper = require('@h/file-helper')
 const htmlHelper = require('@h/html-helper')
+const mailer = require('@p/mailer')
 const reader = require('@d/sql-reader')
 const log = require('@h/log-helper')
 const sleep = require('thread-sleep')
@@ -52,7 +53,7 @@ module.exports = {
 
     // 予測結果を取得
     const simResult = fileHelper.readJson(SimResultFilePath)
-    const hasTicket = writePurchaseLog(simResult, raceIds)
+    const hasTicket = await writePurchaseLog(simResult, raceIds)
 
     // レースページを操作して馬券を購入
     for (const raceId of raceIds) {
@@ -170,7 +171,7 @@ async function onOpenRacePage (browser, page, params) {
         console.log('開発モードのため購入を中止します')
         await dialog.dismiss()
       } else {
-        // await dialog.accept()
+        await dialog.accept()
       }
       page = await htmlHelper.selectNewPuppeteerPage(browser, page)
       await page.screenshot({ path: 'resources/screenshots/070_ipat-complete-purchase.png' })
@@ -207,13 +208,14 @@ function getTicketTypeIndex (ticketType) {
  * @param {Array} raceIds 購入対象のレースIDリスト
  * @returns {void}
  */
-function writePurchaseLog (simResult, raceIds) {
+async function writePurchaseLog (simResult, raceIds) {
   let allSumTicketNum = 0
   const hasTicket = {}
+  const msg = []
   for (const raceId of raceIds) {
     let has = false
     const sim = simResult[raceId]
-    log.info(`${sim.raceName}(${sim.raceId})`)
+    msg.push(`${sim.raceName}(${sim.raceId})`)
     const { purchases } = sim
     for (const ticketType in purchases) {
       const tickets = purchases[ticketType]
@@ -223,20 +225,29 @@ function writePurchaseLog (simResult, raceIds) {
       has = true
       const sumTicketNum = _.sum(tickets.map(t => t.ticketNum))
       allSumTicketNum += sumTicketNum
-      log.info(`${getTypeJpName(ticketType)}:${sumTicketNum}枚(${sumTicketNum * 100}円)`)
+      msg.push(`${getTypeJpName(ticketType)}:${sumTicketNum}枚(${sumTicketNum * 100}円)`)
       for (const ticket of tickets) {
         const horses = ticket.horses.reduce((prev, curr) => {
           return `${prev} ${curr.horseNumber}(${curr.horseName})`
         }, '')
-        log.info(`${horses}:${ticket.ticketNum}枚(${ticket.ticketNum * 100}円)`)
+        msg.push(`${horses}:${ticket.ticketNum}枚(${ticket.ticketNum * 100}円)`)
       }
     }
     hasTicket[raceId] = has
     if (!has) {
-      log.info('チケット購入なし')
+      msg.push('チケット購入なし')
     }
   }
-  log.info(`合計:${allSumTicketNum}枚(${allSumTicketNum * 100}円)`)
+  msg.push(`合計:${allSumTicketNum}枚(${allSumTicketNum * 100}円)`)
+  const text = msg.reduce((prev, curr) => {
+    log.info(curr)
+    return `${prev}\n${curr}`
+  }, '')
+  // 購入情報をメール送信
+  await mailer.send({
+    subject: '【abel】購入通知',
+    text
+  })
   return hasTicket
 }
 

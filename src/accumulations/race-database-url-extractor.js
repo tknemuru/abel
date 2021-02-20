@@ -23,7 +23,7 @@ module.exports = {
    */
   async extract (params = {}) {
     const fs = require('fs')
-    const endDate = params.endDate || '202002'
+    const endDate = params.endDate
     const append = !!params.append
     console.log(`endDate: ${endDate}`)
     console.log(`append: ${append}`)

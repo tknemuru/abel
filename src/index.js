@@ -12,28 +12,36 @@ const optionDefs = [
 const options = args(optionDefs)
 console.log(options)
 
-const dbInit = require('@d/db-initializer')
-const configManger = require('@/config-manager')
-const testSimulator = require('@s/test-purchase-simulator')
-const databaseUrlExtractor = require('@ac/race-database-url-extractor')
-const resultScraper = require('@ac/result-race-scraper')
-const horseHistCreator = require('@an/horse-race-history-creator')
 const additionalResultCreator = require('@an/race-result-additional-creator')
+const configManger = require('@/config-manager')
+const correlationAnalyzer = require('@an/correlation-coefficient-analyzer')
+const databaseUrlExtractor = require('@ac/race-database-url-extractor')
+const dbInit = require('@d/db-initializer')
+const horseHistCreator = require('@an/horse-race-history-creator')
+const ipatPurchaseManager = require('@p/ipat-purchase-manager')
 const learningInputCreator = require('@an/learning-input-creator')
 const learningConfig = require('@an/configs/learning-config')
 const learningRageInputCreator = require('@an/learning-rage-input-creator')
 const learningRageConfig = require('@an/configs/learning-rage-config')
 const learningCollegialInputCreator = require('@an/learning-collegial-input-creator')
-const testConfig = require('@an/configs/test-config')
+const mailer = require('@p/mailer')
 const predAnalyzer = require('@an/prediction-correlation-coefficient-analyzer')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const predictor = require('@s/predictor')
-const correlationAnalyzer = require('@an/correlation-coefficient-analyzer')
-const ipatPurchaseManager = require('@p/ipat-purchase-manager')
+const resultScraper = require('@ac/result-race-scraper')
+const testConfig = require('@an/configs/test-config')
+const testSimulator = require('@s/test-purchase-simulator')
 
 const config = configManger.get()
 
 switch (options.target) {
+  // テスト用
+  case 'sandbox':
+    mailer.send({
+      subject: 'テスト',
+      text: 'テスト１\nテスト２'
+    })
+    break
   // DB初期化
   case 'init-db':
     dbInit.init()

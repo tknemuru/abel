@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --recursive",
+    "sandbox": "node ./src/index.js -t sandbox",
     "init-db": "node ./src/index.js -t init-db",
     "gen-race-sql": "node ./src/index.js -t gen-race-sql",
     "create-horse-hist": "node ./src/index.js -t create-horse-hist",
@@ -44,6 +45,7 @@
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
     "node-dev": "^4.0.0",
+    "nodemailer": "^6.4.18",
     "puppeteer": "^7.1.0",
     "request-promise": "^4.2.5",
     "request-promise-native": "^1.0.8",
