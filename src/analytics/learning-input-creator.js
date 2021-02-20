@@ -42,16 +42,9 @@ module.exports = {
     let validationCols = JSON.parse(fs.readFileSync('resources/defs/learning-input-validation-columns.json', { encoding: 'utf-8' }))
     validationCols = module.exports._extractValidationCols(validationCols)
 
-    // 正解情報を読み込む
-    const answers = {}
-    for (const type of require('@h/purchase-helper').getPurchasingTicketType()) {
-      answers[type] = JSON.parse(fs.readFileSync(`resources/params/pred-result-${type}-key.json`, { encoding: 'utf-8' }))
-    }
-
     const params = {
       targets,
       validationCols,
-      answers,
       towardPost,
       keyRels: [],
       earningMoneys: {}
@@ -166,12 +159,7 @@ module.exports = {
     // 正解データを作成
     if (config.answer) {
       params.earningMoneys = module.exports._createEarningMoneys(hists)
-      if (params.towardPost) {
-        module.exports._createAnswer(hists, params, config)
-      } else {
-        // module.exports._createPostAnswers(hists, validationCols, config, answers)
-        module.exports._createAnswer(hists, params, config)
-      }
+      module.exports._createAnswer(hists, params, config)
     }
 
     // 紐付きデータを作成
@@ -253,47 +241,6 @@ module.exports = {
       // 正解情報
       const money = params.earningMoneys[hist.ret0_race_id]
       const ansSet = config.createAnswer(hist, { money })
-      for (const key in ansSet) {
-        if (!ansListSet[key]) {
-          ansListSet[key] = []
-        }
-        const ans = []
-        ans.push(ansSet[key])
-        ansListSet[key].push(ans)
-      }
-      if (i % 1000 === 0) {
-        console.log(i)
-        // データを書き込む
-        module.exports._writeAnswer(ansListSet)
-        ansListSet = {}
-      }
-      i++
-    }
-    // データを書き込む
-    module.exports._writeAnswer(ansListSet)
-  },
-  /**
-   * @description 学習用正解情報を作成します。
-   * @param {Array} hists - 履歴情報
-   * @param {Array} validationCols - 検証対象のカラム
-   * @param {Object} config - 設定情報
-   * @param {Object} answers - 正解情報
-   * @returns {void}
-   */
-  _createPostAnswers (hists, validationCols, config, answers) {
-    let ansListSet = {}
-    let i = 1
-    for (const hist of hists) {
-      if (!config.validation(hist, validationCols)) {
-        continue
-      }
-      // 正解情報
-      const ansKey = `${hist.ret0_race_id}-${hist.ret0_horse_number}`
-      const ansSet = {}
-      for (const type of require('@h/purchase-helper').getPurchasingTicketType()) {
-        const ans = answers[type][ansKey]
-        ansSet[type] = ans
-      }
       for (const key in ansSet) {
         if (!ansListSet[key]) {
           ansListSet[key] = []

@@ -13,53 +13,64 @@ const options = args(optionDefs)
 console.log(options)
 
 const dbInit = require('@d/db-initializer')
-const creator = require('@an/eval-param-creator')
 const configManger = require('@/config-manager')
 const testSimulator = require('@s/test-purchase-simulator')
-const futurePageClearer = require('@ac/future-page-clearer')
-const futureDownloader = require('@ac/future-race-page-downloader')
-const futureScraper = require('@ac/future-race-scraper')
-const futureRegister = require('@ac/future-race-register')
 const databaseUrlExtractor = require('@ac/race-database-url-extractor')
 const resultScraper = require('@ac/result-race-scraper')
 const horseHistCreator = require('@an/horse-race-history-creator')
 const additionalResultCreator = require('@an/race-result-additional-creator')
-const additionalInfoCreator = require('@an/race-info-additional-creator')
 const learningInputCreator = require('@an/learning-input-creator')
 const learningConfig = require('@an/configs/learning-config')
 const learningRageInputCreator = require('@an/learning-rage-input-creator')
 const learningRageConfig = require('@an/configs/learning-rage-config')
 const learningCollegialInputCreator = require('@an/learning-collegial-input-creator')
 const testConfig = require('@an/configs/test-config')
-const predictionConfig = require('@an/configs/prediction-config')
 const predAnalyzer = require('@an/prediction-correlation-coefficient-analyzer')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const predictor = require('@s/predictor')
-const simAnalyzer = require('@an/simulation-result-analyzer')
 const correlationAnalyzer = require('@an/correlation-coefficient-analyzer')
 const ipatPurchaseManager = require('@p/ipat-purchase-manager')
 
 const config = configManger.get()
 
 switch (options.target) {
+  // DB初期化
   case 'init-db':
     dbInit.init()
     break
-  case 'create-param':
-    creator.create()
+  // SQL生成
+  case 'gen-race-sql':
+    require('@ac/race-sql-generator').generate()
     break
-  case 'future-set-register':
+  // 未来の馬を対象に履歴データを追加する
+  // result-set-registerを実行すれば通常実行不要
+  case 'create-horse-hist':
+    horseHistCreator.create({
+      isFuture: true
+    })
+    break
+  // 途中で追加したパラメータを設定する
+  // 通常使うことはない
+  case 'create-result-additional':
+    additionalResultCreator.create()
+    break
+  // 学習情報の作成
+  case 'learn-pre':
     (async () => {
       try {
-        futurePageClearer.clear()
-        await futureDownloader.download({
-          raceIds: [
-            '202105010511'
-          ]
+        // 学習情報作成
+        await learningInputCreator.create(learningConfig)
+        // 相関係数分析
+        correlationAnalyzer.analyze({
+          colsPath: config.inputAbilityColsFilePath,
+          inputsPath: config.inputAbilityFilePath,
+          answersPath: config.answerAbilityMoneyFilePath
         })
-        await futureScraper.scrape()
-        await futureRegister.register()
-        await learningInputCreator.create(predictionConfig)
+        correlationAnalyzer.analyze({
+          colsPath: config.inputAbilityColsFilePath,
+          inputsPath: config.inputAbilityFilePath,
+          answersPath: config.answerAbilityRecoveryFilePath
+        })
       } catch (e) {
         console.log(e)
       } finally {
@@ -67,8 +78,70 @@ switch (options.target) {
       }
     })()
     break
+  // 学習情報の作成
+  case 'learn-rage-pre':
+    (async () => {
+      try {
+        // 学習情報作成
+        await learningRageInputCreator.create(learningRageConfig)
+        // 相関係数分析
+        correlationAnalyzer.analyze({
+          colsPath: config.inputRageColsFilePath,
+          inputsPath: config.inputRageFilePath,
+          answersPath: config.answerRageOddsFilePath
+        })
+        correlationAnalyzer.analyze({
+          colsPath: config.inputRageColsFilePath,
+          inputsPath: config.inputRageFilePath,
+          answersPath: config.answerRageOrderFilePath
+        })
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
+  // 学習情報の作成
+  case 'learn-collegial-pre':
+    (async () => {
+      try {
+        // 学習情報作成
+        await learningCollegialInputCreator.create()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
+  // 予測テスト
+  case 'test-pred':
+    (async () => {
+      try {
+        // 予測情報作成
+        await learningCollegialInputCreator.create(testConfig)
+        // 予測実施
+        await predictor.predict({
+          target: 'collegial'
+        })
+        // 予測結果整形
+        predAdjuster.adjust({
+          target: 'collegial'
+        })
+        // シミュレーション実施
+        await testSimulator.simulate()
+        // // 予測結果の分析
+        predAnalyzer.analyze()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
+  // 過去のレース結果を登録する
   case 'result-set-register':
-    // eslint-disable-next-line no-case-declarations
     (async () => {
       try {
         const endDate = '202102'
@@ -96,182 +169,7 @@ switch (options.target) {
       }
     })()
     break
-  case 'extract-database-url':
-    (async () => {
-      try {
-        await databaseUrlExtractor.extract({
-          endDate: '202002'
-        })
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'extract-result-race-url':
-    (async () => {
-      try {
-        await require('@ac/race-database-downloader').extract({
-          // endDate: '202001'
-        })
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'download-result-race':
-    (async () => {
-      try {
-        await require('@ac/result-race-page-downloader').download({
-          // endDate: '202001'
-        })
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'result-scrape':
-    resultScraper.scrape()
-    break
-  case 'result-register':
-    require('@ac/result-race-register').register()
-    break
-  case 'gen-race-sql':
-    require('@ac/race-sql-generator').generate()
-    break
-  case 'create-horse-hist':
-    horseHistCreator.create({
-      isFuture: true
-    })
-    break
-  case 'create-result-additional':
-    additionalResultCreator.create()
-    break
-  case 'create-info-additional':
-    additionalInfoCreator.create()
-    break
-  case 'create-post-score':
-    require('@an/race-post-score-creator').create()
-    break
-  case 'learn-pre':
-    (async () => {
-      try {
-        // 学習情報作成
-        await learningInputCreator.create(learningConfig)
-        // 相関係数分析
-        correlationAnalyzer.analyze({
-          colsPath: config.inputAbilityColsFilePath,
-          inputsPath: config.inputAbilityFilePath,
-          answersPath: config.answerAbilityMoneyFilePath
-        })
-        correlationAnalyzer.analyze({
-          colsPath: config.inputAbilityColsFilePath,
-          inputsPath: config.inputAbilityFilePath,
-          answersPath: config.answerAbilityRecoveryFilePath
-        })
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'learn-rage-pre':
-    (async () => {
-      try {
-        // 学習情報作成
-        await learningRageInputCreator.create(learningRageConfig)
-        // 相関係数分析
-        correlationAnalyzer.analyze({
-          colsPath: config.inputRageColsFilePath,
-          inputsPath: config.inputRageFilePath,
-          answersPath: config.answerRageOddsFilePath
-        })
-        correlationAnalyzer.analyze({
-          colsPath: config.inputRageColsFilePath,
-          inputsPath: config.inputRageFilePath,
-          answersPath: config.answerRageOrderFilePath
-        })
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'learn-collegial-pre':
-    (async () => {
-      try {
-        // 学習情報作成
-        await learningCollegialInputCreator.create()
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'learn-pre-resource':
-    (async () => {
-      try {
-        await require('@an/learning-input-resource-creator').create(learningConfig)
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'test-pred':
-    (async () => {
-      try {
-        // 予測情報作成
-        await learningCollegialInputCreator.create(testConfig)
-        // 予測実施
-        await predictor.predict({
-          target: 'collegial'
-        })
-        // 予測結果整形
-        predAdjuster.adjust({
-          target: 'collegial'
-        })
-        // シミュレーション実施
-        await testSimulator.simulate()
-        // // 予測結果の分析
-        predAnalyzer.analyze()
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'test-sim':
-    (async () => {
-      try {
-        // シミュレーション実施
-        await testSimulator.simulate()
-      } catch (e) {
-        console.log(e)
-      } finally {
-        process.exit()
-      }
-    })()
-    break
-  case 'pred-key-adjust':
-    require('@an/prediction-key-result-adjuster').adjust()
-    break
-  case 'sim-analyze':
-    simAnalyzer.analyze()
-    break
-  case 'analyze-correlation':
-    correlationAnalyzer.analyze()
-    break
+  // 予測によるチケット購入
   case 'purchase-ipat':
     (async () => {
       try {
