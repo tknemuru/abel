@@ -57,8 +57,8 @@ async function executeWithWatching () {
   let retryCount = 0
   while (retryCount < config.ipat.maxRetryCount) {
     try {
-      // const targetRaceIds = await watch()
-      const targetRaceIds = ['202109010401']
+      const targetRaceIds = await watch()
+      // const targetRaceIds = ['202105010802']
       // レースページをダウンロード
       await futureDownloader.download({
         raceIds: targetRaceIds
@@ -153,7 +153,7 @@ function mergePredResultsIfExists (purchasedPath, newPredPath) {
     const x = fileHelper.readJson(purchasedPath)
     const y = fileHelper.readJson(newPredPath)
     const merged = mergePredResults(x, y)
-    fileHelper.write(merged, purchasedPath)
+    fileHelper.writeJson(merged, purchasedPath)
   } else {
     fileHelper.copy(
       newPredPath,

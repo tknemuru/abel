@@ -33,6 +33,7 @@ module.exports = {
     // 監視開始
     while (true) {
       await executeWithWatching()
+      // break
     }
   }
 }
@@ -52,6 +53,7 @@ async function executeWithWatching () {
       // // 開催済レースページをダウンロード
       const raceIds = races.map(r => r.raceId)
       // const raceIds = ['202109010401']
+      // const raceIds = ['202105010802']
       // const raceIds = ['202106020209']
       await downloadResults(raceIds)
       // 結果未公開のレースが対象に含まれている場合は処理終了
