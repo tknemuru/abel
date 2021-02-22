@@ -28,6 +28,8 @@ const mailer = require('@p/mailer')
 const predAnalyzer = require('@an/prediction-correlation-coefficient-analyzer')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const predictor = require('@s/predictor')
+const purchaseChecker = require('@p/purchase-result-checker')
+const resultClearer = require('@ac/result-page-clearer')
 const resultScraper = require('@ac/result-race-scraper')
 const testConfig = require('@an/configs/test-config')
 const testSimulator = require('@s/test-purchase-simulator')
@@ -152,6 +154,7 @@ switch (options.target) {
   case 'result-set-register':
     (async () => {
       try {
+        resultClearer.clear()
         const endDate = '202102'
         await databaseUrlExtractor.extract({
           endDate
@@ -182,6 +185,18 @@ switch (options.target) {
     (async () => {
       try {
         await ipatPurchaseManager.execute()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        process.exit()
+      }
+    })()
+    break
+  // チケット購入結果の確認
+  case 'check-purchase':
+    (async () => {
+      try {
+        await purchaseChecker.check()
       } catch (e) {
         console.log(e)
       } finally {

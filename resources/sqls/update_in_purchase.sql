@@ -1,6 +1,6 @@
 update
   purchase
 set
-  purchased_flg = 1
+  purchase_status = $purchaseStatus
 where
   race_id in (?#)

@@ -13,7 +13,7 @@ on
   race.race_id = pu.race_id
 where
   1 = 1
-  and pu.purchased_flg = 0
+  and pu.purchase_status = $purchaseStatus
   and race.race_name not like '%新馬%'
   and race.race_name not like '%障害%'
 order by

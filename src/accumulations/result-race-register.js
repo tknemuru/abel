@@ -1,13 +1,11 @@
 'use strict'
 
+const config = require('@/config-manager').get()
+
 /**
  * @module 開催済レース情報の登録機能を提供します。
  */
 module.exports = {
-  /**
-   * @description レース情報配置ディレクトリ
-   */
-  RaceDataDir: 'resources/races/result-races',
   /**
    * @description レース情報テンプレート配置ディレクトリ
    */
@@ -37,8 +35,8 @@ module.exports = {
     const template = module.exports._generateTemplate()
 
     // レース情報を取得
-    const files = fs.readdirSync(module.exports.RaceDataDir)
-      .map(f => path.join(module.exports.RaceDataDir, f))
+    const files = fs.readdirSync(config.resultRaceJsonDir)
+      .map(f => path.join(config.resultRaceJsonDir, f))
 
     // 情報を登録
     const sql = reader.read('insert_race_result')
@@ -90,8 +88,8 @@ module.exports = {
   _generateTemplate () {
     const fs = require('fs')
     const path = require('path')
-    const file = fs.readdirSync(module.exports.RaceDataTemplateDir)
-      .map(f => path.join(module.exports.RaceDataTemplateDir, f))[0]
+    const file = fs.readdirSync(config.resultRaceJsonTemplateDir)
+      .map(f => path.join(config.resultRaceJsonTemplateDir, f))[0]
     const sqlAndParams = module.exports._generateSqlAndParams(file)
     const param = sqlAndParams.params[0]
     const template = {}

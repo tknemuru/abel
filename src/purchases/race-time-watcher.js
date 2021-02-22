@@ -3,6 +3,7 @@
 const _ = require('lodash')
 const accessor = require('@d/db-accessor')
 const config = require('@/config-manager')
+const consts = require('@/consts')
 const logic = require('@h/logic-helper')
 const moment = require('moment')
 const reader = require('@d/sql-reader')
@@ -19,7 +20,9 @@ module.exports = {
     const config = getConfig()
     // 未来のレース情報を取得
     const sql = reader.read('select_all_future_race_datetime')
-    const futureRaces = await accessor.all(sql)
+    const futureRaces = await accessor.all(sql, {
+      $purchaseStatus: consts.PurchaseStatus.NotPurchased
+    })
     if (!Array.isArray(futureRaces) || futureRaces.length <= 0) {
       throw new Error('future race is empty')
     }

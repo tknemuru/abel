@@ -1,9 +1,6 @@
 'use strict'
 
 const adjuster = require('@s/race-adjuster')
-const configManager = require('@/config-manager')
-const fileHelper = require('@h/file-helper')
-const purchaseHelper = require('@h/purchase-helper')
 
 /**
  * @module 開催予定レース複数チケット種別購入のシミュレーション機能を提供します。
@@ -15,14 +12,16 @@ module.exports = {
    * @param {Number} params.minScore - 最小スコア
    * @returns {void}
    */
-  async simulate (params = {}) {
-    const config = configManager.get()
-    const ticketTypes = require('@h/purchase-helper').getPurchasingTicketType()
+  async simulate (purchaseConfig, params) {
+    if (!params) {
+      params = purchaseConfig.getPurchaseParams()
+    }
+    const ticketTypes = purchaseConfig.getPurchasingTicketType()
     const results = {}
     const scoreHorses = {}
     // 合議制評価値
-    const collegials = fileHelper.readJson(config.predCollegialFilePath)
-    const inputs = purchaseHelper.readAllPredResults()
+    const collegials = purchaseConfig.readPredCollegials()
+    const inputs = purchaseConfig.readAllPredResults()
       .map((p, i) => {
         p.eval = collegials[i].eval
         return p
@@ -60,7 +59,7 @@ module.exports = {
             rageOrderEval: h.rageOrderEval
           }
         })
-        const purchasesSet = purchaser.purchase(horses, scores, params)
+        const purchasesSet = purchaser.purchase(horses, scores, purchaseConfig, params)
         results[raceId].purchases[type] = purchasesSet.purchases
         scoreHorses[raceId].purchases[type] = purchasesSet.horses
       }

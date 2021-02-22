@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const JSONStream = require('JSONStream')
+const path = require('path')
 
 /**
  * @module ファイル操作に関する補助機能を提供します。
@@ -44,6 +45,16 @@ module.exports = {
   delete (path) {
     if (module.exports.existsFile(path)) {
       fs.unlinkSync(path)
+    }
+  },
+  /**
+   * @description 指定したディレクトリ配下の全てのファイルを削除します。
+   */
+  deleteAll (dir) {
+    const files = fs.readdirSync(dir)
+      .map(f => path.join(dir, f))
+    for (const f of files) {
+      fs.unlinkSync(f)
     }
   },
   /**
@@ -110,5 +121,23 @@ module.exports = {
    */
   copy (src, dest) {
     fs.copyFileSync(src, dest)
+  },
+  /**
+   * @description ファイルの移動を行います。
+   * @param {String} src 移動元ファイルパス
+   * @param {String} dest 移動先ファイルパス
+   */
+  move (src, dest) {
+    fs.renameSync(src, dest)
+  },
+  /**
+   * @description ディレクトリを作成します。
+   * @param {String} dir 作成するディレクトリ
+   */
+  mkdir (dir) {
+    if (module.exports.isDirectory(dir)) {
+      return
+    }
+    fs.mkdirSync(dir)
   }
 }

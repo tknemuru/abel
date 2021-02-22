@@ -1,5 +1,5 @@
 create table if not exists purchase (
   race_id text not null,
-  purchased_flg integer,
+  purchase_status integer,
   primary key (race_id)
 )

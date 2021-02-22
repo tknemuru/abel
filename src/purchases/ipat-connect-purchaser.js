@@ -1,11 +1,12 @@
 'use strict'
 
-const _ = require('lodash')
 const accessor = require('@d/db-accessor')
 const config = require('@/config-manager')
+const consts = require('@/consts')
 const fileHelper = require('@h/file-helper')
 const htmlHelper = require('@h/html-helper')
 const mailer = require('@p/mailer')
+const purchaseHelper = require('@h/purchase-helper')
 const reader = require('@d/sql-reader')
 const log = require('@h/log-helper')
 const sleep = require('thread-sleep')
@@ -48,6 +49,7 @@ module.exports = {
     const { raceIds } = params
     // 対象レースを馬券購入済に更新
     let sql = reader.read('update_in_purchase')
+    sql = sql.replace('$purchaseStatus', consts.PurchaseStatus.Purchased)
     sql = sql.replace('?#', raceIds.map(() => '?').join(','))
     accessor.run(sql, [raceIds])
 
@@ -177,6 +179,10 @@ async function onOpenRacePage (browser, page, params) {
       await page.screenshot({ path: 'resources/screenshots/070_ipat-complete-purchase.png' })
       // 投票完了
       console.log('投票完了')
+      await mailer.send({
+        subject: '【abel】投票完了通知',
+        text: '投票が完了しました。'
+      })
       resolve()
     })
     page.click('.btnGreen a')
@@ -209,36 +215,7 @@ function getTicketTypeIndex (ticketType) {
  * @returns {void}
  */
 async function writePurchaseLog (simResult, raceIds) {
-  let allSumTicketNum = 0
-  const hasTicket = {}
-  const msg = []
-  for (const raceId of raceIds) {
-    let has = false
-    const sim = simResult[raceId]
-    msg.push(`${sim.raceName}(${sim.raceId})`)
-    const { purchases } = sim
-    for (const ticketType in purchases) {
-      const tickets = purchases[ticketType]
-      if (tickets[0].ticketNum <= 0) {
-        continue
-      }
-      has = true
-      const sumTicketNum = _.sum(tickets.map(t => t.ticketNum))
-      allSumTicketNum += sumTicketNum
-      msg.push(`${getTypeJpName(ticketType)}:${sumTicketNum}枚(${sumTicketNum * 100}円)`)
-      for (const ticket of tickets) {
-        const horses = ticket.horses.reduce((prev, curr) => {
-          return `${prev} ${curr.horseNumber}(${curr.horseName})`
-        }, '')
-        msg.push(`${horses}:${ticket.ticketNum}枚(${ticket.ticketNum * 100}円)`)
-      }
-    }
-    hasTicket[raceId] = has
-    if (!has) {
-      msg.push('チケット購入なし')
-    }
-  }
-  msg.push(`合計:${allSumTicketNum}枚(${allSumTicketNum * 100}円)`)
+  const { msg, hasTicket } = purchaseHelper.createDispPurchaseTickets(simResult, raceIds)
   const text = msg.reduce((prev, curr) => {
     log.info(curr)
     return `${prev}\n${curr}`
@@ -249,46 +226,6 @@ async function writePurchaseLog (simResult, raceIds) {
     text
   })
   return hasTicket
-}
-
-/**
- * @description 馬券の種類の日本語名を取得します。
- * @param {String} type 馬券の種類
- */
-function getTypeJpName (type) {
-  let name = ''
-  switch (type) {
-    case 'tan':
-      name = '単勝'
-      break
-    case 'fuku':
-      name = '複勝'
-      break
-    case 'waku':
-      name = '枠連'
-      break
-    case 'uren':
-      name = '馬連'
-      break
-    case 'wide':
-      name = 'ワイド'
-      break
-    case 'sanfuku':
-      name = '三連複'
-      break
-    case 'utan':
-      name = '馬単'
-      break
-    case 'santan':
-      name = '三連単'
-      break
-    case 'sum':
-      name = '合計'
-      break
-    default:
-      throw new Error(`unexpected ticket type: ${type}`)
-  }
-  return name
 }
 
 /**

@@ -64,12 +64,24 @@ module.exports = {
     return comb.combination(list, length)
   },
   /**
-   * ゼロ埋めした文字列を取得します。
+   * @description ゼロ埋めした文字列を取得します。
    * @param {Any} val 値
    * @param {Number} length 長さ
    * @returns {String} ゼロ埋めした文字列
    */
   padZero (val, length) {
     return (val + '').padStart(length, '0')
+  },
+  /**
+   * @description 配列を行の文字列に変換します。
+   */
+  ArrayToString (array) {
+    return array.reduce((prev, curr) => {
+      if (!prev) {
+        return curr
+      } else {
+        return `${prev}\n${curr}`
+      }
+    }, '')
   }
 }

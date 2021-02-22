@@ -1,21 +1,11 @@
 'use strict'
 
+const configManager = require('@/config-manager')
+
 /**
  * @module 開催レースページのスクレイピング機能を提供します。
  */
 module.exports = {
-  /**
-   * @description ベースURL
-   */
-  BaseUrl: 'https://db.netkeiba.com',
-  /**
-   * @description 開催済レース一覧URLリストテキストファイルのパス
-   */
-  ListUrlsPath: 'resources/urls/race-database.txt',
-  /**
-   * @description 開催済レースURLリストテキストファイルのパス
-   */
-  RaceUrlsPath: 'resources/urls/result-race.txt',
   /**
    * @description 開催済レースページのスクレイピングを実行します。
    * @param {Object} params パラメータ
@@ -24,13 +14,14 @@ module.exports = {
    * @returns {void}
    */
   async extract (params = {}) {
+    const config = configManager.get()
     const fs = require('fs')
     const endDate = params.endDate
     const append = !!params.append
     console.log(`endDate: ${endDate}`)
     console.log(`append: ${append}`)
-    if (!append && require('@h/file-helper').existsFile(module.exports.RaceUrlsPath)) {
-      fs.unlinkSync(module.exports.RaceUrlsPath)
+    if (!append && require('@h/file-helper').existsFile(config.resultRaceUrlFilePath)) {
+      fs.unlinkSync(config.resultRaceUrlFilePath)
     }
 
     const urls = module.exports._readUrls()
@@ -45,7 +36,7 @@ module.exports = {
         continue
       }
       const raceUrls = await module.exports._extractPageUrl(url, fileName)
-      fs.appendFileSync(module.exports.RaceUrlsPath
+      fs.appendFileSync(config.resultRaceUrlFilePath
         , module.exports._toRows(raceUrls)
         , { encoding: 'utf-8' }
       )
@@ -57,6 +48,7 @@ module.exports = {
    * @param {String} fileName ページファイルの保存名
    */
   async _extractPageUrl (url, fileName) {
+    const config = configManager.get()
     const downloader = require('@ac/page-downloader')
     const pageFilePath = await downloader.download({
       urls: [url],
@@ -69,7 +61,7 @@ module.exports = {
 
     // URLを取得
     const urls = [].slice.call(dom.window.document.querySelectorAll('.race_top_data_info>dd>a'))
-      .map(tag => `${module.exports.BaseUrl}${tag.href}`)
+      .map(tag => `${config.netkeibaDbBaseUrl}${tag.href}`)
     return urls
   },
   /**
@@ -77,12 +69,13 @@ module.exports = {
    * @returns {Array} 前月のURL
    */
   _readUrls () {
-    if (!require('@h/file-helper').existsFile(module.exports.ListUrlsPath)) {
+    const config = configManager.get()
+    if (!require('@h/file-helper').existsFile(config.resultRaceListUrlFilePath)) {
       return []
     }
     const fs = require('fs')
     const urls = fs.readFileSync(
-      module.exports.ListUrlsPath,
+      config.resultRaceListUrlFilePath,
       { encoding: 'utf-8' })
       .split('\n')
       .filter(url => url)

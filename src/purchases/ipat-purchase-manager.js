@@ -1,6 +1,7 @@
 'use strict'
 
-const config = require('@/config-manager')
+const _ = require('lodash')
+const config = require('@/config-manager').get()
 const futureDownloader = require('@ac/future-race-page-downloader')
 const futurePageClearer = require('@ac/future-page-clearer')
 const futureRegister = require('@ac/future-race-register')
@@ -8,11 +9,14 @@ const futureScraper = require('@ac/future-race-scraper')
 const futureSimulator = require('@s/future-multi-ticket-type-purchase-simulator')
 const ipatPurchaser = require('@p/ipat-connect-purchaser')
 const learningCollegialInputCreator = require('@an/learning-collegial-input-creator')
+const logicHelper = require('@h/logic-helper')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const predictor = require('@s/predictor')
-const purchaseHelper = require('@h/purchase-helper')
+const purchaseConfig = require('@p/purchase-config')
 const sleep = require('thread-sleep')
 const watcher = require('@p/race-time-watcher')
+const fileHelper = require('@h/file-helper')
+const purchaseHelper = require('@h/purchase-helper')
 
 /**
  * @description IPAT連携チケット購入の管理機能を提供します。
@@ -23,8 +27,9 @@ module.exports = {
    * @returns {void}
    */
   async execute () {
-    const config = getConfig()
-    if (config.init) {
+    if (config.ipat.init) {
+      // 購入時の予測結果ファイルをクリア
+      clearPredResults()
       // レースページをクリア
       futurePageClearer.clear()
       // レースページをダウンロード
@@ -50,9 +55,10 @@ module.exports = {
  */
 async function executeWithWatching () {
   let retryCount = 0
-  while (retryCount < getConfig().maxRetryCount) {
+  while (retryCount < config.ipat.maxRetryCount) {
     try {
-      const targetRaceIds = await watch()
+      // const targetRaceIds = await watch()
+      const targetRaceIds = ['202109010401']
       // レースページをダウンロード
       await futureDownloader.download({
         raceIds: targetRaceIds
@@ -73,15 +79,13 @@ async function executeWithWatching () {
       predAdjuster.adjust({
         target: 'collegial'
       })
+      // 予測結果の退避（後で結果確認に使用する）
+      copyToPurchasePredDir()
       // 購入計画作成
-      const purchaseParams = purchaseHelper.getPurchaseParams()
-      futureSimulator.simulate(purchaseParams)
+      futureSimulator.simulate(purchaseConfig)
       // IPAT連携購入実行
       await ipatPurchaser.purchase({
         raceIds: targetRaceIds
-        // raceIds: [
-        //   '202105010701'
-        // ]
       })
       break
     } catch (ex) {
@@ -97,7 +101,6 @@ async function executeWithWatching () {
  * @returns {Array} 購入対象レースIDリスト
  */
 async function watch () {
-  const config = getConfig()
   let targetRaceIds = []
   while (targetRaceIds.length <= 0) {
     targetRaceIds = await watcher.watch()
@@ -105,16 +108,81 @@ async function watch () {
       console.log('start purchase')
     } else {
       console.log('still watch...')
-      sleep(config.watchSpanTime * 60000)
+      sleep(config.ipat.watchSpanTime * 60000)
     }
   }
   return targetRaceIds
 }
 
 /**
- * @description 設定情報を取得します。
- * @returns {Object} パラメータ
+ * @description 購入予測評価値ファイルを規定の場所にコピーします。
+ * @returns {void}
  */
-function getConfig () {
-  return config.get().ipat
+function copyToPurchasePredDir () {
+  const dir = config.predCollegialPurchaseFileDir
+  fileHelper.mkdir(dir)
+  mergePredResultsIfExists(
+    config.predCollegialPurchaseFilePath,
+    config.predCollegialFilePath
+  )
+  const destPathSet = purchaseHelper.generatePurchasePredPathSet()
+  mergePredResultsIfExists(
+    destPathSet.abiMoPath,
+    config.predAbilityMoneyFilePath
+  )
+  mergePredResultsIfExists(
+    destPathSet.abiRePath,
+    config.predAbilityRecoveryFilePath
+  )
+  mergePredResultsIfExists(
+    destPathSet.rageOddsPath,
+    config.predRageOddsFilePath
+  )
+  mergePredResultsIfExists(
+    destPathSet.rageOrderPath,
+    config.predRageOrderFilePath
+  )
+}
+
+/**
+ * @description 予測結果ファイルが存在する場合はマージを行います。
+ * @returns {void}
+ */
+function mergePredResultsIfExists (purchasedPath, newPredPath) {
+  if (fileHelper.existsFile(purchasedPath)) {
+    const x = fileHelper.readJson(purchasedPath)
+    const y = fileHelper.readJson(newPredPath)
+    const merged = mergePredResults(x, y)
+    fileHelper.write(merged, purchasedPath)
+  } else {
+    fileHelper.copy(
+      newPredPath,
+      purchasedPath
+    )
+  }
+}
+
+/**
+ * @description 予測結果のマージを行います。
+ * @param {Array} xResults マージ対象結果
+ * @param {Array} yResults マージ対象結果
+ */
+function mergePredResults (xResults, yResults) {
+  // 新しいyの方を正とする
+  const addResults = xResults.filter(
+    x => yResults.every(
+      y => y.raceId !== x.raceId && y.horseId !== x.horseId
+    )
+  )
+  let mergedResults = _.union(yResults, addResults)
+  mergedResults = logicHelper.sort(mergedResults, 'raceId')
+  return mergedResults
+}
+
+/**
+ * @description 購入時の予測ファイルを削除します。
+ * @returns {void}
+ */
+function clearPredResults () {
+  fileHelper.deleteAll(config.learningCollegialPurchaseDir)
 }

@@ -8,12 +8,13 @@ module.exports = {
    * @description 購入します。
    * @param {Array} horses - 出馬リスト
    * @param {Array} scores - 評価値リスト
+   * @param {Object} config - 設定情報
    * @param {Object} params - パラメータ
    * @param {Number} params.minScore - 最小スコア
    * @param {Number} params.maxPopularity - 最大人気順
    * @returns {Array} 購入リスト
    */
-  purchase (horses, scores, params) {
+  purchase (horses, scores, config, params) {
     const validator = require('@h/validation-helper')
     validator.required(params)
     validator.required(params.ticketType)
@@ -22,25 +23,25 @@ module.exports = {
     let ret = {}
     switch (type) {
       case 'fuku':
-        ret = module.exports._calcFukuTicketNum(horses, scores, params)
+        ret = module.exports._calcFukuTicketNum(horses, scores, config, params)
         break
       case 'uren':
-        ret = module.exports._calcURenTicketNum(horses, scores, params)
+        ret = module.exports._calcURenTicketNum(horses, scores, config, params)
         break
       case 'wide':
-        ret = module.exports._calcWideTicketNum(horses, scores, params)
+        ret = module.exports._calcWideTicketNum(horses, scores, config, params)
         break
       case 'sanfuku':
-        ret = module.exports._calcSanfukuTicketNum(horses, scores, params)
+        ret = module.exports._calcSanfukuTicketNum(horses, scores, config, params)
         break
       case 'utan':
-        ret = module.exports._calcUtanTicketNum(horses, scores, params)
+        ret = module.exports._calcUtanTicketNum(horses, scores, config, params)
         break
       case 'santan':
-        ret = module.exports._calcSantanTicketNum(horses, scores, params)
+        ret = module.exports._calcSantanTicketNum(horses, scores, config, params)
         break
       default:
-        ret = module.exports._calcTanTicketNum(horses, scores, params)
+        ret = module.exports._calcTanTicketNum(horses, scores, config, params)
     }
     return ret
   },
@@ -51,12 +52,12 @@ module.exports = {
    * @param {Object} filterParams フィルタ用パラメータ
    * @returns {Object} 購入結果
    */
-  _calcTanTicketNum (horses, scores, params, filterParams = {}) {
+  _calcTanTicketNum (horses, scores, config, params, filterParams = {}) {
     return module.exports._calcSingleTicketNum(
       horses,
       scores,
       params,
-      createPurchaseParam(params, scores)
+      config.createPurchaseParam(params, scores)
     )
   },
   /**
@@ -66,12 +67,12 @@ module.exports = {
    * @param {Object} filterParams フィルタ用パラメータ
    * @returns {Object} 購入結果
    */
-  _calcFukuTicketNum (horses, scores, params, filterParams = {}) {
+  _calcFukuTicketNum (horses, scores, config, params, filterParams = {}) {
     return module.exports._calcSingleTicketNum(
       horses,
       scores,
       params,
-      createPurchaseParam(params, scores)
+      config.createPurchaseParam(params, scores)
     )
   },
   /**
@@ -200,14 +201,14 @@ module.exports = {
    * @param {Number} minScore 下限スコア
    * @returns {Object} 購入結果
    */
-  _calcURenTicketNum (horses, scores, params) {
+  _calcURenTicketNum (horses, scores, config, params) {
     return module.exports._calcCombinationTicketNum(
       horses,
       scores,
       params,
       2,
       false,
-      createPurchaseParam(params, scores)
+      config.createPurchaseParam(params, scores)
     )
   },
   /**
@@ -216,14 +217,14 @@ module.exports = {
    * @param {Number} minScore 下限スコア
    * @returns {Object} 購入結果
    */
-  _calcWideTicketNum (horses, scores, params) {
+  _calcWideTicketNum (horses, scores, config, params) {
     return module.exports._calcCombinationTicketNum(
       horses,
       scores,
       params,
       2,
       false,
-      createPurchaseParam(params, scores)
+      config.createPurchaseParam(params, scores)
     )
   },
   /**
@@ -232,14 +233,14 @@ module.exports = {
    * @param {Number} minScore 下限スコア
    * @returns {Object} 購入結果
    */
-  _calcSanfukuTicketNum (horses, scores, params) {
+  _calcSanfukuTicketNum (horses, scores, config, params) {
     return module.exports._calcCombinationTicketNum(
       horses,
       scores,
       params,
       3,
       false,
-      createPurchaseParam(params, scores)
+      config.createPurchaseParam(params, scores)
     )
   },
   /**
@@ -248,14 +249,14 @@ module.exports = {
    * @param {Number} minScore 下限スコア
    * @returns {Object} 購入結果
    */
-  _calcUtanTicketNum (horses, scores, params) {
+  _calcUtanTicketNum (horses, scores, config, params) {
     return module.exports._calcCombinationTicketNum(
       horses,
       scores,
       params,
       2,
       true,
-      createPurchaseParam(params, scores)
+      config.createPurchaseParam(params, scores)
     )
   },
   /**
@@ -264,36 +265,14 @@ module.exports = {
    * @param {Number} minScore 下限スコア
    * @returns {Object} 購入結果
    */
-  _calcSantanTicketNum (horses, scores, params) {
+  _calcSantanTicketNum (horses, scores, config, params) {
     return module.exports._calcCombinationTicketNum(
       horses,
       scores,
       params,
       3,
       true,
-      createPurchaseParam(params, scores)
+      config.createPurchaseParam(params, scores)
     )
-  }
-}
-
-/**
- * @description 購入パラメータを生成します。
- * @param {Number} rageEval レースの荒れ指数
- */
-function createPurchaseParam (params, scores) {
-  const minOdds = 0
-  const maxOdds = 999
-  const minSs = null
-  const minRageVal = 90
-  let scoreOrder = [1, 2, 3]
-  const rageVal = scores[0].rageOddsEval + scores[0].rageOrderEval
-  if (rageVal < minRageVal) {
-    scoreOrder = []
-  }
-  return {
-    minOdds,
-    maxOdds,
-    minSs,
-    scoreOrder
   }
 }

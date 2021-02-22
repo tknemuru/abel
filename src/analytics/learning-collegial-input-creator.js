@@ -8,12 +8,12 @@ const learningInputCreator = require('@an/learning-input-creator')
 const learningConfig = require('@an/configs/learning-config')
 const predictionConfig = require('@an/configs/prediction-config')
 const predictionRageConfig = require('@an/configs/prediction-rage-config')
+const purchaseConfig = require('@p/purchase-config')
 const learningRageInputCreator = require('@an/learning-rage-input-creator')
 const learningRageConfig = require('@an/configs/learning-rage-config')
 const path = require('path')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const predictor = require('@s/predictor')
-const purchaseHelper = require('@h/purchase-helper')
 
 /**
  * @module 合議制学習用情報の作成機能を提供します。
@@ -54,7 +54,7 @@ module.exports = {
       target: 'rage'
     })
     // 予測結果を読み込む
-    const predResults = purchaseHelper.readAllPredResults()
+    const predResults = purchaseConfig.readAllPredResults()
     // 学習データとして加工して書き込む
     const inputs = predResults.map(p => {
       return [

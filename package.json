@@ -15,7 +15,8 @@
     "learn-collegial-pre": "node ./src/index.js -t learn-collegial-pre",
     "test-pred": "node ./src/index.js -t test-pred",
     "result-set-register": "node ./src/index.js -t result-set-register",
-    "purchase-ipat": "node ./src/index.js -t purchase-ipat"
+    "purchase-ipat": "node ./src/index.js -t purchase-ipat",
+    "check-purchase": "node ./src/index.js -t check-purchase"
   },
   "repository": {
     "type": "git",
