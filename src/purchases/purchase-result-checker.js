@@ -33,7 +33,9 @@ module.exports = {
     // 監視開始
     while (true) {
       await executeWithWatching()
-      // break
+      if (config.ipat.dev) {
+        break
+      }
     }
   }
 }
@@ -116,15 +118,17 @@ async function executeWithWatching () {
       console.log(summary)
       console.log(text)
       // メール送信
-      await mailer.send({
-        subject: `【abel】レース結果通知(${summary})`,
-        text
-      })
-      // レース終了に更新
-      sql = reader.read('update_in_purchase')
-      sql = sql.replace('$purchaseStatus', consts.PurchaseStatus.RaceFinished)
-      sql = sql.replace('?#', raceIds.map(() => '?').join(','))
-      accessor.run(sql, [raceIds])
+      if (!config.ipat.dev) {
+        await mailer.send({
+          subject: `【abel】レース結果通知(${summary})`,
+          text
+        })
+        // レース終了に更新
+        sql = reader.read('update_in_purchase')
+        sql = sql.replace('$purchaseStatus', consts.PurchaseStatus.RaceFinished)
+        sql = sql.replace('?#', raceIds.map(() => '?').join(','))
+        accessor.run(sql, [raceIds])
+      }
       break
     } catch (ex) {
       console.error(ex)
@@ -223,6 +227,7 @@ function createResultSummary (calcResults) {
   const hasWin = results.some(r => r.winTicketNum > 0)
   if (!hasPurchased) {
     summary = '馬券購入はありませんでした。'
+    return summary
   }
   if (hasWin) {
     summary = '購入した馬券が当たりました！！！'
