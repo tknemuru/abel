@@ -8,6 +8,7 @@ const configManager = require('@/config-manager')
 const fileHelper = require('@h/file-helper')
 const log = require('@h/log-helper')
 const logicHelper = require('@h/logic-helper')
+const purchaseConfig = require('@p/purchase-config')
 const purchaseHelper = require('@h/purchase-helper')
 const ss = require('simple-statistics')
 
@@ -24,7 +25,7 @@ module.exports = {
     const config = configManager.get()
     // 分析対象の情報を読み込む
     const collegials = fileHelper.readJson(config.predCollegialFilePath)
-    let inputs = purchaseHelper.readAllPredResults()
+    let inputs = purchaseConfig.readAllPredResults()
       .map((p, i) => {
         p.collegialEval = collegials[i].eval
         // p.ss = calcHelper.standardScore(collegials

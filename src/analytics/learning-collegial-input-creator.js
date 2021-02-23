@@ -23,7 +23,7 @@ module.exports = {
    * @description 学習用情報を作成します。
    * @returns {void}
    */
-  async create (param) {
+  async create (param = {}) {
     const config = configManager.get()
     // 既存ファイルを削除する
     clearFile(config)
@@ -40,11 +40,11 @@ module.exports = {
     // 予測実施
     await predictor.predict({
       target: 'ability'
-      // waitTime: 10000
+      // waitTime: 40000
     })
     await predictor.predict({
       target: 'rage'
-      // waitTime: 15000
+      // waitTime: 60000
     })
     // 予測結果整形
     predAdjuster.adjust({
