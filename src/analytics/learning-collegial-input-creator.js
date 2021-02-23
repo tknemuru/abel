@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const csvHelper = require('@h/csv-helper')
-const configManager = require('@/config-manager')
+const config = require('@/config-manager').get()
 const fileHelper = require('@h/file-helper')
 const learningInputCreator = require('@an/learning-input-creator')
 const learningConfig = require('@an/configs/learning-config')
@@ -24,27 +24,44 @@ module.exports = {
    * @returns {void}
    */
   async create (param = {}) {
-    const config = configManager.get()
     // 既存ファイルを削除する
     clearFile(config)
 
+    let waitTime = 0
     // 予測情報作成
-    if (param.mode === 'future') {
-      await learningInputCreator.create(predictionConfig)
-      await learningRageInputCreator.create(predictionRageConfig)
-    } else {
-      await learningInputCreator.create(learningConfig)
-      await learningRageInputCreator.create(learningRageConfig)
+    switch (param.mode) {
+      case 'future':
+        await learningInputCreator.create(predictionConfig)
+        await learningRageInputCreator.create(predictionRageConfig)
+        break
+      case 'learning':
+        // eslint-disable-next-line no-case-declarations
+        const createConfig = Object.assign(
+          {},
+          learningConfig,
+          {
+            lightweightRelation: true
+          }
+        )
+        await learningInputCreator.create(createConfig)
+        await learningRageInputCreator.create(learningRageConfig)
+        waitTime = 40000
+        break
+      case 'test':
+      default:
+        await learningInputCreator.create(learningConfig)
+        await learningRageInputCreator.create(learningRageConfig)
+        break
     }
 
     // 予測実施
     await predictor.predict({
-      target: 'ability'
-      // waitTime: 40000
+      target: 'ability',
+      waitTime: waitTime
     })
     await predictor.predict({
-      target: 'rage'
-      // waitTime: 60000
+      target: 'rage',
+      waitTime: waitTime * 2
     })
     // 予測結果整形
     predAdjuster.adjust({

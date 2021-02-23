@@ -117,7 +117,9 @@ switch (options.target) {
     (async () => {
       try {
         // 学習情報作成
-        await learningCollegialInputCreator.create()
+        await learningCollegialInputCreator.create({
+          mode: 'learning'
+        })
       } catch (e) {
         console.log(e)
       } finally {
@@ -141,7 +143,7 @@ switch (options.target) {
         })
         // シミュレーション実施
         await testSimulator.simulate()
-        // // 予測結果の分析
+        // 予測結果の分析
         predAnalyzer.analyze()
       } catch (e) {
         console.log(e)

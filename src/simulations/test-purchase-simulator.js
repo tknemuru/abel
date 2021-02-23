@@ -8,7 +8,7 @@ const purchaseHelper = require('@h/purchase-helper')
  */
 module.exports = {
   async simulate () {
-    for (let i = -2; i < 5; i++) {
+    for (let i = 6; i < 7; i++) {
       const params = purchaseConfig.getPurchaseParams(i)
       console.log(params)
       await module.exports._simulate(purchaseConfig, params)
