@@ -11,6 +11,8 @@ const predictionRageConfig = require('@an/configs/prediction-rage-config')
 const purchaseConfig = require('@p/purchase-config')
 const learningRageInputCreator = require('@an/learning-rage-input-creator')
 const learningRageConfig = require('@an/configs/learning-rage-config')
+const testConfig = require('@an/configs/test-config')
+const testRageConfig = require('@an/configs/test-rage-config')
 const path = require('path')
 const predAdjuster = require('@an/prediction-result-adjuster')
 const predictor = require('@s/predictor')
@@ -49,8 +51,8 @@ module.exports = {
         break
       case 'test':
       default:
-        await learningInputCreator.create(learningConfig)
-        await learningRageInputCreator.create(learningRageConfig)
+        await learningInputCreator.create(testConfig)
+        await learningRageInputCreator.create(testRageConfig)
         break
     }
 

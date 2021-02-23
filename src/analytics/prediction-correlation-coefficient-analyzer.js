@@ -56,7 +56,7 @@ module.exports = {
     log.info('===============')
     // 相関係数を求める
     log.info('●馬の強さ')
-    calc(inputs, 'orderOfFinish', ['abilityMoneyEval', 'abilityRecoveryEval', 'odds'])
+    calc(inputs, 'orderOfFinish', ['collegialEval', 'abilityMoneyEval', 'abilityRecoveryEval', 'odds'])
     log.info('●回収率')
     calc(inputs, 'recoveryRate', ['collegialEval', 'abilityMoneyEval', 'abilityRecoveryEval', 'odds'])
     log.info('●レースの荒れ指数')
