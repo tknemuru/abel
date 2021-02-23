@@ -1,5 +1,7 @@
 'use strict'
 
+const calculator = require('@s/recovery-rate-calculator')
+const futurePurchaseSimulater = require('@s/future-multi-ticket-type-purchase-simulator')
 const purchaseConfig = require('@p/purchase-config')
 const purchaseHelper = require('@h/purchase-helper')
 
@@ -8,7 +10,7 @@ const purchaseHelper = require('@h/purchase-helper')
  */
 module.exports = {
   async simulate () {
-    for (let i = 6; i < 7; i++) {
+    for (let i = -2; i < 5; i++) {
       const params = purchaseConfig.getPurchaseParams(i)
       console.log(params)
       await module.exports._simulate(purchaseConfig, params)
@@ -23,14 +25,11 @@ module.exports = {
    * @param {Number} params.maxScore - 最大スコア
    * @returns {void}
    */
-  async _simulate (params) {
+  async _simulate (purchaseConfig, params) {
     // 購入対象を取得
-    const sims = await require('@s/future-multi-ticket-type-purchase-simulator').simulate(params)
-
+    const sims = await futurePurchaseSimulater.simulate(purchaseConfig, params)
     // 購入した馬券から回収率を算出
-    const calculator = require('@s/recovery-rate-calculator')
     const results = calculator.calc(sims)
-
     // 結果を表示
     console.log(purchaseHelper.createDispSimlationResult(results))
   }
