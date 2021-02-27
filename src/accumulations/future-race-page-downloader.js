@@ -26,7 +26,7 @@ module.exports = {
       urls = generateUrlFromRaceId(params.raceIds)
     } else {
       // レースID未指定時はトップページからダウンロードする
-      urls = extractUrlFromTopPage()
+      urls = await extractUrlFromTopPage()
     }
     console.log(urls)
     // レースページをダウンロード

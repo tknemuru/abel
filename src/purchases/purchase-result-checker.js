@@ -53,15 +53,21 @@ async function executeWithWatching () {
       // 開催済レースページファイルをクリア
       resultClearer.clear()
       // // 開催済レースページをダウンロード
-      const raceIds = races.map(r => r.raceId)
+      let raceIds = races.map(r => r.raceId)
       // const raceIds = ['202109010401']
       // const raceIds = ['202105010802']
       // const raceIds = ['202106020209']
       await downloadResults(raceIds)
-      // 結果未公開のレースが対象に含まれている場合は処理終了
-      const hasNotPublished = raceIds.some(raceId => !payoutExtractor.hasPublishedResult(raceId))
-      if (hasNotPublished) {
-        console.log('結果未公開のレースが含まれているため処理を終了します。')
+      // 結果未公開のレースは対象外
+      raceIds = raceIds.filter(raceId => {
+        const has = payoutExtractor.hasPublishedResult(raceId)
+        if (!has) {
+          console.log(`${raceId}:結果未公開のレースです。`)
+        }
+        return has
+      })
+      if (raceIds.length <= 0) {
+        sleep(config.ipat.watchSpanTime * 60000)
         return
       }
       // スクレイピング実行

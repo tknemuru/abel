@@ -200,13 +200,20 @@ module.exports = {
    * @returns {Object} 変換後の値
    */
   convHorseWeight (val) {
+    const undefVal = {
+      weight: 0,
+      diff: 0
+    }
     if (val === '計不') {
-      return {
-        weight: 0,
-        diff: 0
-      }
+      return undefVal
     }
     const vals = val.split('(')
+    // 未来のレースだと馬体重が未定の場合がある
+    if (!Array.isArray(vals) ||
+      vals.length < 2 ||
+      !vals[1]) {
+      return undefVal
+    }
     const diff = vals[1]
       .replace(')', '')
     return {

@@ -29,14 +29,12 @@ module.exports = {
     // 払い戻し
     race = module.exports._extractPayTable($, race, horseCount)
 
-    let horseNumber = 1
     for (const horseDom of horseListDoms) {
       if (module.exports._isCancel(horseDom)) {
         continue
       }
-      let horse = {
-        horseNumber
-      }
+      let horse = {}
+      horse = module.exports._extractHorseNumber(horseDom, horse)
       horse = module.exports._extractHorseIdAndName(horseDom, horse)
       horse = module.exports._extractSexAndAge(horseDom, horse)
       horse = module.exports._extractJockeyId(horseDom, horse)
@@ -52,7 +50,6 @@ module.exports = {
       horse = module.exports._extractOrderOfFinish(horseDom, horse)
 
       horses.push(horse)
-      horseNumber++
     }
     return {
       race,
@@ -69,7 +66,25 @@ module.exports = {
     const dom = htmlHelper.toDom(html)
     const horseListDoms = module.exports._extractHorseList(dom)
     const horseCount = horseListDoms.length
-    return horseCount > 0
+    // 5頭以下は未完全
+    if (horseCount <= 5) {
+      return false
+    }
+    let horseNumber = 1
+    for (const horseDom of horseListDoms) {
+      if (module.exports._isCancel(horseDom)) {
+        continue
+      }
+      let horse = {
+        horseNumber
+      }
+      horse = module.exports._extractOrderOfFinish(horseDom, horse)
+      if (horse.orderOfFinish > 0) {
+        return true
+      }
+      horseNumber++
+    }
+    return false
   },
   /**
    * @description 馬行リストを抽出します。
@@ -147,7 +162,6 @@ module.exports = {
       .replace('稍', '稍重')
       .replace('不', '不良')
     surfaceState = `${surface}:${surfaceState}`
-    console.log(surfaceState)
     const joinedSurface = `${surface}${direction}`
     const surfaceStateDigit = converter.convRaceSurface(joinedSurface)
     const _data = {
@@ -204,6 +218,21 @@ module.exports = {
       raceNumber: module.exports._convNum(tag.textContent.replace('R', ''))
     }
     return Object.assign(data, _data)
+  },
+  /**
+   * @description 馬番を抽出します。
+   * @param {Object} dom - DOM
+   * @param {Object} data - 抽出データ
+   * @returns {Object} 抽出データ
+   */
+  _extractHorseNumber (dom, data) {
+    const tags = dom.querySelectorAll('.Result_Num+td+td>div')
+    const _data = [].slice.call(tags).map(tag => {
+      return {
+        horseNumber: module.exports._convNum(tag.textContent)
+      }
+    })
+    return module.exports._merge(data, _data)
   },
   /**
    * @description 馬名と馬IDを抽出します。
