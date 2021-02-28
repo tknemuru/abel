@@ -8,6 +8,7 @@
     "sandbox": "node ./src/index.js -t sandbox",
     "init-db": "node ./src/index.js -t init-db",
     "gen-race-sql": "node ./src/index.js -t gen-race-sql",
+    "create-feature": "node ./src/index.js -t create-feature",
     "create-horse-hist": "node ./src/index.js -t create-horse-hist",
     "create-result-additional": "node ./src/index.js -t create-result-additional",
     "learn-pre": "node ./src/index.js -t learn-pre",

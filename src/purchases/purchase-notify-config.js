@@ -1,10 +1,10 @@
 'use strict'
 
 const adjuster = require('@s/race-adjuster')
+const ansDefManager = require('@an/answer-def-manager')
 const base = require('@p/purchase-config')
 const config = require('@/config-manager').get()
 const fileHelper = require('@h/file-helper')
-const purchaseHelper = require('@h/purchase-helper')
 
 /**
  * @module 馬券購入の設定情報を提供します。
@@ -45,21 +45,28 @@ module.exports = {
    */
   readAllPredResults () {
     // 分析対象の情報を読み込む
-    const predPathSet = purchaseHelper.generatePurchasePredPathSet()
-    const abilityMoneys = fileHelper.readJson(predPathSet.abiMoPath)
-    const abilityRecoverys = fileHelper.readJson(predPathSet.abiRePath)
-    const rageOdds = adjuster.adjust(fileHelper.readJson(predPathSet.rageOddsPath))
-    const rageOrders = adjuster.adjust(fileHelper.readJson(predPathSet.rageOrderPath))
     const collegials = module.exports.readPredCollegials()
+    const allDefs = ansDefManager.getAllAnswerDefs()
+    const preds = {}
+    for (const def of allDefs) {
+      let pred = fileHelper.readJson(def.predPath)
+      if (def.type === 'rage') {
+        pred = adjuster.adjust(pred)
+      }
+      preds[def.key] = pred
+    }
     // マージする
-    const results = collegials.map((c, i) => {
-      c.abilityMoneyEval = abilityMoneys[i].eval
-      c.abilityRecoveryEval = abilityRecoverys[i].eval
-      c.rageOddsEval = rageOdds[c.raceId][0].eval
-      c.rageOrderEval = rageOrders[c.raceId][0].eval
-      c.recoveryRate = c.orderOfFinish <= 3 ? c.odds : 0
-      c.collegialEval = c.eval
-      return c
+    const results = collegials.map((a, i) => {
+      for (const def of allDefs) {
+        if (def.type === 'ability') {
+          a[def.evalName] = preds[def.key][i].eval
+        } else {
+          a[def.evalName] = preds[def.key][a.raceId][0].eval
+        }
+      }
+      a.recoveryRate = a.orderOfFinish <= 3 ? a.odds : 0
+      a.collegialEval = a.eval
+      return a
     })
     return results
   }

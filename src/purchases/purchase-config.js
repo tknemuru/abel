@@ -1,6 +1,7 @@
 'use strict'
 
 const adjuster = require('@s/race-adjuster')
+const ansDefManager = require('@an/answer-def-manager')
 const config = require('@/config-manager').get()
 const fileHelper = require('@h/file-helper')
 
@@ -94,16 +95,25 @@ module.exports = {
    */
   readAllPredResults () {
     // 分析対象の情報を読み込む
-    const abilityMoneys = fileHelper.readJson(config.predAbilityMoneyFilePath)
-    const abilityRecoverys = fileHelper.readJson(config.predAbilityRecoveryFilePath)
-    const rageOdds = adjuster.adjust(fileHelper.readJson(config.predRageOddsFilePath))
-    const rageOrders = adjuster.adjust(fileHelper.readJson(config.predRageOrderFilePath))
+    const allDefs = ansDefManager.getAllAnswerDefs()
+    const preds = {}
+    for (const def of allDefs) {
+      let pred = fileHelper.readJson(def.predPath)
+      if (def.type === 'rage') {
+        pred = adjuster.adjust(pred)
+      }
+      preds[def.key] = pred
+    }
     // マージする
-    const results = abilityMoneys.map((a, i) => {
-      a.abilityMoneyEval = a.eval
-      a.abilityRecoveryEval = abilityRecoverys[i].eval
-      a.rageOddsEval = rageOdds[a.raceId][0].eval
-      a.rageOrderEval = rageOrders[a.raceId][0].eval
+    const first = Object.values(preds)[0]
+    const results = first.map((a, i) => {
+      for (const def of allDefs) {
+        if (def.type === 'ability') {
+          a[def.evalName] = preds[def.key][i].eval
+        } else {
+          a[def.evalName] = preds[def.key][a.raceId][0].eval
+        }
+      }
       a.recoveryRate = a.orderOfFinish <= 3 ? a.odds : 0
       return a
     })

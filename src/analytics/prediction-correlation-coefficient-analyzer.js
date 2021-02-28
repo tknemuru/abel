@@ -3,6 +3,7 @@
 
 const _ = require('lodash')
 const adjuster = require('@s/race-adjuster')
+const ansDefManager = require('@an/answer-def-manager')
 const calcHelper = require('@h/calc-helper')
 const configManager = require('@/config-manager')
 const fileHelper = require('@h/file-helper')
@@ -50,20 +51,27 @@ module.exports = {
     // ソートする
     inputs = logicHelper.sortReverse(inputs, 'recoveryRate')
     // 情報を出力する
+    const defs = ansDefManager.getAllAnswerDefs()
     for (const inp of inputs) {
-      log.info(`recvRate:${inp.recoveryRate} order:${inp.orderOfFinish} odds:${inp.odds} coll:${inp.collegialEval} abilityM:${inp.abilityMoneyEval} abilityR:${inp.abilityRecoveryEval} rageOdds:${inp.rageOddsEval} rageOrder:${inp.rageOrderEval}`)
+      let evalInfo = `recvRate:${inp.recoveryRate} order:${inp.orderOfFinish} odds:${inp.odds} coll:${inp.collegialEval}`
+      for (const def of defs) {
+        evalInfo += ` ${def.shortName}:${inp[def.evalName]}`
+      }
+      log.info(evalInfo)
     }
     log.info('===============')
     // 相関係数を求める
     log.info('●馬の強さ')
-    calc(inputs, 'orderOfFinish', ['collegialEval', 'abilityMoneyEval', 'abilityRecoveryEval', 'odds'])
+    const aDefs = ansDefManager.getAbilityAnswerDefs()
+    let targets = ['odds', 'collegialEval']
+    targets = _.union(targets, aDefs.map(d => d.evalName))
+    calc(inputs, 'orderOfFinish', targets)
     log.info('●回収率')
-    calc(inputs, 'recoveryRate', ['collegialEval', 'abilityMoneyEval', 'abilityRecoveryEval', 'odds'])
+    calc(inputs, 'recoveryRate', targets)
     log.info('●レースの荒れ指数')
     inputs = inputs.filter(inp => inp.orderOfFinish <= 3)
-    calc(inputs, 'recoveryRate', ['rageOddsEval', 'rageOrderEval'])
-    log.info('●評価値間')
-    calc(inputs, 'abilityMoneyEval', ['rageOddsEval', 'rageOrderEval'])
+    targets = ansDefManager.getRageAnswerDefs().map(d => d.evalName)
+    calc(inputs, 'recoveryRate', targets)
     console.log('done!')
   }
 }

@@ -2,6 +2,7 @@
 
 const accessor = require('@d/db-accessor')
 const adjuster = require('@s/race-adjuster')
+const ansDefManager = require('@an/answer-def-manager')
 const calculator = require('@s/recovery-rate-calculator')
 const config = require('@/config-manager').get()
 const consts = require('@/consts')
@@ -115,8 +116,13 @@ async function executeWithWatching () {
         const ticketsStr = logicHelper.ArrayToString(purchaseHelper.createDispPurchaseTickets(simResults, [raceId]).msg)
         predValsStrList.push(ticketsStr)
         predValsStrList.push('-----------------')
+        const defs = ansDefManager.getAllAnswerDefs()
         for (const inp of vals) {
-          predValsStrList.push(`${inp.horseNumber}(${inp.horseName}) popularity:${inp.popularity} odds:${inp.odds} coll:${inp.collegialEval} abilityM:${inp.abilityMoneyEval} abilityR:${inp.abilityRecoveryEval} rageOdds:${inp.rageOddsEval} rageOrder:${inp.rageOrderEval}`)
+          let evalInfo = `${inp.horseNumber}(${inp.horseName}) popularity:${inp.popularity} odds:${inp.odds} coll:${inp.collegialEval}`
+          for (const def of defs) {
+            evalInfo += ` ${def.shortName}:${inp[def.evalName]}`
+          }
+          predValsStrList.push(evalInfo)
         }
       }
       const predValsStr = logicHelper.ArrayToString(predValsStrList)

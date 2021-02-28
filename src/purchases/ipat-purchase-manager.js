@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const ansDefManager = require('@an/answer-def-manager')
 const config = require('@/config-manager').get()
 const futureDownloader = require('@ac/future-race-page-downloader')
 const futurePageClearer = require('@ac/future-page-clearer')
@@ -58,7 +59,7 @@ async function executeWithWatching () {
   while (retryCount < config.ipat.maxRetryCount) {
     try {
       const targetRaceIds = await watch()
-      // const targetRaceIds = ['202105010802']
+      // const targetRaceIds = ['202106020212']
       // レースページをダウンロード
       await futureDownloader.download({
         raceIds: targetRaceIds
@@ -126,22 +127,13 @@ function copyToPurchasePredDir () {
     config.predCollegialFilePath
   )
   const destPathSet = purchaseHelper.generatePurchasePredPathSet()
-  mergePredResultsIfExists(
-    destPathSet.abiMoPath,
-    config.predAbilityMoneyFilePath
-  )
-  mergePredResultsIfExists(
-    destPathSet.abiRePath,
-    config.predAbilityRecoveryFilePath
-  )
-  mergePredResultsIfExists(
-    destPathSet.rageOddsPath,
-    config.predRageOddsFilePath
-  )
-  mergePredResultsIfExists(
-    destPathSet.rageOrderPath,
-    config.predRageOrderFilePath
-  )
+  const allDefs = ansDefManager.getAllAnswerDefs()
+  for (const def of allDefs) {
+    mergePredResultsIfExists(
+      destPathSet[def.shortPathKey],
+      def.predPath
+    )
+  }
 }
 
 /**

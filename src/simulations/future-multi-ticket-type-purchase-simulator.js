@@ -1,6 +1,7 @@
 'use strict'
 
 const adjuster = require('@s/race-adjuster')
+const ansDefManager = require('@an/answer-def-manager')
 
 /**
  * @module 開催予定レース複数チケット種別購入のシミュレーション機能を提供します。
@@ -27,6 +28,7 @@ module.exports = {
         return p
       })
     const races = Object.values(adjuster.adjust(inputs))
+    const defs = ansDefManager.getAllAnswerDefs()
 
     for (const type of ticketTypes) {
       params.ticketType = type
@@ -51,13 +53,13 @@ module.exports = {
           }
         }
         const scores = horses.map(h => {
-          return {
-            score: h.eval,
-            abilityMoneyEval: h.abilityMoneyEval,
-            abilityRecoveryEval: h.abilityRecoveryEval,
-            rageOddsEval: h.rageOddsEval,
-            rageOrderEval: h.rageOrderEval
+          const s = {
+            score: h.eval
           }
+          for (const def of defs) {
+            s[def.evalName] = h[def.evalName]
+          }
+          return s
         })
         const purchasesSet = purchaser.purchase(horses, scores, purchaseConfig, params)
         results[raceId].purchases[type] = purchasesSet.purchases

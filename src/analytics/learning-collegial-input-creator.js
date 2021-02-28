@@ -1,5 +1,6 @@
 'use strict'
 
+const ansDefManager = require('@an/answer-def-manager')
 const fs = require('fs')
 const csvHelper = require('@h/csv-helper')
 const config = require('@/config-manager').get()
@@ -75,14 +76,14 @@ module.exports = {
     // 予測結果を読み込む
     const predResults = purchaseConfig.readAllPredResults()
     // 学習データとして加工して書き込む
+    const defs = ansDefManager.getAllAnswerDefs()
     const inputs = predResults.map(p => {
-      return [
-        p.abilityMoneyEval,
-        p.abilityRecoveryEval,
-        p.rageOddsEval,
-        p.rageOrderEval,
-        p.odds
-      ]
+      const ret = []
+      for (const def of defs) {
+        ret.push(p[def.evalName])
+      }
+      ret.push(p.odds)
+      return ret
     })
     const inputCsv = csvHelper.toCsv(inputs)
     fileHelper.write(inputCsv, config.inputCollegialFilePath)

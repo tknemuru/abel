@@ -12,11 +12,12 @@ const optionDefs = [
 const options = args(optionDefs)
 console.log(options)
 
-const additionalResultCreator = require('@an/race-result-additional-creator')
+const ansDefManager = require('@an/answer-def-manager')
 const configManger = require('@/config-manager')
 const correlationAnalyzer = require('@an/correlation-coefficient-analyzer')
 const databaseUrlExtractor = require('@ac/race-database-url-extractor')
 const dbInit = require('@d/db-initializer')
+const featCreator = require('@an/feature-creator')
 const horseHistCreator = require('@an/horse-race-history-creator')
 const ipatPurchaseManager = require('@p/ipat-purchase-manager')
 const learningInputCreator = require('@an/learning-input-creator')
@@ -52,17 +53,18 @@ switch (options.target) {
   case 'gen-race-sql':
     require('@ac/race-sql-generator').generate()
     break
+  // 特徴作成
+  case 'create-feature':
+    featCreator.create({
+      target: 'post-money'
+    })
+    break
   // 未来の馬を対象に履歴データを追加する
   // result-set-registerを実行すれば通常実行不要
   case 'create-horse-hist':
     horseHistCreator.create({
       isFuture: true
     })
-    break
-  // 途中で追加したパラメータを設定する
-  // 通常使うことはない
-  case 'create-result-additional':
-    additionalResultCreator.create()
     break
   // 学習情報の作成
   case 'learn-pre':
@@ -71,16 +73,14 @@ switch (options.target) {
         // 学習情報作成
         await learningInputCreator.create(learningConfig)
         // 相関係数分析
-        correlationAnalyzer.analyze({
-          colsPath: config.inputAbilityColsFilePath,
-          inputsPath: config.inputAbilityFilePath,
-          answersPath: config.answerAbilityMoneyFilePath
-        })
-        correlationAnalyzer.analyze({
-          colsPath: config.inputAbilityColsFilePath,
-          inputsPath: config.inputAbilityFilePath,
-          answersPath: config.answerAbilityRecoveryFilePath
-        })
+        const defs = ansDefManager.getAbilityAnswerDefs()
+        for (const def of defs) {
+          correlationAnalyzer.analyze({
+            colsPath: config.inputAbilityColsFilePath,
+            inputsPath: config.inputAbilityFilePath,
+            answersPath: def.answerPath
+          })
+        }
       } catch (e) {
         console.log(e)
       } finally {
@@ -95,16 +95,14 @@ switch (options.target) {
         // 学習情報作成
         await learningRageInputCreator.create(learningRageConfig)
         // 相関係数分析
-        correlationAnalyzer.analyze({
-          colsPath: config.inputRageColsFilePath,
-          inputsPath: config.inputRageFilePath,
-          answersPath: config.answerRageOddsFilePath
-        })
-        correlationAnalyzer.analyze({
-          colsPath: config.inputRageColsFilePath,
-          inputsPath: config.inputRageFilePath,
-          answersPath: config.answerRageOrderFilePath
-        })
+        const defs = ansDefManager.getRageAnswerDefs()
+        for (const def of defs) {
+          correlationAnalyzer.analyze({
+            colsPath: config.inputRageColsFilePath,
+            inputsPath: config.inputRageFilePath,
+            answersPath: def.answerPath
+          })
+        }
       } catch (e) {
         console.log(e)
       } finally {

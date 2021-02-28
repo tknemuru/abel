@@ -1,6 +1,9 @@
 'use strict'
 
 const _ = require('lodash')
+const config = require('@/config-manager').get()
+const fileHelper = require('@h/file-helper')
+let postEarningMoneys
 
 /**
  * @module 学習用正解データの作成機能を提供します。
@@ -107,10 +110,11 @@ module.exports = {
   /**
    * @description 上位3位の回収率によって正解データを作成します。
    * @param {Object} data 学習用データ
-   * @param {Number} index インデックス
+   * @param {Number} params.index インデックス
    * @returns {Number} 正解データ
    */
-  createAnswerByTopThreeRecoveryRate (data, index = 0) {
+  createAnswerByTopThreeRecoveryRate (data, params) {
+    const index = params.index || 0
     const odds = data[`ret${index}_odds`] || 0
     const order = data[`ret${index}_order_of_finish`] || 0
     const _order = Number(order)
@@ -253,13 +257,13 @@ module.exports = {
   /**
    * @description 順位と獲得賞金から正解データを作成します。
    * @param {Object} data 学習用データ
-   * @param {Number} money 獲得賞金
+   * @param {Number} params.money 獲得賞金
    * @returns {Number} 正解データ
    */
-  createAnswerByOrderAndEarningMoney (data, money) {
+  createAnswerByOrderAndEarningMoney (data, params) {
     const order = data.ret0_order_of_finish
     const count = data.ret0_horse_count
-    const ret = (count - order) * money
+    const ret = (count - order) * params.money
     return ret
   },
   /**
@@ -315,5 +319,19 @@ module.exports = {
       sumDiffs[raceId] = sumDiff
     }
     return sumDiffs
+  },
+  /**
+   * @description 将来の順位と獲得賞金から正解データを作成します。
+   * @param {Object} data 学習用データ
+   * @returns {Number} 正解データ
+   */
+  createAnswerByPostEarningMoney (data) {
+    if (!postEarningMoneys) {
+      postEarningMoneys = fileHelper.readJson(config.featPostEarningMoneysFilePath)
+    }
+    const raceId = data.ret0_race_id
+    const horseId = data.ret0_horse_id
+    const ret = postEarningMoneys[`${raceId}-${horseId}`]
+    return ret || 0
   }
 }

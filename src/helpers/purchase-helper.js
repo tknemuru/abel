@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const ansDefManager = require('@an/answer-def-manager')
 const logicHelper = require('@h/logic-helper')
 const config = require('@/config-manager').get()
 
@@ -109,33 +110,19 @@ module.exports = {
    * @returns {Object} 購入予測評価値ファイルのパスセット
    */
   generatePurchasePredPathSet () {
-    const abiMoPath = config.predAbilityMoneyFilePath.replace(
-      config.learningAbilityDir,
-      config.learningCollegialPurchaseDir
-    )
-    const abiRePath = config.predAbilityRecoveryFilePath.replace(
-      config.learningAbilityDir,
-      config.learningCollegialPurchaseDir
-    )
-    const rageOddsPath = config.predRageOddsFilePath.replace(
-      config.learningRageDir,
-      config.learningCollegialPurchaseDir
-    )
-    const rageOrderPath = config.predRageOrderFilePath.replace(
-      config.learningRageDir,
-      config.learningCollegialPurchaseDir
-    )
-    const collegialPath = config.predCollegialFilePath.replace(
+    const allDefs = ansDefManager.getAllAnswerDefs()
+    const ret = {}
+    for (const def of allDefs) {
+      ret[def.shortPathKey] = def.predPath.replace(
+        def.rootDir,
+        config.learningCollegialPurchaseDir
+      )
+    }
+    ret.collegialPath = config.predCollegialFilePath.replace(
       config.learningCollegialDir,
       config.learningCollegialPurchaseDir
     )
-    return {
-      abiMoPath,
-      abiRePath,
-      rageOddsPath,
-      rageOrderPath,
-      collegialPath
-    }
+    return ret
   }
 }
 

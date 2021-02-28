@@ -1,5 +1,7 @@
 'use strict'
 
+const ansDefManager = require('@an/answer-def-manager')
+
 /**
  * @module 学習用設定情報を提供します。
  */
@@ -45,7 +47,7 @@ module.exports = {
   /**
    * @description 紐付き情報を軽量にするかどうか
    */
-  lightweightRelation: false,
+  lightweightRelation: true,
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名
@@ -60,12 +62,6 @@ module.exports = {
    */
   validation (data, validationCols) {
     let err = false
-    // err = validationCols.some(key => {
-    //   return Number.isNaN(Number(data[key])) ||
-    //     Number(data[key]) <= 0
-    // }) ||
-    // data.ret0_race_name.includes('新馬') ||
-    //   data.ret0_race_name.includes('障害')
     err = data.ret0_race_name.includes('新馬') ||
       data.ret0_race_name.includes('障害')
     return !err
@@ -77,10 +73,11 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswer (data, params) {
-    const creator = require('@an/learning-answer-creator')
+    const ansDefs = ansDefManager.getAbilityAnswerDefs()
     const ansSet = {}
-    ansSet['earning-money'] = creator.createAnswerByOrderAndEarningMoney(data, params.money)
-    ansSet['recovery-rate'] = creator.createAnswerByTopThreeRecoveryRate(data)
+    for (const def of ansDefs) {
+      ansSet[def.key] = def.creator(data, params)
+    }
     return ansSet
   }
 }

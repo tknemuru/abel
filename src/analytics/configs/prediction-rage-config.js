@@ -1,5 +1,7 @@
 'use strict'
 
+const base = require('@an/configs/learning-rage-config')
+
 /**
  * @module 学習用設定情報を提供します。
  */
@@ -7,19 +9,19 @@ module.exports = {
   /**
    * @description 学習バージョン
    */
-  version: 1,
+  version: base.version,
   /**
    * @description インプット情報を作成するかどうか
    */
-  input: true,
+  input: base.input,
   /**
    * @description 正解情報を作成するかどうか
    */
-  answer: false,
+  answer: base.answer,
   /**
    * @description 紐付き情報を作成するかどうか
    */
-  relation: true,
+  relation: base.relation,
   /**
    * @description 前準備のセレクト文ファイル名
    */
@@ -27,7 +29,7 @@ module.exports = {
   /**
    * @description データベースの情報から作成するかどうか
    */
-  fromDb: true,
+  fromDb: base.fromDb,
   /**
    * @description データセレクト文ファイル名
    */
@@ -35,7 +37,7 @@ module.exports = {
   /**
    * @description 未来に向かう入力情報を作成するかどうか
    */
-  towardPost: false,
+  towardPost: base.towardPost,
   /**
    * @description 出力対象のカラム定義を取得します。
    * @returns {String} 出力対象のカラム定義名
@@ -49,10 +51,7 @@ module.exports = {
    * @param {Array} validationCols - 検証対象のカラムリスト
    */
   validation (data, validationCols) {
-    let err = false
-    err = data.ret0_race_name.includes('新馬') ||
-      data.ret0_race_name.includes('障害')
-    return !err
+    return base.validation(data, validationCols)
   },
   /**
    * @description 正解データを作成します。
@@ -60,10 +59,6 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswer (hists) {
-    const creator = require('@an/learning-answer-creator')
-    const ansSet = {}
-    ansSet['rage-odds'] = creator.createAnswerByTopThreeOdds(hists)
-    ansSet['rage-order'] = creator.createAnswerByOrderPopularityDiff(hists)
-    return ansSet
+    return base.createAnswer(hists)
   }
 }

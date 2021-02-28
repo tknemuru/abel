@@ -1,5 +1,7 @@
 'use strict'
 
+const ansDefManager = require('@an/answer-def-manager')
+
 /**
  * @module 学習用設定情報を提供します。
  */
@@ -62,10 +64,11 @@ module.exports = {
    * @returns {Number} 正解データ
    */
   createAnswer (hists) {
-    const creator = require('@an/learning-answer-creator')
+    const ansDefs = ansDefManager.getRageAnswerDefs()
     const ansSet = {}
-    ansSet['rage-odds'] = creator.createAnswerByTopThreeOdds(hists)
-    ansSet['rage-order'] = creator.createAnswerByOrderPopularityDiff(hists)
+    for (const def of ansDefs) {
+      ansSet[def.key] = def.creator(hists)
+    }
     return ansSet
   }
 }
