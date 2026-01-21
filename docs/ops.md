@@ -6,7 +6,7 @@
 
 | ソフトウェア | 用途 | 備考 |
 |-------------|------|------|
-| Node.js | アプリケーション実行 | package.json 参照 |
+| Node.js v12+ | アプリケーション実行 | v20 で動作確認済み。sqlite3 v5 は Node.js v12 以上が必要 |
 | Python + Jupyter Notebook | 機械学習モデル実行 | abel-learning と連携 |
 | SQLite3 | データベース | npm install 時に自動インストール |
 | Chromium | IPAT 連携 (puppeteer) | puppeteer が自動ダウンロード |

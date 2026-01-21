@@ -4,8 +4,9 @@
 
 | ファイル | 変更内容 |
 |---------|----------|
-| `docs/ops.md` | WSL環境での学習データ生成手順を追記 |
+| `docs/ops.md` | WSL環境での学習データ生成手順を追記、Node.js バージョン要件を明記 |
 | `package.json` | sqlite3 を v4.1.1 → v5.1.7 に更新（Node.js v20 互換性のため） |
+| `package-lock.json` | sqlite3 更新に伴う依存関係の更新 |
 
 ## 実行した作業
 
@@ -110,9 +111,15 @@ ANSWER_COUNT=$(ls resources/learnings/answer-*.csv 2>/dev/null | wc -l)
 |-----|------|--------|
 | sqlite3 ビルド失敗 | sqlite3 v4.1.1 が Node.js v20 と非互換（node-gyp の module_name 未定義エラー） | `npm install sqlite3@5 --save` で v5.1.7 に更新 |
 
+## sqlite3 更新の影響範囲
+
+- **変更理由**: WSL 上の Node.js v20 で sqlite3 v4.1.1 のネイティブビルドが失敗するため、v5.1.7 に更新
+- **最低サポート Node.js バージョン**: v12 以上（sqlite3 v5 の要件）
+- **既存環境への影響**: sqlite3 v5 は Node.js v12+ で動作するため、既存の Windows 環境（Node.js v12 以上を使用している場合）との互換性に問題なし
+- **docs/ops.md への反映**: 必要ソフトウェアに「Node.js v12+」を明記済み
+
 ## 残課題・不確実点
 
-- package.json の sqlite3 バージョンを v5.1.7 に変更した。この変更は既存の Windows 環境にも影響する可能性があるが、sqlite3 v5 は Node.js v12+ で動作するため、互換性の問題は少ないと想定。
 - npm audit で脆弱性が報告されている（34件）。learn-pre の動作には影響しないが、将来的に依存関係の更新を検討すべき。
 
 ## 元DBの安全性確認
