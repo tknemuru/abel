@@ -218,3 +218,73 @@ npm run init-db
   - 日次で `db/` をバックアップ
   - 週次で `resources/learnings/` をバックアップ
   - TODO: cron またはスクリプトで自動化
+
+## WSL環境での学習データ生成
+
+### 前提条件
+
+Windows側に以下が配置されていること:
+- SQLite DB: `C:\work\abel\race.db`
+- 設定ファイル: `C:\work\abel\resources\configs\index.yml`
+
+### WSL側への取り込み手順
+
+1. 必要ディレクトリの作成
+   ```bash
+   mkdir -p db resources/configs resources/learnings
+   ```
+
+2. DBのコピー（元DBを保護するためコピー方式）
+   ```bash
+   cp /mnt/c/work/abel/race.db db/race.db
+   ```
+
+3. 設定ファイルのコピー
+   ```bash
+   cp /mnt/c/work/abel/resources/configs/index.yml resources/configs/index.yml
+   ```
+
+**注意**: `npm run init-db` は実行しないこと。既存DBのデータが失われる。
+
+### 依存パッケージのインストール
+
+```bash
+npm install
+```
+
+**よくある失敗と対処**:
+
+| 症状 | 原因 | 対処 |
+|-----|------|------|
+| `sqlite3` ビルド失敗 | ビルドツール不足 | `sudo apt install build-essential python3` |
+| `sqlite3` ビルド失敗（Node.js v20+） | sqlite3 v4 は非互換 | `npm install sqlite3@5 --save` で v5 に更新 |
+| `canvas` ビルド失敗 | cairo等のライブラリ不足 | `sudo apt install libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev` |
+| `ENOENT: resources/configs/index.yml` | 設定ファイル未配置 | 上記手順3を実行 |
+| `ENOENT: resources/params/learnings` | 中間パラメータ不足 | `mkdir -p resources/params && cp -r /mnt/c/work/abel/resources/params/learnings resources/params/` |
+
+### 学習データ生成
+
+```bash
+npm run learn-pre
+```
+
+### 生成物の確認（Verify）
+
+```bash
+# 必須ファイルの存在・非空確認
+test -s resources/learnings/input.csv && echo "input.csv: OK"
+test -f resources/learnings/input-cols.json && echo "input-cols.json: OK"
+
+# answer ファイルが1つ以上存在
+ls resources/learnings/answer-*.csv >/dev/null 2>&1 && echo "answer files: OK"
+
+# データ件数確認
+wc -l resources/learnings/input.csv
+```
+
+**期待される生成物**:
+- `input.csv`: 学習入力データ（0バイトより大きい）
+- `input-cols.json`: カラム定義（JSON配列）
+- `answer-earning-money.csv`: 正解データ
+- `answer-recovery-rate.csv`: 正解データ
+- `relation.json`: 紐付きデータ
