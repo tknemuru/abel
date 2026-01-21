@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "topic": "2026-01-21-learning-data-contract-tests",
+  "title": "Learning Data Contract Tests",
+  "status": "DONE",
+  "paths": {
+    "instruction": "instruction.md",
+    "plan": "plan.md",
+    "designReview": "design-review.md",
+    "impl": "impl.md",
+    "implReview": "impl-review.md"
+  },
+  "hashes": {
+    "planSha256": "f74398c6a800f27a45a426656a3d259fd8847af04a01c7697adfae0242ad70fb",
+    "designReviewSha256": "5545f19f03c0aebe446ed7beaf6b162fcc1902c1f65a6f75aef7ff683821f033",
+    "implSha256": "20d332b8864bfaf1001331f621990fb10a683cb6a0aebd34ee3353b4da5827b1",
+    "implReviewSha256": "ea8721aab7f84d248c3a7f36cb5e865ff34a481601eb6fae5f8c953c6adad905"
+  },
+  "timestamps": {
+    "createdAt": "2026-01-21T16:57:00+09:00",
+    "updatedAt": "2026-01-21T17:33:46+09:00"
+  }
+}

@@ -1,6 +1,6 @@
 <!-- AUTO-GENERATED FILE - DO NOT EDIT -->
 <!-- Source: ~/.vdev/CLAUDE.md -->
-<!-- Last synced: 2026-01-21T10:55:43+09:00 -->
+<!-- Last synced: 2026-01-21T16:57:16+09:00 -->
 
 # vdev 前提実装規約（Claude Code 用・永続）
 
@@ -275,3 +275,59 @@ status が期待値と異なる場合:
 
 - 必須ドキュメントの更新要否判断が明示されていること
 - DB を持つシステムでスキーマ全量参照・更新要否が明示されていること
+
+---
+
+## 13. GitHub PR 自動作成（gh CLI）
+
+### 13.1 目的
+
+- Claude Code が実装完了時に GitHub CLI（gh）を用いて PR 作成を自動で試行する
+- PR 作成の有無・成否は vdev の DONE 判定に影響しない
+- PR 作成 = 完了ではない（impl-review の Status: DONE が必須）
+
+### 13.2 発火条件
+
+以下をすべて満たした場合に PR 作成を試行する：
+
+1. vdev の状態が IMPLEMENTING である
+2. 実装作業が完了している
+3. impl.md を作成済みである
+4. `vdev impl <topic> --stdin` による登録が成功した直後である
+
+### 13.3 事前チェック（すべて必須）
+
+以下のチェックをすべて通過した場合のみ PR 作成を続行する。
+いずれかの失敗は non-fatal とし、失敗理由を impl.md に記録する。
+
+1. **gh CLI 存在確認**: `command -v gh` が成功すること
+2. **認証状態確認**: `gh auth status` が成功すること
+3. **git リポジトリ確認**: `.git` ディレクトリが存在すること
+4. **作業ツリー確認**: `git status --porcelain` が空であること（未コミット変更なし）
+5. **ブランチ確認**: 現在ブランチがデフォルトブランチでないこと
+   - デフォルトブランチ上の場合は、topic 名で新規ブランチを作成してから続行する
+   - 例: `git checkout -b <topic>`
+
+### 13.4 PR 作成手順
+
+1. **リモート push**: 未 push の場合は `git push -u origin HEAD` を実行する
+2. **既存 PR 確認**: `gh pr view --json url` で既存 PR を確認する
+   - 既存 PR がある場合は新規作成せず、その URL を使用する
+3. **新規 PR 作成**: 既存 PR がない場合は `gh pr create --fill` を実行する
+4. **URL 記録**: 作成または検出した PR の URL を impl.md に追記する
+
+### 13.5 失敗時の扱い
+
+- gh 未導入、未認証、権限不足、ネットワークエラー等はすべて non-fatal
+- vdev impl の成功状態は維持する
+- impl.md に以下を記録する：
+  - 実行したコマンド
+  - 失敗理由（エラーメッセージ）
+  - 人間が行うべき次の手順
+
+### 13.6 禁止事項
+
+- PR の merge を実行しない
+- auto-merge を設定しない
+- release 操作を行わない
+- PR 作成をもって DONE 扱いにしない（impl-review の Status: DONE が必須）

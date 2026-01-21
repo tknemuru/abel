@@ -44,17 +44,31 @@
 - **1行 = 1馬 × 1レース**（馬の出走単位）
 - 同一レースに出走する馬は複数行として出力される
 
-### 主キー
+### 主キー（input.csv）
+
+input.csv の各行は以下のカラムで一意に特定される:
+
+| カラム | 説明 | 根拠 |
+|-----|------|------|
+| `ret0_race_id` | レースID（カラム定義参照） | `src/analytics/learning-input-creator.js:279` |
+| `ret0_horse_number` | 馬番（カラム定義参照） | `src/analytics/learning-input-creator.js:281` |
+
+### relation.json のキー
+
+紐付きデータ（relation.json）は以下のキーを持つ:
 
 | キー | 説明 | 根拠 |
 |-----|------|------|
-| `ret0_race_id` | レースID | `src/analytics/learning-input-creator.js:279` |
-| `ret0_horse_number` | 馬番 | `src/analytics/learning-input-creator.js:281` |
+| `raceId` | レースID | `src/analytics/learning-input-creator.js:506-527` |
+| `horseNumber` | 馬番 | `src/analytics/learning-input-creator.js:506-527` |
+| `raceName` | レース名 | `src/analytics/learning-input-creator.js:506-527` |
+| `horseId` | 馬ID | `src/analytics/learning-input-creator.js:506-527` |
+| `horseName` | 馬名 | `src/analytics/learning-input-creator.js:506-527` |
+| `orderOfFinish` | 着順 | `src/analytics/learning-input-creator.js:506-527` |
+| `popularity` | 人気順 | `src/analytics/learning-input-creator.js:506-527` |
+| `odds` | オッズ | `src/analytics/learning-input-creator.js:506-527` |
 
-紐付きデータ（relation.json）には上記キーに加え、以下も含まれる:
-- `ret0_horse_id`: 馬ID
-- `ret0_horse_name`: 馬名
-- `ret0_race_name`: レース名
+**注**: relation.json のキー名は camelCase 形式であり、input.csv のカラム名（snake_case + ret0_ prefix）とは命名規則が異なる。
 
 ## カラム定義
 
