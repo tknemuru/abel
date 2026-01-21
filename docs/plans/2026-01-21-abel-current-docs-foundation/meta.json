@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "topic": "2026-01-21-abel-current-docs-foundation",
+  "title": "Abel Current Docs Foundation",
+  "status": "DONE",
+  "paths": {
+    "instruction": "instruction.md",
+    "plan": "plan.md",
+    "designReview": "design-review.md",
+    "impl": "impl.md",
+    "implReview": "impl-review.md"
+  },
+  "hashes": {
+    "planSha256": "4e2d92d09cb3473b80be7213461433831764e3ac79185aa9ea70a6eca4817439",
+    "designReviewSha256": "9c60d39924a7e365d4bd252430ea251f897633d661ca9aefcad3d9c1346c9d57",
+    "implSha256": "9cb2d8c7762ba48f6160e9c01e5cca859b5b6282126e276976fb83f035c52a1d",
+    "implReviewSha256": "09b7d91fa07fda0e5cd6422ab6122b3cf05a74af3ca03547fb6f540039be17c8"
+  },
+  "timestamps": {
+    "createdAt": "2026-01-21T10:55:43+09:00",
+    "updatedAt": "2026-01-21T14:16:47+09:00"
+  }
+}
