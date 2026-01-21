@@ -127,11 +127,17 @@ mkdir -p resources/learnings resources/learnings-rage
 
 ### 生成コマンド
 
+**重要**: learn-pre は追記モード（`fs.appendFileSync`）で出力するため、実行前に既存の生成物を削除すること。削除せずに再実行すると、ファイルが破損する（特に relation.json が不正な JSON になる）。
+
 ```bash
+# 【必須】実行前に既存ファイルを削除
+rm -f resources/learnings/input.csv resources/learnings/input-cols.json resources/learnings/relation.json resources/learnings/answer-*.csv
+
 # 能力学習データ作成
 npm run learn-pre
 
-# Rage学習データ作成
+# Rage学習データ作成（同様にクリーンしてから実行）
+rm -f resources/learnings-rage/*.csv resources/learnings-rage/*.json
 npm run learn-rage-pre
 
 # 合議制学習データ作成
@@ -288,3 +294,53 @@ wc -l resources/learnings/input.csv
 - `answer-earning-money.csv`: 正解データ
 - `answer-recovery-rate.csv`: 正解データ
 - `relation.json`: 紐付きデータ
+
+## テスト実行
+
+### 前提条件
+
+契約テストを実行する場合、以下が満たされていること:
+
+- `mkdir -p resources/learnings`（初回のみ）
+- `npm run learn-pre` が正常完了していること
+- DB（`db/race.db`）が存在し、データが投入されていること
+
+### ユニットテスト実行
+
+```bash
+npm test
+```
+
+- 通常開発用
+- 契約テストはスキップされる（`RUN_CONTRACT_TESTS` 環境変数未設定時）
+
+### 契約テスト実行
+
+契約テストは learn-pre の生成物が契約（learning-data-contract.md）に適合しているか検証する。
+
+**再現性のある検証手順**:
+
+```bash
+# 1. 既存ファイルをクリーン
+rm -f resources/learnings/input.csv resources/learnings/input-cols.json resources/learnings/relation.json resources/learnings/answer-*.csv
+
+# 2. 学習データ生成
+npm run learn-pre
+
+# 3. 契約テスト実行
+RUN_CONTRACT_TESTS=1 npm test
+```
+
+**検証内容**:
+- ファイル存在、形式（BOM/LF）、行数整合性などを検証
+
+### 契約テスト失敗時の切り分け
+
+| 症状 | 原因 | 対処 |
+|-----|------|------|
+| ディレクトリ不存在 | resources/learnings 未作成 | `mkdir -p resources/learnings` を実行 |
+| ファイル不存在 | learn-pre 未実行 | `npm run learn-pre` を再実行 |
+| JSON パースエラー（relation.json 破損） | learn-pre 複数回実行による追記 | `rm resources/learnings/*` 後に `npm run learn-pre` を再実行 |
+| BOM 検出 | 生成元コードの問題 | 通常は発生しない。生成元コードを確認 |
+| CRLF 検出 | 改行コードの問題 | 通常は発生しない。生成元コードを確認 |
+| 行数不一致 | learn-pre 実行中のエラー | learn-pre 実行時のログを確認 |
