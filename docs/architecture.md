@@ -1,8 +1,24 @@
-# abel 設計書 (arch.md)
+# abel アーキテクチャ
 
-## コンポーネント責務
+## 技術スタック
 
-### ディレクトリ構成と責務
+| 技術 | 用途 | 備考 |
+|------|------|------|
+| Node.js | アプリケーション実行基盤 | v12+（v20 で動作確認済み） |
+| SQLite | データ永続化 | ローカル DB、セットアップ不要 |
+| Puppeteer | ブラウザ自動操作 | IPAT 連携・スクレイピング |
+| cheerio | HTML パース | netkeiba.com スクレイピング |
+| @jupyterlab/services | Jupyter 連携 | Python ML モデル実行 |
+| nodemailer | メール送信 | 購入・結果通知 |
+
+### データストア
+
+| 種別 | 用途 | 保存場所 |
+|------|------|----------|
+| SQLite | レース情報・結果・購入状態の永続化 | `db/` |
+| ファイル (JSON/CSV) | 学習データ・予測結果の中間ファイル | `resources/learnings/`, `resources/simulations/` |
+
+## ディレクトリ構成と責務
 
 | ディレクトリ | 責務 | ファイル数 |
 |-------------|------|-----------|
@@ -13,9 +29,7 @@
 | `src/purchases/` | 馬券購入・通知 | 7 |
 | `src/simulations/` | 予測・シミュレーション | 7 |
 
-### 各コンポーネントの詳細
-
-#### accumulations（データ収集）
+### accumulations（データ収集）
 
 - netkeiba.com からレース情報・結果をスクレイピング
 - HTML ダウンロード、パース、DB 登録
@@ -24,7 +38,7 @@
   - `result-race-extractor.js` - レース結果抽出
   - `page-downloader.js` - HTML ダウンロード共通処理
 
-#### analytics（学習データ作成）
+### analytics（学習データ作成）
 
 - DB のレース結果から学習用データを生成
 - 特徴量作成、正解データ作成
@@ -33,7 +47,7 @@
   - `learning-answer-creator.js` - 正解データ作成
   - `feature-extractor.js` - 特徴量抽出
 
-#### dbs（データベースアクセス）
+### dbs（データベースアクセス）
 
 - SQLite への CRUD 操作
 - SQL ファイルの読み込み・実行
@@ -42,7 +56,7 @@
   - `db-provider.js` - DB 接続管理
   - `sql-reader.js` - SQL ファイル読み込み
 
-#### helpers（共通ユーティリティ）
+### helpers（共通ユーティリティ）
 
 - ファイル操作、データ変換、計算処理
 - 他コンポーネントから利用される
@@ -51,7 +65,7 @@
   - `convert-helper.js` - データ変換
   - `html-helper.js` - HTML/puppeteer 操作
 
-#### purchases（購入・通知）
+### purchases（購入・通知）
 
 - IPAT 連携馬券購入
 - メール通知
@@ -61,7 +75,7 @@
   - `mailer.js` - メール送信
   - `purchase-result-checker.js` - 結果確認
 
-#### simulations（予測・シミュレーション）
+### simulations（予測・シミュレーション）
 
 - Jupyter Notebook 経由の予測実行
 - 購入シミュレーション、回収率計算
@@ -149,11 +163,9 @@ graph LR
 - **abel-learning**: 学習データを受け取り、モデル学習・予測を実行
 - インターフェース: CSV ファイル（詳細は [learning-data-contract.md](./learning-data-contract.md)）
 
-## 依存方向（現行実装の実態）
+## 依存関係
 
 ### ディレクトリ間依存
-
-Step 0 の require 抽出結果を集約:
 
 ```
 accumulations → dbs, helpers
@@ -218,63 +230,6 @@ graph TD
 - **トレードオフ**:
   - メリット: 依存が少ない、バックアップが容易
   - デメリット: 並行書き込みに制限あり
-
-## 失敗時方針
-
-### リトライ機構
-
-- `config.ipat.maxRetryCount` によるリトライ
-- 根拠: `src/purchases/ipat-purchase-manager.js:59`, `src/purchases/purchase-result-checker.js:50`
-- 対象: 購入処理、結果確認処理
-
-### 購入状態管理
-
-```javascript
-// src/consts.js:10-23
-PurchaseStatus: {
-  NotPurchased: 0,  // 未購入
-  Purchased: 1,     // 購入完了
-  RaceFinished: 2   // レース終了
-}
-```
-
-- 状態遷移: `NotPurchased → Purchased → RaceFinished`
-- 購入処理の冪等性: 同一レースの二重購入を防止（`hasPurchased` チェック）
-
-### 部分失敗時の扱い
-
-- 複数レースの購入で一部失敗した場合、成功分は DB に記録
-- 失敗分はリトライ後、手動確認が必要
-
-## DB スキーマ概要
-
-### 主要テーブル
-
-| テーブル名 | 用途 | 主キー |
-|-----------|------|--------|
-| `race_result` | レース結果 | `race_id` |
-| `race_future` | 開催予定レース | `race_id` |
-| `horse_race_history` | 馬の出走履歴 | `horse_id`, `race_id` |
-| `simulation_result` | シミュレーション結果 | - |
-| `purchase` | 購入状態管理 | `race_id` |
-
-### 主要ビュー
-
-| ビュー名 | 用途 |
-|---------|------|
-| `view_result_race_history` | 結果レースと履歴の結合 |
-| `view_future_race_history` | 予定レースと履歴の結合 |
-| `view_result_post_history` | 事後分析用ビュー |
-
-### DDL 参照
-
-詳細は `resources/sqls/create_*.sql` を参照:
-
-- [create_race_result.sql](../resources/sqls/create_race_result.sql)
-- [create_race_future.sql](../resources/sqls/create_race_future.sql)
-- [create_horse_race_history.sql](../resources/sqls/create_horse_race_history.sql)
-- [create_simulation_result.sql](../resources/sqls/create_simulation_result.sql)
-- [create_purchase.sql](../resources/sqls/create_purchase.sql)
 
 ## 将来の改善余地
 
